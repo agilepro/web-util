@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:po="urn:po.api" xmlns:addr="urn:addr.api" xmlns:item="urn:item.api" xmlns:dept="urn:dept.api" targetNamespace="urn:po.api" elementFormDefault="qualified">
+	<xsd:import namespace="urn:addr.api" schemaLocation="addr.xsd"/>
+	<xsd:import namespace="urn:item.api" schemaLocation="item.xsd"/>
+	<xsd:import namespace="urn:dept.api" schemaLocation="dept.xsd"/>
+	<xsd:complexType name="PurchaseOrderType">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string"/>
+			<xsd:element name="dueDate" type="xsd:date"/>
+			<xsd:element name="shipTo" type="addr:AddressType"/>
+			<xsd:element name="dept" type="dept:DepartmentType"/>
+			<xsd:element name="items" type="item:ItemType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="eleWithLocalTypeDef">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="sub-ele" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="po:referencedEle"/>
+			<xsd:element name="simpleTypeEle">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="AZ"/>
+							<xsd:enumeration value="CA"/>
+							<xsd:enumeration value="NV"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="udaValue" type="po:PurchaseOrderType"/>
+	<xsd:element name="referencedEle" type="xsd:string"/>
+</xsd:schema>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addr:Address xmlns:addr="urn:addr.api" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="urn:po.api C:\asn\sync\V11.2\IntExt\po.xsd">
+    <addr:name>11111</addr:name>
+    <addr:street>22222</addr:street>
+    <addr:city>33333</addr:city>
+    <addr:state>44444</addr:state>
+    <addr:zip>55555</addr:zip>
+</addr:Address>

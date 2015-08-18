@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Unicode / UTF-8 Genie</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+  <script>
+    var genieApp = angular.module('genieApp', []);
+
+
+    genieApp.controller('genieCtrl', function ($scope) {
+        $scope.srctext = "";
+        $scope.latex = "Static Text";
+
+        $scope.convert = function() {
+            var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+            var res = "";
+            for ( var i = 0; i < $scope.srctext.length; i++ ) {
+                var ch = $scope.srctext.charCodeAt(i);
+                if (ch==0x0A) {
+                    res += fourHex(ch) + "\n";
+                }
+                else {
+                    res += fourHex(ch) + " ";
+                }
+            }
+            return res;
+        };
+
+        $scope.convert2 = function() {
+            var res = "";
+            for ( var i = 0; i < $scope.srctext.length; i++ ) {
+                var ch = $scope.srctext.charCodeAt(i);
+                if (ch<=0x7F) {
+                    res += twoHex(ch) + " ";
+                }
+                else if (ch<=0x7FF) {
+                    var n1 = 0x80 + ch % 64;
+                    var n2 = 0xC0 + Math.floor(ch/64) % 32;
+                    res += twoHex(n2) + twoHex(n1) + " ";
+                }
+                else if (ch<=0xFFFF) {
+                    var n1 = 0x80 + ch % 64;
+                    var x = Math.floor(ch/64);
+                    var n2 = 0x80 + x % 64;
+                    var n3 = 0xE0 + Math.floor(x/64) % 16;
+                    res += twoHex(n3) + twoHex(n2) + twoHex(n1) + " ";
+                }
+            }
+            return res;
+        };
+    });
+
+    function fourHex(x) {
+        var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        var n1 = x % 16;
+        x = Math.floor(x/16);
+        var n2 = x % 16;
+        x = Math.floor(x/16);
+        var n3 = x % 16;
+        x = Math.floor(x/16);
+        var n4 = x % 16;
+        return  map[n4] + map[n3] + map[n2] + map[n1];
+    }
+    function twoHex(x) {
+        var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        var n1 = x % 16;
+        x = Math.floor(x/16);
+        var n2 = x % 16;
+        return map[n2] + map[n1];
+    }
+
+  </script>
+</head>
+
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<h1>Unicode / UTF-8 Genie</h1>
+
+<p><font size="-1">Type or paste text into the box, and the unicode code point values and UTF-8 ecodings
+will appear in the space below it</font></p>
+<table class="table">
+<tr>
+<td>Source:</td>
+<td><textarea type="text" ng-model="srctext" cols="80" rows="10"></textarea></td>
+</tr>
+<tr>
+<td>Unicode:</td>
+<td class="warning">{{convert()}}</td>
+</tr>
+<tr>
+<td>UTF-8:</td>
+<td class="warning">{{convert2()}}</td>
+</tr>
+</table>
+</body>
+
+<ng-include src="'tileFooter.htm'" />
+
+</html>
+
+

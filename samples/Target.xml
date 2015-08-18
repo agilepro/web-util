@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" 
+  xmlns:as="http://www.oasis-open.org/asap/0.9/asap.xsd" 
+  xmlns:wfx="http://www.oasis-open.org/asap/0.9/asap.xsd">
+  <env:Header>
+    <as:Response>
+      <as:SenderKey> </as:SenderKey>
+      <as:ReceiverKey> </as:ReceiverKey>
+    </as:Response>
+  </env:Header>
+  <env:Body>
+    <as:GetDetailsRs>
+      <as:Key> xsd:anyURI (process instance URI) </as:Key>
+      <as:State> xsd:String </as:State>
+      <as:Name> xsd:String </as:Name>
+      <as:Subject> xsd:String (PI title) </as:Subject>
+      <as:Description> xsd:String </as:Description>
+      <as:Initiator> xsd:String (initiator) </as:Initiator>
+      <as:CreationTime> xsd:dateTime </as:CreationTime >
+      <as:Id> xsd:long </as:Id>
+      <as:DueDate> xsd:dateTime nillable=true </as:DueDate>
+      <as:DefinitionKey> xsd:anyURI (PD URI) </as:DefinitionKey>
+      <as:DefinitionId> xsd:long </as:DefinitionId>
+      <as:DefinitionName> xsd:String </as:DefinitionName>
+      <as:DataItems> 
+        <as:DataItem>
+          <as:DataItemName>myPurchase</as:DataItemName>
+          <as:DataItemIdentifier>myPurchase</as:DataItemIdentifier>
+          <as:DataItemType>PurchseOrder@urn:po.api</as:DataItemType>
+          <as:Value></as:Value>
+          <as:ComplexDataItemValue>
+          </as:ComplexDataItemValue>
+        </as:DataItem>
+      </as:DataItems>
+    </as:GetDetailsRs>
+  </env:Body>
+</env:Envelope>

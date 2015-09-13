@@ -1,15 +1,17 @@
 <%@page import="java.io.Writer"
+%><%@page import="java.io.InputStream"
 %><%@page import="java.io.InputStreamReader"
 %><%@page import="java.io.Reader"
 %><%@page import="java.io.Writer"
-%><%@page import="java.io.InputStream"
+%><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.net.URL"
 %><%@page import="java.util.Collections"
 %><%@page import="java.util.Comparator"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
+%><%@page import="java.util.List"
+%><%@page import="java.util.Map"
 %><%@page import="java.util.Vector"
 %><%@page import="javax.servlet.http.HttpServletRequest"
 %><%@page import="javax.servlet.http.HttpSession"
@@ -109,6 +111,15 @@
         Reader r = new InputStreamReader(is, enc);
         char[] cb = new char[2048];
 
+        Map<String,List<String>> fields = uc.getHeaderFields();
+        for (String fieldName: fields.keySet()) {
+            List<String> vals = fields.get(fieldName);
+            for (String oneVal : vals) {
+                putBackTogether.append(fieldName+": "+oneVal+"\n");
+            }
+        }
+        putBackTogether.append("-----------------------------\n");
+
         int amtRead = r.read(cb);
         while (amtRead > 0) {
             putBackTogether.append(cb, 0, amtRead);
@@ -172,357 +183,8 @@
     public String extractWiki(Element parent)
     {
         return "DISABLED";
-        //if (htmlElementType==null) {
-        //    htmlElementType = new Hashtable();
-        //    htmlElementType.put("html","A");
-        //}
-        //StringBuffer retval = new StringBuffer();
-//
-        //recursiveExtractIgnore(parent, retval);
-///
-        //return retval.toString();
     }
 
-
-/*
-    public void recursiveExtractIgnore(Element parent, StringBuffer retval)
-    {
-        Enumeration eee = getChildElements(parent);
-        while (eee.hasMoreElements()) {
-            Element ele = (Element)eee.nextElement();
-            String eleName = ele.getTagName();
-            if (eleName==null) {
-                //do nothing
-            } else if(eleName.equalsIgnoreCase("html")) {
-                recursiveExtractIgnore(ele, retval);
-            } else if(eleName.equalsIgnoreCase("body")) {
-                recursiveExtractWiki(ele, retval);
-            } else if(eleName.equalsIgnoreCase("div")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("p")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("h1")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("h2")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("h3")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("table")) {
-                //purposefully strip this out
-            } else if(eleName.equalsIgnoreCase("head")) {
-                //purposefully strip this out
-            } else if(eleName.equalsIgnoreCase("script")) {
-                //purposefully strip this out
-            } else {
-                recursiveExtractIgnore(ele, retval);
-            }
-        }
-    }
-
-    public void recursiveExtractWiki(Element parent, StringBuffer retval)
-    {
-        Enumeration eee = getChildElements(parent);
-        while (eee.hasMoreElements()) {
-            Element ele = (Element)eee.nextElement();
-            String eleName = ele.getTagName();
-            if (eleName==null) {
-                //do nothing
-            } else if(eleName.equalsIgnoreCase("html")) {
-                recursiveExtractWiki(ele, retval);
-            } else if(eleName.equalsIgnoreCase("body")) {
-                recursiveExtractWiki(ele, retval);
-            } else if(eleName.equalsIgnoreCase("div")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("p")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("h1")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("h2")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("h3")) {
-                wikiBlock(ele, retval);
-            } else if(eleName.equalsIgnoreCase("table")) {
-                //purposefully strip this out
-            } else if(eleName.equalsIgnoreCase("head")) {
-                //purposefully strip this out
-            } else if(eleName.equalsIgnoreCase("script")) {
-                //purposefully strip this out
-            } else {
-                recursiveExtractIgnore(ele, retval);
-            }
-        }
-    }
-
-    public void wikiBlock(Element parent, StringBuffer retval)
-    {
-        String eleName = parent.getTagName();
-        String trailer = "";
-        if (eleName.equalsIgnoreCase("p")) {
-            retval.append("\n\n");
-            trailer = "\n";
-        } else if (eleName.equalsIgnoreCase("h1")) {
-            retval.append("\n!!!");
-            trailer = "\n";
-        } else if (eleName.equalsIgnoreCase("h2")) {
-            retval.append("\n!!");
-            trailer = "\n";
-        } else if (eleName.equalsIgnoreCase("h3")) {
-            retval.append("\n!");
-            trailer = "\n";
-        } else if (eleName.equalsIgnoreCase("table")) {
-            return;   //strip out tables
-        } else if (eleName.equalsIgnoreCase("ol")) {
-            return;   //strip out tables
-        } else if (eleName.equalsIgnoreCase("ul")) {
-            return;   //strip out tables
-        } else if (eleName.equalsIgnoreCase("tr")) {
-            return;   //strip out tables
-        } else if (eleName.equalsIgnoreCase("td")) {
-            return;   //strip out tables
-        } else if (eleName.equalsIgnoreCase("img")) {
-            return;   //strip out images
-        } else if (eleName.equalsIgnoreCase("strong")) {
-            wikiStyle(parent, retval);
-            return;
-        } else if (eleName.equalsIgnoreCase("a")) {
-            wikiStyle(parent, retval);
-            return;
-        } else if (eleName.equalsIgnoreCase("hr")) {
-            retval.append("\n----\n");
-            return;
-        } else if (eleName.equalsIgnoreCase("span")) {
-            wikiStyle(parent, retval);
-            return;
-        } else if (eleName.equalsIgnoreCase("b")) {
-            wikiStyle(parent, retval);
-            return;
-        } else if (eleName.equalsIgnoreCase("i")) {
-            wikiStyle(parent, retval);
-            return;
-        } else if (eleName.equalsIgnoreCase("div")) {
-            //ok, no debug output
-        } else {
-            retval.append("\n---block "+eleName+"\n");
-        }
-        NodeList childNdList = parent.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
-            org.w3c.dom.Node n = childNdList.item(i) ;
-            if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                Element ele = (Element)n;
-                eleName = parent.getTagName();
-                if (eleName.equalsIgnoreCase("p")) {
-                    wikiBlock(ele, retval);
-                } else if (eleName.equalsIgnoreCase("h1")) {
-                    wikiBlock(ele, retval);
-                } else if (eleName.equalsIgnoreCase("h2")) {
-                    wikiBlock(ele, retval);
-                } else if (eleName.equalsIgnoreCase("h3")) {
-                    wikiBlock(ele, retval);
-                } else if (eleName.equalsIgnoreCase("div")) {
-                    wikiBlock(ele, retval);
-                } else if (eleName.equalsIgnoreCase("table")) {
-                    //strip out tables
-                } else if (eleName.equalsIgnoreCase("tr")) {
-                    //strip out tables
-                } else if (eleName.equalsIgnoreCase("td")) {
-                    //strip out tables
-                } else {
-                    wikiStyle(ele, retval);
-                }
-            }
-            else {
-                retval.append(n.getNodeValue());
-            }
-        }
-        retval.append(trailer);
-    }
-
-    public void wikiStyle(Element parent, StringBuffer retval)
-    {
-        String styleText = "";
-        String eleName = parent.getTagName();
-        if(eleName.equalsIgnoreCase("b")) {
-            styleText="__";
-        }
-        if(eleName.equalsIgnoreCase("strong")) {
-            styleText="__";
-        } else if(eleName.equalsIgnoreCase("i")) {
-            styleText="''";
-        } else if(eleName.equalsIgnoreCase("span")) {
-            styleText="";
-        } else if(eleName.equalsIgnoreCase("a")) {
-            //wikiLink(parent, retval);
-            return;
-        } else if(eleName.equalsIgnoreCase("hr")) {
-            retval.append("\n----(inside style)\n");
-            return;
-        } else if (eleName.equalsIgnoreCase("img")) {
-            return;   //strip out images
-        } else {
-            retval.append("\n---style for "+eleName+"\n");
-        }
-        retval.append(styleText);
-        NodeList childNdList = parent.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
-            org.w3c.dom.Node n = childNdList.item(i) ;
-            if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                Element ele = (Element)n;
-                wikiStyle(ele, retval);
-            }
-            else {
-                retval.append(n.getNodeValue());
-            }
-        }
-        retval.append(styleText);
-    }
-
-/*
-    public void wikiLink(Element parent, StringBuffer retval)
-    {
-        String linkName = DOMFace.textValueOf(parent, true);
-        String linkAddr = parent.getAttribute("href");
-        //probably need to clean up this link somewhat...
-        retval.append("[");
-        retval.append(linkName);
-        retval.append("|");
-        retval.append(linkAddr);
-        retval.append("]");
-
-    }
-
-    public String dita2Wiki(Element parent)
-    {
-        StringBuffer retval = new StringBuffer();
-
-        recursiveDita(parent, retval);
-
-        return retval.toString();
-    }
-
-    public void recursiveDita(Element parent, StringBuffer retval)
-    {
-        Enumeration eee = getChildElements(parent);
-        while (eee.hasMoreElements()) {
-            Element ele = (Element)eee.nextElement();
-            String eleName = ele.getTagName();
-            if (eleName==null) {
-                //do nothing
-            } else if(eleName.equalsIgnoreCase("title")) {
-                retval.append("\n!!!");
-                retval.append(DOMFace.textValueOf(ele, true));
-                retval.append("\n");
-            } else if(eleName.equals("taskbody")) {
-                recursiveDita(ele, retval);
-            } else if(eleName.equals("prereq")) {
-                recursiveDita(ele, retval);
-            } else if(eleName.equals("context")) {
-                recursiveDita(ele, retval);
-            } else if(eleName.equals("steps")) {
-                recursiveDita(ele, retval);
-            } else if(eleName.equals("result")) {
-                recursiveDita(ele, retval);
-            } else if(eleName.equals("p")) {
-                ditaBlock(ele, retval);
-            } else if(eleName.equals("step")) {
-                ditaBlock(ele, retval);
-            } else {
-                retval.append("\n--what is "+eleName+"?\n");
-            }
-        }
-    }
-
-    public void ditaBlock(Element parent, StringBuffer retval)
-    {
-        String eleName = parent.getTagName();
-        String trailer = "";
-        if (eleName.equalsIgnoreCase("p")) {
-            retval.append("\n");
-            trailer = "\n";
-        } else if (eleName.equals("uicontrol")) {
-            ditaStyle(parent,retval);
-            return;
-        } else if (eleName.equals("b")) {
-            //fake a p since it is missing
-            retval.append("\n");
-            ditaStyle(parent,retval);
-            retval.append("\n");
-            return;
-        } else if (eleName.equals("cmd")) {
-            //nothing special needed
-        } else if (eleName.equals("info")) {
-            //nothing special needed
-        } else if (eleName.equals("stepresult")) {
-            //nothing special needed
-        } else if (eleName.equals("note")) {
-            retval.append("\nNote: ");
-        } else if (eleName.equals("step")) {
-            retval.append("\n* ");
-            trailer = "\n";
-        } else {
-            retval.append("\n--unknown block "+eleName+"\n");
-        }
-        NodeList childNdList = parent.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
-            org.w3c.dom.Node n = childNdList.item(i) ;
-            if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                Element ele = (Element)n;
-                eleName = parent.getTagName();
-                if (eleName.equals("cmd")) {
-                    ditaBlock(ele, retval);
-                } else if (eleName.equals("info")) {
-                    ditaBlock(ele, retval);
-                } else if (eleName.equals("p")) {
-                    ditaBlock(ele, retval);
-                } else if (eleName.equals("cmd")) {
-                    ditaBlock(ele, retval);
-                } else if (eleName.equals("step")) {
-                    ditaBlock(ele, retval);
-                } else {
-                    ditaStyle(ele, retval);
-                }
-            }
-            else {
-                retval.append(n.getNodeValue());
-            }
-        }
-        retval.append(trailer);
-    }
-
-    public void ditaStyle(Element parent, StringBuffer retval)
-    {
-        String styleText = "";
-        String trailer = "";
-        String eleName = parent.getTagName();
-        if(eleName.equals("b")) {
-            styleText="__";
-            trailer="__";
-        } else if(eleName.equals("strong")) {
-            styleText="__";
-            trailer="__";
-        } else if (eleName.equals("uicontrol")) {
-            styleText="\"";
-            trailer="\"";
-        } else if (eleName.equals("note")) {
-            retval.append("\nNote: ");
-        } else {
-            styleText="\n+++style for "+eleName+"\n";
-            trailer="\n---style for "+eleName+"\n";
-        }
-        retval.append(styleText);
-        NodeList childNdList = parent.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
-            org.w3c.dom.Node n = childNdList.item(i) ;
-            if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                Element ele = (Element)n;
-                ditaStyle(ele, retval);
-            }
-            else {
-                retval.append(n.getNodeValue());
-            }
-        }
-        retval.append(trailer);
-    }
-*/
 
 
     public static Enumeration getChildElements(Element from)

@@ -128,6 +128,38 @@
         return putBackTogether.toString();
     }
 
+    public String postDoc(String pageUrl, String body, String enc)
+        throws Exception
+    {
+        URL testUrl = new URL(pageUrl);
+        URLConnection uc = testUrl.openConnection();
+        if (uc == null) {
+            throw new Exception("Got a null URLConnection object!");
+        }
+        InputStream is = uc.getInputStream();
+        if (is == null) {
+            throw new Exception("Got a null content object!");
+        }
+        StringBuffer putBackTogether = new StringBuffer();
+        Reader r = new InputStreamReader(is, enc);
+        char[] cb = new char[2048];
+
+        Map<String,List<String>> fields = uc.getHeaderFields();
+        for (String fieldName: fields.keySet()) {
+            List<String> vals = fields.get(fieldName);
+            for (String oneVal : vals) {
+                putBackTogether.append(fieldName+": "+oneVal+"\n");
+            }
+        }
+        putBackTogether.append("-----------------------------\n");
+
+        int amtRead = r.read(cb);
+        while (amtRead > 0) {
+            putBackTogether.append(cb, 0, amtRead);
+            amtRead = r.read(cb);
+        }
+        return putBackTogether.toString();
+    }
 
     public String stripIndent(String source)
     {

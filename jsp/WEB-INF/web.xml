@@ -23,4 +23,15 @@
         <url-pattern>/jd</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>HttpRequestPathHelper</servlet-name>
+        <servlet-class>org.workcast.wu.HttpRequestPathHelper</servlet-class>
+        <load-on-startup>6</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HttpRequestPathHelper</servlet-name>
+        <url-pattern>/path1/path2/*</url-pattern>
+    </servlet-mapping>
+
+    
 </web-app>

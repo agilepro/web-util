@@ -66,7 +66,7 @@ p
 
 <pre>
 <%
-    for (int i=1; i<124; i++) {
+    for (int i=1; i<125; i++) {
         //out.write("\nPage "+i+"\n\n");
         dumpStudents("http://new.oberlin.edu/home/directory.dot?type=Student&pageNumber="+i, out);
     }
@@ -126,19 +126,64 @@ p
         }
         return output;
     }
-    
+
+    public void dumpAll(String path, Writer out) throws Exception {
+        List<String> res = parseFile(path);
+        for (String line : res) {
+            HTMLWriter.writeHtml(out, line);
+            out.write("\n");
+        }
+    }
+     
     public void dumpStudents(String path, Writer out) throws Exception {
         List<String> res = parseFile(path);
         boolean isAName = false;
+        boolean readyCode = false;
+        boolean isCode = false;
+        boolean readyEmail = false;
+        boolean isEmail = false;
+        String name = "";
+        String email = "";
+        String code = "";
         for (String line : res) {
             if (isAName) {
-                HTMLWriter.writeHtml(out, line);
+                name = line;
                 isAName = false;
-                out.write("\n");
+                readyCode = true;
+            }
+            else if (isCode) {
+                code = line;
+                isCode = false;
+                readyEmail = true;
+            }
+            else if (isEmail) {
+                String rest = line.substring(16);
+                int quotePos = rest.indexOf("'");
+                email = rest.substring(0,quotePos)+"@oberlin.edu";
+                isEmail = false;
             }
             else if (line.indexOf("class=\"geor\"")>0) {
                 isAName = true;
             }        
+            else if (line.indexOf("<p>")>=0 && readyCode) {
+                readyCode = false;
+                isCode = true;
+            }
+            else if (line.indexOf("<script>")>=0 && readyEmail) {
+                readyEmail = false;
+                isEmail = true;
+            }
+            else if (line.indexOf("end item --")>0) {
+                HTMLWriter.writeHtml(out, name);
+                out.write(",");
+                HTMLWriter.writeHtml(out, code);
+                out.write(",");
+                HTMLWriter.writeHtml(out, email);
+                out.write("\n");
+                name = "";
+                email = "";
+                code = "";                
+            }
         }
     }
     

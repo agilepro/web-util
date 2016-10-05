@@ -18,14 +18,12 @@
     WebRequest wr = WebRequest.getOrCreate(request, response, out);
     String enc  = wr.defParam("enc","UTF-8");
     String path = wr.defParam("path","");
+    String postBody = wr.defParam("postBody","");
     String pageSource = null;
-    String postBody = null;
     long startTime = System.currentTimeMillis();
     int amtTotal = 0;
-    if (path!=null && path.length()>=5)
-    {
+    if (path!=null && path.length()>=5) {
         SSLPatch.disableSSLCertValidation();
-
         pageSource = fetchDoc(path, enc);
         amtTotal = pageSource.length();
     }
@@ -46,8 +44,8 @@
 <form action="postsource.jsp" method="post">
   <input type="text" name="path" value="<%= path %>" size=80>
   <input type="submit" value="Post">
-  <input type="text" name="enc" value="<%= enc %>">
-  <textarea name="postBody"><% writeHtml(out, postBody); %></textarea>
+  <input type="text" name="enc" value="<%= enc %>"><br/>
+  <textarea name="postBody" style="width:500px;height:300px"><% wr.writeHtml(postBody); %></textarea>
 </form>
 
 <%

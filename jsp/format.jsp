@@ -38,7 +38,7 @@
     <title>Decimal Formatter</title>
     <link href="mystyle.css" rel="stylesheet" type="text/css"/>
 </head>
-<body BGCOLOR="#F6FDE5">
+<body>
 <h1>Decimal Formatter</h1>
 <form action="format.jsp" method="get">
  value: <input type="text" name="value" value="<%wr.writeHtml(value);%>" size=30>

@@ -15,6 +15,7 @@
 %><%@page import="javax.net.ssl.X509TrustManager"
 %><%@page import="org.apache.http.HttpEntity"
 %><%@page import="org.apache.http.HttpResponse"
+%><%@page import="org.apache.http.Header"
 %><%@page import="org.apache.http.client.HttpClient"
 %><%@page import="org.apache.http.client.methods.HttpGet"
 %><%@page import="org.apache.http.conn.ClientConnectionManager"
@@ -101,12 +102,20 @@ the second box if you know the page to be encoded in something other than UTF-8.
         HttpGet httpget = new HttpGet(pageUrl);
 
         HttpResponse response = httpclient.execute(httpget);
+        StringBuffer putBackTogether = new StringBuffer();
+        Header[] allHeaders = response.getAllHeaders();
+        if (allHeaders!=null) {
+            for (int i=0; i<allHeaders.length; i++) {
+                putBackTogether.append(allHeaders[i].getName() + ": " + allHeaders[i].getValue()+"\n");
+            }
+        }
+        putBackTogether.append("-------------------------------------------\n\n");
+        
         HttpEntity ent = response.getEntity();
         InputStream is = ent.getContent();
         if (is == null) {
             throw new Exception("Got a null content object!");
         }
-        StringBuffer putBackTogether = new StringBuffer();
         Reader r = new InputStreamReader(is, enc);
         char[] cb = new char[2048];
 

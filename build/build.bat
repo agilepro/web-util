@@ -21,7 +21,7 @@ COPY %SOURCELIB%\*.jar %TARGET_DIR%\wu_war\WEB-INF\lib
 
 :### setup classpath
 
-set WU_CP=%SERVLET_API_CP%;%SOURCELIB%\httpclient-4.1.2.jar;%SOURCELIB%\openid4java-0.9.6.jar;%SOURCELIB%\guice-2.0.jar;%SOURCELIB%\mendo.jar
+set WU_CP=%SERVLET_API_CP%;%SOURCELIB%\httpclient-4.1.2.jar;%SOURCELIB%\openid4java-0.9.6.jar;%SOURCELIB%\guice-2.0.jar;%SOURCELIB%\purple.jar
 
 :### compile java classes
 "%JAVA_HOME%/bin/javac" -classpath "%WU_CP%" -source 1.6 -target 1.6 -d %TARGET_DIR%\wu_war\WEB-INF\classes %SOURCE_DIR%\src\org\workcast\wu\*.java

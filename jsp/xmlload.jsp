@@ -5,7 +5,7 @@
 %><%@page import="java.io.InputStream"
 %><%@page import="java.io.Reader"
 %><%@page import="java.io.InputStreamReader"
-%><%@page import="org.workcast.mendocino.Mel"
+%><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.WebRequest"
 %><%
     WebRequest wr = WebRequest.getOrCreate(request, response, out);

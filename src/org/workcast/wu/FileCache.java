@@ -15,11 +15,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import org.workcast.mendocino.Mel;
-import org.workcast.mendocino.Schema;
-import org.workcast.mendocino.ValidationResults;
-import org.workcast.streams.MemFile;
-import org.workcast.streams.HTMLWriter;
+import com.purplehillsbooks.xml.Mel;
+import com.purplehillsbooks.xml.Schema;
+import com.purplehillsbooks.xml.ValidationResults;
+import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
 * Manages a collection of "files" for session.  Each

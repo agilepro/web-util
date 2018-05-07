@@ -10,7 +10,7 @@
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.NamedNodeMap"
-%><%@page import="org.workcast.mendocino.Mel"
+%><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.WebRequest"

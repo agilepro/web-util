@@ -6,7 +6,7 @@
 %><%@page import="java.util.List"
 %><%@page import="java.util.ArrayList"
 %><%@page import="java.io.Writer"
-%><%@page import="org.workcast.streams.HTMLWriter"
+%><%@page import="com.purplehillsbooks.streams.HTMLWriter"
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"

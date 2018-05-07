@@ -11,7 +11,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.workcast.mendocino.Mel;
+import com.purplehillsbooks.xml.Mel;
 
 /**
 * This servlet serves up JavaDoc documentation with

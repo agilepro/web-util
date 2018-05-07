@@ -23,7 +23,7 @@
 %><%@page import="org.apache.http.conn.scheme.SchemeRegistry"
 %><%@page import="org.apache.http.conn.ssl.SSLSocketFactory"
 %><%@page import="org.apache.http.impl.client.DefaultHttpClient"
-%><%@page import="org.workcast.streams.SSLPatch"
+%><%@page import="com.purplehillsbooks.streams.SSLPatch"
 %><%@page import="org.workcast.wu.WebRequest"
 %><%
     WebRequest wr = WebRequest.getOrCreate(request, response, out);

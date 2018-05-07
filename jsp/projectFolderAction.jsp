@@ -11,7 +11,7 @@
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Hashtable"
-%><%@page import="org.workcast.mendocino.Mel"
+%><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.MemFile"
 %><%@page import="org.workcast.wu.WebRequest"

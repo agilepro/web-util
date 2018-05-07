@@ -3,7 +3,7 @@
 %><%@page import="java.io.PrintWriter"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Properties"
-%><%@page import="org.workcast.streams.HTMLWriter"
+%><%@page import="com.purplehillsbooks.streams.HTMLWriter"
 %><%@page import="org.workcast.wu.WebRequest"
 %><%
     WebRequest wr = WebRequest.getOrCreate(request, response, out);

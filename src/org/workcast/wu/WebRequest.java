@@ -15,8 +15,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.workcast.streams.MemFile;
-import org.workcast.streams.HTMLWriter;
+import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.streams.HTMLWriter;
 import org.workcast.wu.UtilityMethods;
 
 /**

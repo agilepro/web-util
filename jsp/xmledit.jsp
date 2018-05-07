@@ -13,7 +13,7 @@
 %><%@page import="org.w3c.dom.Element"
 %><%@page import="org.w3c.dom.Node"
 %><%@page import="org.w3c.dom.NodeList"
-%><%@page import="org.workcast.mendocino.Mel"
+%><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.WebRequest"

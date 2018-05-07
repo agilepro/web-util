@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.util.Vector;
-import org.workcast.mendocino.Mel;
+import com.purplehillsbooks.xml.Mel;
 
 /**
 * Holds the data and logic for synchronizing a local file with a WebDAV remote file

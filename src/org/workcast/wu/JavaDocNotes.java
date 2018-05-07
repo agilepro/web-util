@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.io.File;
-import org.workcast.mendocino.Mel;
+import com.purplehillsbooks.xml.Mel;
 
 /**
 * Represents a set of comments (notes) on a particular

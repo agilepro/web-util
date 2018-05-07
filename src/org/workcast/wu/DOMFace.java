@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.mendocino.Mel;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.xml.Mel;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
 * now just a wrapper for Mendocino element

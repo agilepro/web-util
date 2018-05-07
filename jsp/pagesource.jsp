@@ -13,7 +13,7 @@
 %><%@page import="javax.net.ssl.TrustManager"
 %><%@page import="javax.net.ssl.X509TrustManager"
 %><%@page import="org.workcast.wu.WebRequest"
-%><%@page import="org.workcast.streams.SSLPatch"
+%><%@page import="com.purplehillsbooks.streams.SSLPatch"
 %><%
     WebRequest wr = WebRequest.getOrCreate(request, response, out);
     String enc  = wr.defParam("enc","UTF-8");

@@ -6,11 +6,11 @@
 %><%@page import="java.util.List"
 %><%@page import="java.util.ArrayList"
 %><%@page import="java.io.Writer"
-%><%@page import="org.workcast.streams.HTMLWriter"
+%><%@page import="com.purplehillsbooks.streams.HTMLWriter"
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="org.workcast.mendocino.Mel"
+%><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.WebRequest"
 %><%
     WebRequest wr = WebRequest.getOrCreate(request, response, out);

@@ -10,7 +10,7 @@ import org.openid4java.discovery.html.HtmlResolver;
 import org.openid4java.discovery.yadis.YadisResolver;
 import org.openid4java.server.RealmVerifierFactory;
 import org.openid4java.util.HttpFetcherFactory;
-import org.workcast.streams.SSLPatch;
+import com.purplehillsbooks.streams.SSLPatch;
 
 /**
 * Manages an OpenID4Java session

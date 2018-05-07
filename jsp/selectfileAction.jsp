@@ -10,7 +10,7 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Hashtable"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="org.workcast.streams.MemFile"
+%><%@page import="com.purplehillsbooks.streams.MemFile"
 %><%@page import="org.workcast.wu.WebRequest"
 %><%
     WebRequest wr = WebRequest.getOrCreate(request, response, out);

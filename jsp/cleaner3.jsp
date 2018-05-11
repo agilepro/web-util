@@ -289,7 +289,7 @@ p
         }
         else {
             String tagName = node.getNodeName().toLowerCase();
-            if ("link".equals(tagName)) {
+            if ("a".equals(tagName)) {
                 dumpLink(wr, node);
             }
             String name = s + " / " + node.getNodeName();

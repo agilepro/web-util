@@ -130,166 +130,13 @@ p
     boolean outputMode = true;
     boolean showDebug = false;
 
-    public void outTag(Writer out, String command, String basePath)
-        throws Exception
-    {
-        String clc = command.toLowerCase();
-        if (clc.startsWith("<img")) {
-            if (showDebug) {
-                out.write("<img src=\"delicon.gif\">");
-            }
-            return;
-        }
-        if (clc.startsWith("<a ")) {
-            fixTagField(out, command, clc, "href", basePath);
-            return;
-        }
-        if (clc.startsWith("<!--")) {
-            return;
-        }
-        if (clc.startsWith("<meta")) {
-            return;
-        }
-        //base tags can disrupt the relative addressing to clean linked pages
-        if (clc.startsWith("<base")) {
-            return;
-        }
-        if (clc.startsWith("<font")) {
-            return;
-        }
-        if (clc.startsWith("</font")) {
-            return;
-        }
-        if (clc.startsWith("<iframe")) {
-            if (showDebug) {
-                out.write("<img src=\"delicon.gif\">");
-            }
-            return;
-        }
-        if (clc.startsWith("<scri")) {
-            if (showDebug) {
-                out.write("SCRIPT{");
-            }
-            outputMode = false;
-            return;
-        }
-        if (clc.startsWith("</scri")) {
-            if (showDebug) {
-                out.write("}");
-            }
-            outputMode = true;
-            return;
-        }
-        if (clc.startsWith("</iframe")) {
-            return;
-        }
-        if (clc.startsWith("<noscri")) {
-            if (showDebug) {
-                out.write("<img src=\"delicon.gif\">");
-            }
-            return;
-        }
-        if (clc.startsWith("</noscri")) {
-            return;
-        }
-        if (clc.startsWith("<styl")) {
-            if (showDebug) {
-                out.write("STYLE{");
-            }
-            outputMode = false;
-            return;
-        }
-        if (clc.startsWith("</styl")) {
-            if (showDebug) {
-                out.write("}");
-            }
-            outputMode = true;
-            return;
-        }
-        if (clc.startsWith("<link")) {
-            if (showDebug) {
-                out.write("{LINK");
-            }
-            return;
-        }
-        if (clc.startsWith("</link")) {
-            if (showDebug) {
-                out.write("}");
-            }
-            return;
-        }
-        if (clc.startsWith("<div")) {
-            return;
-        }
-        if (clc.startsWith("</div")) {
-            return;
-        }
-        out.write(command);
-    }
 
-    public
-    void
-    fixTagField(Writer out, String command, String clc, String field, String basePath)
-        throws Exception
-    {
-        int addrPos = clc.indexOf("href");
-        if (addrPos < 0) {
-            out.write("<!--no href-->");
-            out.write(command);
-            return;
-        }
-        addrPos+=4;
-        if (command.charAt(addrPos)!='=') {
-            out.write("<!--no equals-->");
-            out.write(command);
-            return;
-        }
-        addrPos++;
-        String addr1 = null;
-        boolean hasQuotes = (command.charAt(addrPos)=='\"');
-        if (hasQuotes) {
-            addrPos++;
-            int endPos = command.indexOf("\"", addrPos);
-            if (endPos<0) {
-                out.write("<!--no closing quote-->");
-                out.write(command);
-                return;
-            }
-            addr1 = command.substring(addrPos, endPos);
-        }
-        else {
-            int endPos = command.indexOf(" ", addrPos);
-            if (endPos<0) {
-                out.write("<!--cant get addr-->");
-                out.write(command);
-                return;
-            }
-            addr1 = command.substring(addrPos, endPos);
-        }
-        if (addr1.startsWith("http")) {
-            out.write("\n<!--found http-->");
-        }
-        else if (addr1.startsWith("/")) {
-            out.write("\n<!--found base rel-->");
-            int thirdslash = basePath.indexOf("/", 9);
-            String realBase = basePath.substring(0,thirdslash);
-            addr1 = realBase+addr1;
-        }
-        else if (addr1.startsWith("'")) {
-            //out.write("\n<!--script: "+addr1+"-->");
-        }
-        else {
-            out.write("\n<!--relative?-->");
-            addr1 = basePath+addr1;
-        }
-        String subAddr = "cleaner.jsp?path="+URLEncoder.encode(addr1);
-        out.write("<a href=\""+subAddr+"\">");
-    }
-    
+
     
     public void outputCleanPage(WebRequest wr, Tag tag, String s) throws Exception {
         String tagName = tag.getRawTagName().toLowerCase();
         String p = s + " / " + tagName;
+        int kind = kindOfBlock(tag);
         if ("a".equals(tagName)) {
             dumpLink(wr, tag);
             return;
@@ -298,11 +145,22 @@ p
             wr.write("\n == found endtag:"+tagName+"<br/>");
             return;
         }
-        wr.write("\nTAG: "+p+"<br/>");
+        if (kind == 3) {
+            wr.write("\n<span style=\"color:gray\">container: "+p+"</span><br/>");
+        }
+        else if (kind == 2) {
+            wr.write("\n<span style=\"color:black\">BLOCK: "+p+"</span><br/>");
+        }
+        else {
+            wr.write("\n<span style=\"color:red\">TAG "+kind+": "+p+"</span><br/>");
+        }
         if ("script".equals(tagName)) {
             return;
         }
         if ("noscript".equals(tagName)) {
+            return;
+        }
+        if ("svg".equals(tagName)) {
             return;
         }
         if ("style".equals(tagName)) {
@@ -317,6 +175,10 @@ p
             for (Node n : nl.toNodeArray()) {
                 if (n instanceof Tag) {
                     Tag subTag = (Tag) n;
+                    int subKind = kindOfBlock(subTag);
+                    if (kind == 3 && subKind == 1) {
+                        wr.write("\n     <span style=\"yellow\">non-leaf in container</span><br/>");
+                    }
                     outputCleanPage(wr, subTag, p);
                 }
                 else if (n instanceof Text) {
@@ -341,6 +203,38 @@ p
             }
         }
     }
+    
+    
+    /** 1 = not a block instead span or text style, 
+        2 == leaf block,  
+        3 == containing block, 
+        0 == unknown */
+    public int kindOfBlock(Tag tag) {
+        String tagName = tag.getRawTagName().toLowerCase();
+        if ("span".equals(tagName) || "b".equals(tagName) || "i".equals(tagName)
+            || "a".equals(tagName)) {
+            return 1;
+        }
+        boolean hasChildBlock = false;
+        NodeList nl = tag.getChildren();
+        if (nl!=null) {
+            for (Node n : nl.toNodeArray()) {
+                if (n instanceof Tag) {
+                    Tag subTag = (Tag) n;
+                    int kind = kindOfBlock(subTag);
+                    if (kind==3 || kind==2) {
+                        // if inside the current block we find either a leaf block
+                        // or containing block, then the current block is a containing block.
+                        // nothing else has to be looked at.
+                        return 3;
+                    }
+                }                
+            }
+        }
+        return 2;
+    }
+    
+    
     public void dumpLink(WebRequest wr, Tag node) throws Exception  {
         StringBuilder sb = new StringBuilder();
         gatherAllText(node, sb);

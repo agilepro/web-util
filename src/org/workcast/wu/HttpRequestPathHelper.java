@@ -2,7 +2,6 @@
  * NGLeafServlet.java
  */
 package org.workcast.wu;
-import java.io.File;
 import java.io.PrintWriter;
 import java.io.Writer;
 import javax.servlet.ServletConfig;

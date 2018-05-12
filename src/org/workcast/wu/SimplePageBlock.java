@@ -72,9 +72,6 @@ public class SimplePageBlock {
                 else {
                     this.addPlainText(t);
                 }
-                if (t.length()>5) {
-                    t = t.substring(0,5);
-                }
                 HTMLWriter.writeHtml(wr, t);
             }
             else if (child instanceof Element) {

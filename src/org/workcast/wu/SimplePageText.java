@@ -88,9 +88,6 @@ public class SimplePageText {
                 TextNode tNode = (TextNode) child;
                 String t = tNode.getWholeText();
                 spt.addPlainText(t);
-                if (t.length()>5) {
-                    t = t.substring(0,5);
-                }
                 HTMLWriter.writeHtml(wr, t);
             }
             else if (child instanceof Element) {
@@ -108,6 +105,17 @@ public class SimplePageText {
         for (Attribute att : ele.attributes()) {
             if (att.getKey().equalsIgnoreCase("href")) {
                 url = att.getValue();
+                if (url.toLowerCase().startsWith("http")) {
+                    //nothing to do
+                }
+                else if (url.startsWith("/")) {
+                    //root style relative URL
+                    url = thePage.rootUrl + url;
+                }
+                else {
+                    //relative URL to current context
+                    url = thePage.contextUrl + url;
+                }
             }
         }
         String val = ele.text().trim();

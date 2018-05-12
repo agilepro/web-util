@@ -70,6 +70,10 @@
         throw new Exception("Hey, you have to have at least one slash in that URL!");
     }
     String basePath = path.substring(0, lastSlash+1);
+    String shortPath = path;
+    if (path.length()>48) {
+        shortPath = path.substring(0,45) + "...";
+    }
 %>
 <html>
 <head>
@@ -79,9 +83,9 @@ body
     font-family:"Helvetica";
     font-size:12px;
     background-color:#eeeeee;
-    width:600px;
-    margin-right:50px;
-    margin-left:50px;
+    max-width:600px;
+    margin-right:25px;
+    margin-left:25px;
 }
 h1
 {
@@ -129,7 +133,8 @@ p
 <div class="cleanerHeader">
     <b>Cleaned Page: </b>
     <a href="<%=path%>">Original</a> /  
-    <a href="cleaner4.jsp">New URL</a>
+    <a href="cleaner4.jsp">New URL</a> 
+    <span><%=shortPath%></span>
 </div>
 
 <%

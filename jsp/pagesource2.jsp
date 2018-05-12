@@ -22,6 +22,7 @@
 %><%@page import="org.apache.http.conn.scheme.Scheme"
 %><%@page import="org.apache.http.conn.scheme.SchemeRegistry"
 %><%@page import="org.apache.http.conn.ssl.SSLSocketFactory"
+%><%@page import="org.apache.http.conn.ssl.SSLConnectionSocketFactory"
 %><%@page import="org.apache.http.impl.client.DefaultHttpClient"
 %><%@page import="com.purplehillsbooks.streams.SSLPatch"
 %><%@page import="org.workcast.wu.WebRequest"
@@ -98,7 +99,7 @@ the second box if you know the page to be encoded in something other than UTF-8.
         URL testUrl = new URL(pageUrl);
 
         HttpClient httpclient = new DefaultHttpClient();
-        httpclient = wrapClient(httpclient);
+        //httpclient = wrapClient(httpclient);
         HttpGet httpget = new HttpGet(pageUrl);
 
         HttpResponse response = httpclient.execute(httpget);
@@ -128,7 +129,22 @@ the second box if you know the page to be encoded in something other than UTF-8.
     }
 
     public static HttpClient wrapClient(HttpClient base) {
-        try {
+        try { 
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, new TrustManager[]{SSLPatch.getDummyTrustManager()}, null);
+            SSLConnectionSocketFactory ssf = new SSLConnectionSocketFactory(ctx,  
+                     SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            ClientConnectionManager ccm = base.getConnectionManager();
+            //SchemeRegistry sr = ccm.getSchemeRegistry();
+            //sr.register(new Scheme("https", ssf, 443));
+            return new DefaultHttpClient(ccm, base.getParams());
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+    
+    public static HttpClient wrapClientBACK(HttpClient base) {
+        try { 
             SSLContext ctx = SSLContext.getInstance("TLS");
             ctx.init(null, new TrustManager[]{SSLPatch.getDummyTrustManager()}, null);
             SSLSocketFactory ssf = new SSLSocketFactory(ctx);
@@ -140,5 +156,5 @@ the second box if you know the page to be encoded in something other than UTF-8.
         } catch (Exception ex) {
             return null;
         }
-    }
+    }    
 %>

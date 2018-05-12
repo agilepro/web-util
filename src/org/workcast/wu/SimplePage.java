@@ -2,18 +2,22 @@ package org.workcast.wu;
 
 import java.io.InputStream;
 import java.io.Writer;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
-import org.jsoup.nodes.Comment;
 
 import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.streams.SSLPatch;
 
 /*
  * Represents a simplified html page.
@@ -27,6 +31,12 @@ public class SimplePage {
     String contextUrl = "";    //slash on end
     
     public static SimplePage consumeWebPage(Writer wr, String path) throws Exception {
+
+        HttpClient httpclient = getGoodClient();
+        HttpGet httpget = new HttpGet(path);
+
+        HttpResponse response = httpclient.execute(httpget);
+
         SimplePage sp = new SimplePage();
         int slashPos = path.lastIndexOf("/"); 
         if (slashPos>1) {
@@ -39,20 +49,41 @@ public class SimplePage {
                 sp.rootUrl = path.substring(0,slashPos);
             }
         }
-        InputStream input = new URL(path).openStream();
+        InputStream input = response.getEntity().getContent();
         Document doc = Jsoup.parse(input, null, path);
         Element body = doc.body();
         sp.outputCleanPage(wr,body,"");
         return sp;
     }
 
+    public static HttpClient getGoodClient() {
+        try { 
+            /*
+            HttpClient base = new DefaultHttpClient();
+            ClientConnectionManager ccm = base.getConnectionManager();
+            
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, new TrustManager[]{SSLPatch.getDummyTrustManager()}, null);
+            SSLConnectionSocketFactory ssf = new SSLConnectionSocketFactory(ctx,  
+                     SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            //SchemeRegistry sr = ccm.getSchemeRegistry();
+            //sr.register(new Scheme("https", ssf, 443));
+            return new DefaultHttpClient(ccm, base.getParams());
+            */
+            HttpClientBuilder hcb = HttpClientBuilder.create();
+            hcb.setSSLHostnameVerifier(SSLPatch.getAllHostVerifier());
+            return hcb.build();
+            
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+
     public void outputCleanPage(Writer wr, Element ele, String s) throws Exception {
         String tagName = ele.nodeName().toLowerCase();
         String p = s + " / " + tagName;
 
-        if ("noscript".equals(tagName)) {
-            return;
-        }
         if ("script".equals(tagName)) {
             return;
         }
@@ -69,6 +100,10 @@ public class SimplePage {
             return;
         }
         if ("meta".equals(tagName)) {
+            return;
+        }
+        if ("iframe".equals(tagName)) {
+            wr.write("\n<div class=\"showBogus\">I-FRAME</div>");
             return;
         }
 

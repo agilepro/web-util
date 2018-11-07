@@ -21,7 +21,7 @@
     }
     
     File sourceFolder = new File("c:/beanstalk/bpm");
-    File objectFolder = new File("c:/CD-IMG/11.4.1/");
+    File objectFolder = new File("c:/CD-IMG/11.4.1-exploded/");
     //HttpSession session = request.getSession();
     
     Object loadedFiles = session.getAttribute("loadedFiles");

@@ -16,12 +16,14 @@ import java.util.List;
 */
 public class FileInfo
 {
+    public String folder;
     public File path;
     long size = -1;
     long checksum = -1;
 
     public FileInfo(File _path) {
         path = _path;
+        folder = _path.getParentFile().toString();
     }
 
     public String getName() {
@@ -53,9 +55,9 @@ public class FileInfo
                 //white space, carriage returns, and line feeds are ignored
                 if (ch>' ' && ch<'~') {
                     value += ch;
-                }
-                if (count-- <0) {
-                    break;
+                    if (count-- <0) {
+                        break;
+                    }
                 }
                 ch = fis.read();
             }

@@ -68,6 +68,8 @@ Will be reading files from
 <input type="text" name="filter" value="<%wr.writeHtml(filter);%>">
 <input type="submit" class="btn btn-primary" value="Filter More">
 </form>
+<a href="unb_report.jsp"><button class="btn btn-primary">Output Files Source</button></a>
+<a href="unb_report2.jsp"><button class="btn btn-primary">Source File Usage</button></a>
 </div>
 
 <table class="table">

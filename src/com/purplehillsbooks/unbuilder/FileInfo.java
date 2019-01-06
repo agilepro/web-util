@@ -37,6 +37,9 @@ public class FileInfo
         return size;
     }
 
+    /**
+    * getCheckSum
+    */
     public long getChecksum() {
         if (checksum<0) {
             checksum = calculateChecksum(path);

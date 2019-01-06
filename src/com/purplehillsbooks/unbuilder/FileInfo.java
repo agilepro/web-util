@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
 * Manages metadata for a file
+* Non conflicting change from GitHub
 *
 * Author: Keith Swenson
 * Copyright: Keith Swenson, all rights reserved

@@ -111,6 +111,9 @@ public class FileInfo
             return a.getName().compareTo(b.getName());
         }
     }
+    /**
+    * SortByPath -- changed on computer
+    */
     private static class SortByPath implements Comparator<FileInfo> {
         public SortByPath() {}
 

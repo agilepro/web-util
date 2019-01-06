@@ -96,7 +96,9 @@ public class FileInfo
         Collections.sort(coll, new SortByName());
     }
 
-
+/**
+* Sortby Name
+*/
     private static class SortByName implements Comparator<FileInfo> {
         public SortByName() {}
 

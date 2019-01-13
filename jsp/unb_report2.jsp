@@ -169,11 +169,11 @@ Will be reading files from
                     }
                 }
             }
-            for (FileInfo fi4: notMatching) {
-                if (path.equals(fi4.folder)) {
-                    fw.write("\n        ! "+fi4.getName());
-                }
-            }
+            //for (FileInfo fi4: notMatching) {
+            //    if (path.equals(fi4.folder)) {
+            //        fw.write("\n        ! "+fi4.getName());
+            //    }
+            //}
         }
         
         

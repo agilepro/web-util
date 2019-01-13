@@ -1,10 +1,12 @@
 
 
 body {
-    background: #FFFFDD;
-    background-image: url('whitepaper.gif'); 
-    font-family: Arial ;
-    font-size: 10pt;
+    background: #FFEEFF;
+    font: normal 18px/1.5 "Montserrat", helvetica, arial, sans-serif;
+  font weight:    normal;
+  font-size:      18px;
+  line-height:    1.5;
+  font-family:    "Montserrat", helvetica, arial, sans-serif;
 }
 
 
@@ -30,18 +32,55 @@ a:visited {
 
 
 .mainFrame {
-	padding: 10px;
+    padding: 15px;
+    width:1000px;
+    margin:auto;
 }
 
 .headLine {
-	background-image: url('BannerPeak.jpg'); 
-	background-repeat: no-repeat;
-	height:200px;
+    background-image: url('BannerPeak.jpg'); 
+    background-repeat: no-repeat;
+    height:260px;
+    padding:20px;
+    margin-bottom:20px;
 }
 .headLine h1 {
-	font-size: 70px;
-	font-weight: 500;
+    font-size: 60px;
+    font-weight: 200;
+    color: white;
+    *text-shadow: 0 0 05px lightskyblue;
 }
 
+.floater {
+    float:left;
+    border: solid 1px purple;
+    border-radius:10px;
+    background-color: white;
+    width:300px;
+    height:300px;
+    padding:10px;
+    margin:10px;
+    box-shadow: 5px 5px 5px grey;
+}
 
+.footframe {
+    font-size: 20px;
+    font-weight: 400;
+    color: purple;
+    padding: 20px;
+    text-align: center;
+}
+.footLine {
+    font-size: 30px;
+    font-weight: 200;
+    border: 1px solid purple;
+    border-radius: 10px;
+    padding: 10px;
+    margin:20px;
+    text-align: center;
+}
+.footLine a {
+    color: purple;
+    text-decoration: none;
+}
 

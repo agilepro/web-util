@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>Index</title>
+    <title>Index</title>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
 </head>
@@ -10,7 +11,7 @@
 <div class="mainFrame">
 
 <div class="headLine">
-    <h1>Web Utilities Index</h1>
+    <h1>Purple Hills Tools</h1>
 </div>
 
 <p>Here is a collection of useful pages for examining the web.
@@ -18,34 +19,38 @@ Some of these tools are useful for developing your web pages.
 Also included are some tools for XML and web services debugging.
 Please Enjoy!</p>
 
-<ul>
-<li><a href="openid.jsp">OpenId Client Test</a> - Test that your
-    OpenId provider is working correctly with an independent client.</li>
 
-<li><a href="selectfile.jsp">XML Grinder</a> - Load XML in either
-    by reading from a web URL, or by pasting from your text editor.
-    This will parse the XML.  It will allow you
-    to clean up, reformat, and validate the XML
-    using S-XML (Simple XML) rules.</li>
 
-<li><a href="sudoku.jsp">sudoku solver</a> - Fustrated by a
-    particular SUDOKU puzzle?  Enter the starting values here
-    and have the puzzle solved.  You can also play and make
-    your own sudoku puzzle and see IF it can be solved.</li>
-
-<li><a href="pagesource2.jsp">page source viewer</a> - This allows you to enter a
+<div class="floater"><a href="pagesource2.jsp">page source viewer</a> - This allows you to enter a
     URL and see exactly what the server sent.  There is no interpretation
     of JavaScript, there is no attempt to parse XML (and fail), there is
     no processing of redirect commands.  It simply reads that URL and display
     precisely what it receives. 
-    (<a href="pagesource.jsp">old source viewer</a>)</li>
+    (<a href="pagesource.jsp">old source viewer</a>)</div>
+    
+<div class="floater"><a href="selectfile.jsp">XML Grinder</a> - Load XML in either
+    by reading from a web URL, or by pasting from your text editor.
+    This will parse the XML.  It will allow you
+    to clean up, reformat, and validate the XML
+    using S-XML (Simple XML) rules.</div>
 
-<li><a href="xmlstrip.jsp">XML Stripper</a> - Probably not what you
+<div class="floater">
+<a href="openid.jsp">OpenId Client Test</a> - Test that your
+    OpenId provider is working correctly with an independent client.
+</div>    
+    
+<div class="floater"><a href="sudoku.jsp">sudoku solver</a> - Fustrated by a
+    particular SUDOKU puzzle?  Enter the starting values here
+    and have the puzzle solved.  You can also play and make
+    your own sudoku puzzle and see IF it can be solved.</div>
+
+
+<div class="floater"><a href="xmlstrip.jsp">XML Stripper</a> - Probably not what you
     are thinking.  This will take a block of XML and strip all
     occurrances of a particular tag from it.  This is useful in XPDL
-    to remove all the ExtendedAttributes from an XPDL file.</li>
+    to remove all the ExtendedAttributes from an XPDL file.</div>
 
-<li><a href="cleaner4.jsp">page cleaner</a> - Sometimes I am on a slow link,
+<div class="floater"><a href="cleaner4.jsp">page cleaner</a> - Sometimes I am on a slow link,
     and the pages I am trying to browse through have an annoying amount of
     graphics and other large files attached.  What I want to do is to
     prevent the downloading of all the junk I am not going to look at, and
@@ -56,40 +61,38 @@ Please Enjoy!</p>
     even the entire page) will be broken.  This is actually not very useful
     in the current form, so I am looking for a better solution, but in some
     senses loading a page through the "cleaner" will be somewhat safer
-    than loading it directly because it prevents a lot of the page side effects.</li>
+    than loading it directly because it prevents a lot of the page side effects.</div>
 
-<li><a href="hacker.jsp">URL Hacker</a> - paste a URL with a bunch of parameters
+<div class="floater"><a href="hacker.jsp">URL Hacker</a> - paste a URL with a bunch of parameters
     and submit.  This will parse the URL parameters out, and make a form
     with all the parameters, as well as input fields where you can change
     the parameter values.  A button on that form allows you to access the
     original page, with the modified parameters.  This is really useful
-    when the original URL has large and complexly encoded parameter values.</li>
+    when the original URL has large and complexly encoded parameter values.</div>
 
-<li><a href="threads.jsp">Threads</a> - produces a thread dump to show what tomcat is doing.</li>
+<div class="floater"><a href="threads.jsp">Threads</a> - produces a thread dump to show what tomcat is doing.</div>
 
-<li><a href="utf8genie.htm">Unicode</a> - enter text and see the unicode and UTF-8 equivalents.</li>
+<div class="floater"><a href="utf8genie.htm">Unicode</a> - enter text and see the unicode and UTF-8 equivalents.</div>
 
-<li><a href="latexgenie.htm">LaTeX</a> - enter text and see the LaTeX equivalents.</li>
+<div class="floater"><a href="latexgenie.htm">LaTeX</a> - enter text and see the LaTeX equivalents.</div>
 
-<li><a href="format.jsp">Decimal Formatter</a> - experiment with decimal formatting in Java.</li>
+<div class="floater"><a href="format.jsp">Decimal Formatter</a> - experiment with decimal formatting in Java.</div>
 
-<li><a href="path1/path2/fff/ggg.doc?s=3&y=4">HTTPRequest Helper</a> - demonstrating the various parts of the HTTP request path parsing.</li>
+<div class="floater"><a href="path1/path2/fff/ggg.doc?s=3&y=4">HTTPRequest Helper</a> - demonstrating the various parts of the HTTP request path parsing.</div>
 
-<li><a href="facebook.jsp">Facebook Experiment</a> - Facebook login and fetches.</li>
+<div class="floater"><a href="facebook.jsp">Facebook Experiment</a> - Facebook login and fetches.</div>
 
-<li><a href="unbuilder.jsp">Unbuilder</a> - Look at output files and determine which source they came from.</li>
+<div class="floater"><a href="unbuilder.jsp">Unbuilder</a> - Look at output files and determine which source they came from.</div>
 
-</ul>
-
+<div style="clear:both"></div>
+</div>
 
 <hr>
-<table>
-<tr>
-<td><a href="index.htm"><img border="0" src="SwensonWebUtilities.gif"></a></td>
-</tr>
-</table>
 
+<div class="footframe">
+<a href="index.htm">Purple Hills Tools</a>
 </div>
+
 
 </body>
 </html>

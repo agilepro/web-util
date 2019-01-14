@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Unicode / UTF-8 Genie</title>
   <script src="js/angular.min.js"></script>
   <link href='https://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
@@ -158,7 +158,7 @@
             return res+"\"";
         };
         $scope.case1 = function() {
-            $scope.srctext = "Addrè\u0219\u0219 \u041B\u043E\u0440\u0435\u043C a\u030A\u25CC\u030A";
+            $scope.srctext = "Addr\u00E8\u0219\u0219 \u041B\u043E\u0440\u0435\u043C a\u030A\u25CC\u030A";
         }
         
         $scope.case2 = function() {

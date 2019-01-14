@@ -35,15 +35,36 @@
 %>
 <html>
 <head>
-    <title>Decimal Formatter</title>
-    <link href="mystyle.css" rel="stylesheet" type="text/css"/>
+  <title>Decimal Formatter</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "";
+
+    });
+</script>
 </head>
-<body>
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
 <h1>Decimal Formatter</h1>
+
 <form action="format.jsp" method="get">
- value: <input type="text" name="value" value="<%wr.writeHtml(value);%>" size=30>
- format:  <input type="text" name="format" value="<%wr.writeHtml(format);%>" size=30>
-  <input type="submit" value="Display Formatted Result">
+<table class="table">
+<tr>
+<td>value:</td><td><input type="text" name="value" value="<%wr.writeHtml(value);%>" size=30>
+</td><td><input type="submit" value="Recalc" class="btn btn-primary"></td>
+</tr>
+<tr>
+<td>format:</td><td><input type="text" name="format" value="<%wr.writeHtml(format);%>" size=30>
+</td><td><input type="submit" value="Add Format" class="btn btn-primary"></td>
+</tr>
+</table>
 </form>
 <hr/>
 <%
@@ -56,18 +77,9 @@
 
 %>
 
-<table>
-<tr><td>Input</td><td><pre><%wr.writeHtml(value); %></pre></td></tr>
-<tr><td>Format</td><td><pre><%wr.writeHtml(format); %></pre></td></tr>
-<tr><td>Result</td><td><pre><%wr.writeHtml(formatted); %></pre></td></tr>
-</table>
 
 
-<br/>
-<hr/>
-<br/>
-
-<table>
+<table class="table">
 <col width="50">
 <col width="150">
 <col width="150">
@@ -91,5 +103,11 @@ for (String olff : flist) {
 }
 %>
 </table>
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+
+</div>
 </body>
 </html>
+

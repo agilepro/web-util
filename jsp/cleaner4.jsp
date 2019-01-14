@@ -26,15 +26,34 @@
         enc = "UTF-8";
     }
     String path = request.getParameter("path");
+    
+%>
+
+<head>
+  <title>Web Page Cleaner</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "";
+
+    });
+</script>
+</head>
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
+<h1>Web Page Cleaner</h1>
+
+<%
     if (path==null || path.length()<=4) {
         %>
         <html>
-        <head>
-            <title>Web Page Cleaner</title>
-            <link href="mystyle.css" rel="stylesheet" type="text/css"/>
-        </head>
-        <body BGCOLOR="#E6FDF5">
-        <h1>Web Page Cleaner</h1>
+
         <form action="cleaner4.jsp" method="get">
           <input type="text" name="path" value="" size=80>
           <input type="submit" value="Get">
@@ -75,10 +94,9 @@
         shortPath = path.substring(0,45) + "...";
     }
 %>
-<html>
-<head>
+
 <style>
-body
+ddbody
 {
     font-family:"Helvetica";
     font-size:12px;
@@ -87,24 +105,16 @@ body
     margin-right:25px;
     margin-left:25px;
 }
-h1
-{
-    font-family:"Helvetica";
+h1 {
     color:darkblue;
 }
-h2
-{
-    font-family:"Helvetica";
+h2 {
     color:blue;
 }
-h3
-{
-    font-family:"Helvetica";
+h3 {
     color:green;
 }
-p
-{
-    font-family:"Helvetica";
+p {
     font-size:16px;
 }
 .showText {
@@ -160,7 +170,15 @@ p
 
 <hr>
 <!-- modified by cleaner.jsp --><a href="<%=path%>">Go There</a>
-<% wr.invokeJSP("tileBottom.jsp"); %>
+
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a>
+</div>
+
+</div>
+</body>
+</html>
+
 <%!
     boolean outputMode = true;
     boolean showDebug = false;

@@ -28,10 +28,31 @@ for (int i=0; i<9; i++) {
 }
 
 %>
-<html>
+<head>
+  <title>SUDOKU Solutions</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "";
+
+    });
+</script>
+</head>
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
+<h1>SUDOKU Solutions</h1>
+
+<div style="margin:auto">
 <%
 solve(out,v);
 %>
+</div>
 <hr>
 Number of solutions found: <%=count%>
 </body></html>
@@ -148,3 +169,11 @@ public void dump(int [][] v)
 }
 
 %>
+
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+
+</div>
+</body>
+</html>

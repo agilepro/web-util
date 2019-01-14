@@ -4,10 +4,24 @@
 <html>
 <head>
   <title>SUDOKU Solver</title>
-  <link href="mystyle.css" rel="stylesheet" type="text/css"/>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "";
+
+    });
+</script>
 </head>
-<body>
-<h3>SUDOKU Solver</h3>
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
+<h1>SUDOKU Solver</h1>
+
 <form action="sudoku3.jsp" method="get">
 <table>
 <%
@@ -40,9 +54,12 @@ for (int i=0; i<9; i++) {
 <input type="submit" value="GO">
 </form>
 <hr>
-<table>
-<tr>
-<td><a href="index.htm"><img border="0" src="SwensonWebUtilities.gif"></a></td>
-</tr>
-</table>
-</body></html>
+
+
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+
+</div>
+</body>
+</html>

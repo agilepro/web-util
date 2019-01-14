@@ -26,11 +26,25 @@
 %>
 <html>
 <head>
-    <title>URL Hacker</title>
-    <link href="mystyle.css" rel="stylesheet" type="text/css"/>
+  <title>URL Hacker</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "";
+
+    });
+</script>
 </head>
-<body BGCOLOR="#F6FDE5">
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
 <h1>URL Hacker</h1>
+
 <form action="hacker.jsp" method="get">
   <input type="text" name="url" value="<%wr.writeHtml(url);%>" size=80>
   <input type="submit" value="Create Form">
@@ -43,7 +57,10 @@
            This this break the URL in to a form that makes it easy to
            subsatitute other values in.</p>
            </p>
-        <% wr.invokeJSP("tileBottom.jsp"); %>
+        <div class="footLine">
+            <a href="index.htm">Purple Hills Tools</a>
+        </div>
+        </div>
         </body>
         </html>
 <%
@@ -115,9 +132,14 @@
     }
 
 %>
-<input type="submit" value="POST">
+<input type="submit" value="POST"/>
 </form>
 
-<% wr.invokeJSP("tileBottom.jsp"); %>
+
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+
+</div>
 </body>
 </html>

@@ -14,20 +14,20 @@ body {
 /* Default style for links */
 a:active { 
     color: #000099;
-    text-decoration: underline;
+    text-decoration: none;
 }
 a:hover { 
     color: #0000FF;
-    text-decoration: underline;
+    text-decoration: none;
     background-color: #FFFF00;
 }
 a:link { 
     color: #000099;
-    text-decoration: underline;
+    text-decoration: none;
 }
 a:visited { 
     color: #008888;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 
@@ -58,9 +58,20 @@ a:visited {
     background-color: white;
     width:300px;
     height:300px;
-    padding:10px;
+    padding:0px;
     margin:10px;
     box-shadow: 5px 5px 5px grey;
+}
+
+.floater-top {
+    padding:10px;
+    background-color: purple;
+    border-radius:10px 10px 0px 0px;
+    color:white;
+}
+
+.floater-body {
+    padding:10px;
 }
 
 .footframe {

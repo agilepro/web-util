@@ -47,10 +47,24 @@
 <html>
 <head>
   <title>Page Source Display</title>
-  <link href="mystyle.css" rel="stylesheet" type="text/css"/>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "";
+
+    });
+</script>
 </head>
-<body>
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
 <h1>Page Source Display</h1>
+
 <hr>
 <form action="pagesource2.jsp" method="get">
   <input type="text" name="path" value="<%= path %>" size=80>
@@ -86,7 +100,12 @@ it so that the browser is not involved in trying to interpret the XML.</p>
 
 <p>Enter the desired page encoding for conversion from bytes to characters into
 the second box if you know the page to be encoded in something other than UTF-8.</p>
-<% wr.invokeJSP("tileBottom.jsp"); %>
+
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+
+</div>
 </body>
 </html>
 

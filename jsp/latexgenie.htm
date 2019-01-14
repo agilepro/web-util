@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
   <title>LaTeX Genie</title>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
   <script>
     var genieApp = angular.module('genieApp', []);
     genieApp.controller('genieCtrl', function ($scope) {
@@ -102,6 +102,8 @@
 </head>
 
 <body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
 <h1>LaTeX Genie</h1>
 
 <p><font size="-1">Type text into the box, and the LaTeX literal form
@@ -113,13 +115,18 @@ will appear in the space below it</font></p>
 </tr>
 <tr>
 <td>LaTeX:</td>
-<td class="warning"><pre>{{convert()}}</pre></td>
+<td class="warning">
+<div class="codeBox">{{convert()}}</div>
+</td>
 </tr>
 </table>
+
+
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+</div>
 </body>
-
-<ng-include src="'tileFooter.htm'" />
-
 </html>
 
 

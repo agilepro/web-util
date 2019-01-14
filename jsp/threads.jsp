@@ -2,11 +2,25 @@
     pageEncoding="ISO-8859-1"%>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
-<title>Thread Dump</title>
+  <title>Thread Dump</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "";
+
+    });
+</script>
 </head>
-<body>
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
+<h1>Thread Dump</h1>
+
 <%
     out.print("Generating Thread-dump at:" + (new java.util.Date()).toString() + "<BR>");
     out.println("----------------------------<br>");
@@ -43,5 +57,10 @@
     }
 
 %>
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a>
+</div>
+
+</div>
 </body>
 </html>

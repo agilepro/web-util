@@ -60,6 +60,7 @@
 <div class="footLine">
     <a href="index.htm">Purple Hills Tools</a>
 </div>
+<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
 
 </div>
 </body>

@@ -58,27 +58,28 @@
 
         $scope.convert3 = function() {
             var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
-            var res = "";
+            var res = [];
             var highSurrogate = 0;
             for ( var i = 0; i < $scope.srctext.length; i++ ) {
                 var ch = $scope.srctext.charCodeAt(i);
                 if (ch==0x0A) {
-                    res += sixHex(ch) + "\n";
+                    res.push(sixHex(ch));
                 }
                 else if (ch<0xD800) {
-                    res += sixHex(ch) + " ";
+                    res.push(sixHex(ch));
                 }
                 else if (ch<0xDC00) {
                     highSurrogate = ch;
                 }
                 else if (ch<0xE000) {
                     var completeChar = (highSurrogate - 0xD800) * 0x400 + ch - 0xDC00 + 0x10000;
-                    res += sixHex(completeChar) + " ";
+                    res.push(sixHex(completeChar))
                 }
                 else {
-                    res += sixHex(ch) + " ";
+                    res.push(sixHex(ch));
                 }
             }
+            console.log("convert 3 returned", res);
             return res;
         };
         
@@ -293,7 +294,7 @@ will appear in the space below it</font></p>
 <tr>
 <tr>
 <td>Unicode:</td>
-<td><div class="codeBox">{{convert3()}}</div></td>
+<td><div class="codeBox"><span ng-repeat="ccc in convert3() track by $index"><a href="https://unicode-table.com/en/{{ccc}}">{{ccc}}</a> </span></div></td>
 </tr>
 <tr>
 <td>Java Exp:</td>
@@ -310,7 +311,7 @@ will appear in the space below it</font></p>
 <div class="footLine">
     <a href="index.htm">Purple Hills Tools</a></div>
 </div>
-
+<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
 </body>
 </html>
 

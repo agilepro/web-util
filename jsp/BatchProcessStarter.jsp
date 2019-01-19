@@ -1,4 +1,4 @@
-<%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page errorPage="error.jsp"
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
@@ -38,6 +38,7 @@ row in the CVS.
 The ignore non-matching UDA names will suppress the
 </p>
 <hr/>
+<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
 </body>
 </html>
 

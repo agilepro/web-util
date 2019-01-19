@@ -1,4 +1,4 @@
-<%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page errorPage="error.jsp"
 %><%@page import="java.io.InputStream"
 %><%@page import="java.io.InputStreamReader"
@@ -106,6 +106,7 @@ for (String olff : flist) {
 <div class="footLine">
     <a href="index.htm">Purple Hills Tools</a></div>
 </div>
+<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
 
 </div>
 </body>

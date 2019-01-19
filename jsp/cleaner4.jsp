@@ -1,4 +1,4 @@
-<%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page errorPage="error.jsp"
 %><%@page import="com.purplehillsbooks.streams.MemFile"
 %><%@page import="java.io.InputStream"
@@ -79,6 +79,7 @@
         possibly re-organize the text in order to make the result more readable.
         Yup, this is a research topic.
         <% wr.invokeJSP("tileBottom.jsp"); %>
+        <div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
         </body>
         </html>
         <%
@@ -174,6 +175,7 @@ p {
 <div class="footLine">
     <a href="index.htm">Purple Hills Tools</a>
 </div>
+<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
 
 </div>
 </body>

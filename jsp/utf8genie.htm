@@ -14,7 +14,6 @@
 
     genieApp.controller('genieCtrl', function ($scope) {
         $scope.srctext = "";
-        $scope.latex = "Static Text";
 
         $scope.reportLength = function() {
             return $scope.srctext.length;
@@ -172,6 +171,11 @@
             $scope.srctext = "\uD83D\uDC69\u200D\u2764\uFE0F\u200D\uD83D\uDC8B\u200D\uD83D\uDC69\uD83D\uDC6A \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67";
         }
         
+        $scope.parseInput = function() {
+            var newPart = parseLiteral($scope.newValue);
+            $scope.srctext  += newPart;
+        }
+        
     });
 
     function UTF8Encode(ch) {
@@ -242,6 +246,70 @@
         var n2 = x % 16;
         return map[n2] + map[n1];
     }
+    function parseLiteral(input) {
+        var pos = 0;
+        
+        var inUTF = false;
+        var inUnicode = false;
+        var result = "";
+        
+        while (pos<input.length) {
+            var ch = input.charAt(pos++);
+            if (ch!='\\') {
+                result += ch;
+                continue;
+            }
+            ch = input.charAt(pos++);
+            if (ch != 'u') {
+                result += ch;
+                continue;
+            }
+            ch = input.charAt(pos++);
+            var curHexValue = 0;
+            if (ch != '{') {
+                curHexValue = hexValue(ch);
+                ch = input.charAt(pos++);
+                curHexValue = curHexValue*16 + hexValue(ch);
+                ch = input.charAt(pos++);
+                curHexValue = curHexValue*16 + hexValue(ch);
+                ch = input.charAt(pos++);
+                curHexValue = curHexValue*16 + hexValue(ch);
+                result += String.fromCharCode(curHexValue);
+            }
+            else {
+                ch = input.charAt(pos++);
+                while (ch!='}') {
+                    curHexValue = curHexValue*16 + hexValue(ch);
+                    ch = input.charAt(pos++);
+                }
+                if (curHexValue<=0xFFFF) {
+                    result += String.fromCharCode(curHexValue);
+                }
+                else {
+                    curHexValue = curHexValue - 0x10000
+                    var highSurrogate = Math.floor(curHexValue / 0x400) + 0xD800;
+                    var lowSurrogate =  (curHexValue % 0x400) + 0xDC00;
+                    result += String.fromCharCode(highSurrogate);
+                    result += String.fromCharCode(lowSurrogate);
+                }
+            }
+        }
+        return result;
+    }
+    function hexValue(ch) {
+        if (ch>='0' && ch <= '9') {
+            return ( ch.charCodeAt(0) - 48 );
+        }
+        if (ch>='A' && ch <= 'F') {
+            return ( ch.charCodeAt(0) - 55 );
+        }
+        if (ch>='a' && ch <= 'f') {
+            return ( ch.charCodeAt(0) - 87 );
+        }
+        return 0;
+    }
+    
+
     
 
 </script>
@@ -303,6 +371,10 @@ will appear in the space below it</font></p>
 <tr>
 <td>JS Exp:</td>
 <td><div class="codeBox">{{convertStringLiteral2()}}</div></td>
+</tr>
+<tr>
+<td>Input:</td>
+<td><input ng-model="newValue"/><button ng-click="parseInput()">Parse</button></td>
 </tr>
 </table>
 

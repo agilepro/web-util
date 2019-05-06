@@ -79,7 +79,6 @@
         possibly re-organize the text in order to make the result more readable.
         Yup, this is a research topic.
         <% wr.invokeJSP("tileBottom.jsp"); %>
-        <div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
         </body>
         </html>
         <%
@@ -172,10 +171,7 @@ p {
 <hr>
 <!-- modified by cleaner.jsp --><a href="<%=path%>">Go There</a>
 
-<div class="footLine">
-    <a href="index.htm">Purple Hills Tools</a>
-</div>
-<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
+<% wr.invokeJSP("tileBottom.jsp"); %>
 
 </div>
 </body>

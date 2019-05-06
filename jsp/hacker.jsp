@@ -57,11 +57,9 @@
            This this break the URL in to a form that makes it easy to
            subsatitute other values in.</p>
            </p>
-        <div class="footLine">
-            <a href="index.htm">Purple Hills Tools</a>
-        </div>
-        <div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
-        </div>
+
+<% wr.invokeJSP("tileBottom.jsp"); %>
+           
         </body>
         </html>
 <%
@@ -136,11 +134,7 @@
 <input type="submit" value="POST"/>
 </form>
 
-
-<div class="footLine">
-    <a href="index.htm">Purple Hills Tools</a></div>
-</div>
-<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
+<% wr.invokeJSP("tileBottom.jsp"); %>
 
 </div>
 </body>

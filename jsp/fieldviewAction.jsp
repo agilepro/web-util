@@ -13,7 +13,6 @@
 %><%@page import="com.purplehillsbooks.xml.Schema"
 %><%@page import="com.purplehillsbooks.xml.SchemaGen"
 %><%@page import="com.purplehillsbooks.xml.ValidationResults"
-%><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.WebRequest"
 %><%

@@ -11,15 +11,17 @@ import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Hashtable;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.xml.Mel;
 import com.purplehillsbooks.xml.Schema;
 import com.purplehillsbooks.xml.ValidationResults;
-import com.purplehillsbooks.streams.MemFile;
-import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
 * Manages a collection of "files" for session.  Each
@@ -343,7 +345,7 @@ public class FileCache
         assignedMinSch = otherFile;
         if (parsedFile!=null)
         {
-            parsedFile.setSchema(otherFile.getAsSchema());
+            //parsedFile.setSchema(otherFile.getAsSchema());
         }
     }
 
@@ -378,7 +380,7 @@ public class FileCache
     public void validateSchema(ValidationResults results)
         throws Exception
     {
-        parsedFile.validate(results);
+        //parsedFile.validate(results);
     }
 
     public InputStream getInputStreamForContents()

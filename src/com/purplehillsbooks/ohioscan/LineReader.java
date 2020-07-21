@@ -27,7 +27,7 @@ public class LineReader {
         }
         while (true) {
             if (line.indexOf(token)>0) {
-                System.out.println("            line "+lineNo+" has "+token);
+                //System.out.println("            line "+lineNo+" has "+token);
                 return true;
             }
             nextLine();
@@ -43,7 +43,7 @@ public class LineReader {
         }
         while (true) {
             if (line.indexOf(token)>0) {
-                System.out.println("            line "+lineNo+" has "+token);
+                //System.out.println("            line "+lineNo+" has "+token);
                 return true;
             }
             if (line.indexOf(stopper)>0) {
@@ -61,7 +61,7 @@ public class LineReader {
             return false;
         }
         if (line.indexOf(token)>0) {
-            System.out.println("            line "+lineNo+" has "+token);
+            //System.out.println("            line "+lineNo+" has "+token);
             return true;
         }
         return false;

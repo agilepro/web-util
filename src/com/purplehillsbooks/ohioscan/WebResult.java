@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Hashtable;
 
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.streams.StreamHelper;
 
@@ -13,9 +14,9 @@ public class WebResult {
     private String lastNameQuery;
     private String firstNameQuery;
     public MemFile rawResult = new MemFile();
-    public boolean exceeds150 = false;
+    public boolean incompleteResults = false;
     public String anticipatedNum = "";
-    Hashtable<String, String> results = new Hashtable<String, String>();
+    Hashtable<String, JSONObject> results = new Hashtable<String, JSONObject>();
     
     private URL serverBaseUrl = new URL("https://www.osu.edu/findpeople/");
     /**
@@ -62,6 +63,7 @@ public class WebResult {
             web.postHttpRequestRaw(serverBaseUrl, postBody, rawResult);
             System.out.println("WRITING to cache: "+debugFile);
             StreamHelper.copyReaderToFile(rawResult.getReader(), debugFile, "UTF-8");
+            Thread.sleep(9999);
         }
     }
     
@@ -76,10 +78,9 @@ public class WebResult {
         //we have the results line
         if (lineReader.lineContains("exceed 150 matches")) {
             System.out.println("   TOO MANY");
-            exceeds150 = true;
-            return;
+            incompleteResults = true;
         }
-        if (lineReader.lineContains("Results Found")) {
+        else if (lineReader.lineContains("Results Found")) {
             anticipatedNum = lineReader.getBetween("<strong>", "</strong>");
             System.out.println("   EXPECTING: "+anticipatedNum);
         }
@@ -90,23 +91,45 @@ public class WebResult {
 
             String personName = "";
             String email = "";
+            String phone = "";
+            String major = "";
+            String org = "";
             
-            if (lineReader.advanceUntil("record-data-name", "record-data-email")) {
+            if (lineReader.advanceUntil("record-data-name", "record-data-phone")) {
                 lineReader.nextLine();
                 lineReader.nextLine();
                 personName = lineReader.getBefore("<span class=\"off-left\">").trim();
-                System.out.println("    --+   "+personName);
+                //System.out.println("    --+   "+personName);
             }
-            if (lineReader.advanceUntil("record-data-email", "record-details")) {
+            if (lineReader.advanceUntil("record-data-phone", "record-data-email")) {
+                phone = lineReader.getBetween("<a href=\"tel:", "\">");
+                
+            }
+            if (lineReader.advanceUntil("record-data-email", "record-data-major")) {
                 email = lineReader.getBetween("<a href=\"mailto:", "\">");
-                System.out.println("      +-- "+email);
+            }
+            if (lineReader.advanceUntil("record-data-major", "record-data-org")) {
+                major = lineReader.getBetween("data-major\">", "</td>");
+            }
+            if (lineReader.advanceUntil("record-data-org", "record-details")) {
+                org = lineReader.getBetween("data-org\">", "</td>");
             }
             
             if (email.length()>0 && !email.startsWith("★")) {
-                results.put(email, personName);
+                JSONObject record = new JSONObject();
+                record.put("name", personName );
+                record.put("phone", phone );
+                record.put("major", major );
+                record.put("org", org );
+                results.put(email, record);
+                System.out.println("    --+   "+email+" - "+personName);
             }
         
         }
+        
+        //it seems that valid sets extend to 300 records (or 301)
+        //so assume that this is valid to 299 and more than that is 
+        incompleteResults = results.size()>299;
     }
     
     private boolean findBeginningOfRecord(LineReader lineReader) throws Exception {

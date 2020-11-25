@@ -20,7 +20,7 @@
 %><%@page import="org.w3c.dom.Node"
 %><%@page import="org.w3c.dom.NodeList"
 %><%@page import="org.workcast.wu.DOMFace"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%!
 
     //stores the current document so that it is not always being passed around
@@ -43,32 +43,7 @@
     }
 
 
-    public void makeTabs (WebRequest wr, String current)
-        throws Exception
-    {
-        String names[] = {"Set Up", "Source", "Links"};
-        String addrs[] = {"setup.jsp", "source.jsp", "links.jsp"};
-
-        int last = names.length;
-        wr.write("\n<table><tr>");
-        for (int i=0; i<last; i++)
-        {
-            if (names[i].equals(current)) {
-                wr.write("\n  <td> &nbsp; <b>");
-                wr.writeHtml(names[i]);
-                wr.write("</b> &nbsp; </td>");
-            }
-            else {
-                wr.write("\n  <td> &nbsp; <a href=\"");
-                wr.writeHtml(addrs[i]);
-                wr.write("\">");
-                wr.writeHtml(names[i]);
-                wr.write("</a> &nbsp; </td>");
-            }
-        }
-        wr.write("\n</tr></table>");
-    }
-
+ 
 
     public String fetchDoc(HttpSession session, HttpServletRequest request)
         throws Exception

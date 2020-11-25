@@ -12,10 +12,10 @@
 %><%@page import="javax.net.ssl.SSLSession"
 %><%@page import="javax.net.ssl.TrustManager"
 %><%@page import="javax.net.ssl.X509TrustManager"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%@page import="com.purplehillsbooks.streams.SSLPatch"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     String enc  = wr.defParam("enc","UTF-8");
     String path = wr.defParam("path","");
     String postBody = wr.defParam("postBody","");

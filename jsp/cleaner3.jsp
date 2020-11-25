@@ -7,7 +7,7 @@
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%@page import="com.gargoylesoftware.htmlunit.WebClient"
 %><%@page import="com.gargoylesoftware.htmlunit.html.HtmlPage"
 %><%@page import="org.w3c.dom.Node"
@@ -16,7 +16,7 @@
 %><%@page import="org.htmlparser.Parser"
 
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     request.setCharacterEncoding("UTF-8");
 
     String enc  = request.getParameter("enc");
@@ -277,7 +277,7 @@ p
     }
     
     
-    public void dumpPage(WebRequest wr, Node node, String s) throws Exception  {
+    public void dumpPage(OldWebRequest wr, Node node, String s) throws Exception  {
         if (node instanceof Text) {
             String textVal = ((Text)node).getWholeText();
             textVal = textVal.trim();
@@ -305,7 +305,7 @@ p
         }
     }
     
-    public void dumpLink(WebRequest wr, Node node) throws Exception  {
+    public void dumpLink(OldWebRequest wr, Node node) throws Exception  {
         StringBuilder sb = new StringBuilder();
         gatherAllText(node, sb);
         wr.write("\nLINK: ");

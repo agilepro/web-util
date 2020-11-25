@@ -7,7 +7,7 @@
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%@page import="org.htmlparser.Parser"
 %><%@page import="org.htmlparser.Remark"
 %><%@page import="org.htmlparser.util.NodeIterator"
@@ -16,7 +16,7 @@
 %><%@page import="org.htmlparser.util.NodeList"
 %><%@page import="org.htmlparser.Text"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     request.setCharacterEncoding("UTF-8");
 
     String enc  = request.getParameter("enc");
@@ -133,7 +133,7 @@ p
 
 
     
-    public void outputCleanPage(WebRequest wr, Tag tag, String s) throws Exception {
+    public void outputCleanPage(OldWebRequest wr, Tag tag, String s) throws Exception {
         String tagName = tag.getRawTagName().toLowerCase();
         String p = s + " / " + tagName;
         int kind = kindOfBlock(tag);
@@ -235,7 +235,7 @@ p
     }
     
     
-    public void dumpLink(WebRequest wr, Tag node) throws Exception  {
+    public void dumpLink(OldWebRequest wr, Tag node) throws Exception  {
         StringBuilder sb = new StringBuilder();
         gatherAllText(node, sb);
         wr.write("\nLINK: <span style=\"color:blue\">");

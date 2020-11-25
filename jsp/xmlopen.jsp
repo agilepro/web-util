@@ -5,10 +5,10 @@
 %><%@page import="java.io.InputStream"
 %><%@page import="java.io.Reader"
 %><%@page import="java.io.InputStreamReader"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
 
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     String f = wr.defParam("f", "");
 
 %>

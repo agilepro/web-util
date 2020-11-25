@@ -25,9 +25,9 @@
 %><%@page import="org.apache.http.conn.ssl.SSLConnectionSocketFactory"
 %><%@page import="org.apache.http.impl.client.DefaultHttpClient"
 %><%@page import="com.purplehillsbooks.streams.SSLPatch"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     String enc  = wr.defParam("enc","UTF-8");
     String path = wr.defParam("path","");
     String pageSource = null;

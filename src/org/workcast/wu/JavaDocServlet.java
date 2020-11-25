@@ -26,10 +26,10 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
     {
-        WebRequest wr = null;
+        OldWebRequest wr = null;
         try
         {
-            wr = WebRequest.getOrCreate(req, resp, null);
+            wr = OldWebRequest.getOrCreate(req, resp, null);
             handleRequest(wr);
         }
         catch (Exception e)
@@ -61,7 +61,7 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
     }
 
     //request to http://machine:port/application/jd/version/com/example/foo/MyClass.html
-    private void handleRequest(WebRequest wr) throws Exception
+    private void handleRequest(OldWebRequest wr) throws Exception
     {
         //get request URI includes a starting slash, everything after machine:port
         //format:  /wu/jd/version/com/example/foo/MyClass.html
@@ -175,7 +175,7 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
         wr.flush();
     }
 
-    private void showDocSets(WebRequest wr, String nonSet)
+    private void showDocSets(OldWebRequest wr, String nonSet)
         throws Exception
     {
         wr.write("<html><body>");
@@ -214,7 +214,7 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
         return path;
     }
 
-    private void streamFile(JavaDocSet jds, String docPath, WebRequest wr)
+    private void streamFile(JavaDocSet jds, String docPath, OldWebRequest wr)
         throws Exception
     {
         File theFile = jds.getDocFile(docPath);
@@ -243,7 +243,7 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
 
     private static final String patt = "A NAME=";
 
-    private String seek(InputStreamReader r, String fileName, WebRequest wr,
+    private String seek(InputStreamReader r, String fileName, OldWebRequest wr,
         String setName, JavaDocNotes jdn)
         throws Exception
     {
@@ -326,7 +326,7 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
     }
 
 
-    private void getComment(String ipart, WebRequest wr, JavaDocSet jds)
+    private void getComment(String ipart, OldWebRequest wr, JavaDocSet jds)
         throws Exception
     {
         //the ipath ends with $note, strip that off
@@ -376,7 +376,7 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
         wr.flush();
     }
 
-    private void updateComment(String ipart, WebRequest wr, JavaDocSet jds)
+    private void updateComment(String ipart, OldWebRequest wr, JavaDocSet jds)
         throws Exception
     {
         //the ipath ends with $upd, strip that off

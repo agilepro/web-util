@@ -8,10 +8,10 @@
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.List"
 %><%@page import="java.util.Properties"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
 
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 %>
 
 <html>

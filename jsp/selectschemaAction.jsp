@@ -8,9 +8,9 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Hashtable"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     String f = wr.reqParam("f");
     Hashtable ht = (Hashtable) session.getAttribute("fileCache");
     if (ht == null)

@@ -6,9 +6,9 @@
 %><%@page import="java.io.Reader"
 %><%@page import="java.io.InputStreamReader"
 %><%@page import="com.purplehillsbooks.xml.Mel"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     Mel mainDoc = (Mel) session.getAttribute("mainDoc");
 

@@ -12,9 +12,9 @@
 %><%@page import="org.w3c.dom.NamedNodeMap"
 %><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     String f = wr.reqParam("f");
 
@@ -86,7 +86,7 @@
 <!-- %@ include file="functions.jsp"% -->
 <%!
 
-    public void generateTables(WebRequest wr, int width, Mel me)
+    public void generateTables(OldWebRequest wr, int width, Mel me)
         throws Exception
     {
         String color = "skyblue";

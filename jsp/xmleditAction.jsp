@@ -25,13 +25,13 @@
 %><%@page import="com.purplehillsbooks.xml.ValidationResults"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%@page import="org.workcast.wu.XMLSchemaDef"
 %><%@page import="org.workcast.wu.XMLSchemaFile"
 %><%@page import="org.workcast.wu.XMLSchemaPool"
 %><%@page import="org.workcast.wu.XMLSchemaType"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     String f = wr.reqParam("f");
     String destFile = wr.defParam("destFile", null);

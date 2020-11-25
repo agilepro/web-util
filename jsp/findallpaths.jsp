@@ -15,13 +15,13 @@
 %><%@page import="com.purplehillsbooks.xml.Schema"
 %><%@page import="com.purplehillsbooks.xml.SchemaDef"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%@page import="org.workcast.wu.XMLSchemaDef"
 %><%@page import="org.workcast.wu.XMLSchemaFile"
 %><%@page import="org.workcast.wu.XMLSchemaPool"
 %><%@page import="org.workcast.wu.XMLSchemaType"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     XMLSchemaPool pool = (XMLSchemaPool) session.getAttribute("XMLSchemaPool");
     if (pool == null)

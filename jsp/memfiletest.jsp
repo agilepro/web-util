@@ -13,9 +13,9 @@
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="com.purplehillsbooks.streams.MemFile"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     String testCase = "This is sample text.";
 
     MemFile mf = new MemFile();

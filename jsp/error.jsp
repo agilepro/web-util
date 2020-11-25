@@ -1,9 +1,9 @@
 <%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page isErrorPage="true"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%@page import="java.io.PrintWriter"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     if (exception == null)
     {
@@ -13,10 +13,16 @@
 %>
 
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD><TITLE>JSP Test</TITLE></HEAD>
-<BODY BGCOLOR="#FDF5E6">
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Error Page</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div class="mainFrame">
 <H1>Error</H1>
 <ul>
 <%
@@ -35,5 +41,10 @@
 <% out.flush(); %>
 <% exception.printStackTrace(new PrintWriter(out)); %>
 </pre>
-</BODY>
-</HTML>
+
+<div style="height:400px"></div>
+<% wr.invokeJSP("tileBottom.jsp"); %>
+
+</div>
+</body>
+</html>

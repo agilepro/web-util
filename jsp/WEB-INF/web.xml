@@ -33,5 +33,14 @@
         <url-pattern>/path1/path2/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>DiscusServlet</servlet-name>
+        <servlet-class>org.workcast.wu.DiscusServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DiscusServlet</servlet-name>
+        <url-pattern>/ds/*</url-pattern>
+    </servlet-mapping>
     
 </web-app>

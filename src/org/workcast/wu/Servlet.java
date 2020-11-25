@@ -25,7 +25,7 @@ public class Servlet extends javax.servlet.http.HttpServlet
     protected void service(HttpServletRequest req, HttpServletResponse resp)
                 throws ServletException, java.io.IOException
     {
-        WebRequest wr = WebRequest.getOrCreate(req, resp, null);
+        OldWebRequest wr = OldWebRequest.getOrCreate(req, resp, null);
         try {
             doWebService(wr);
         }
@@ -40,7 +40,7 @@ public class Servlet extends javax.servlet.http.HttpServlet
     /**
     * This is the method that subclasses should implement
     */
-    private void doWebService(WebRequest wr) throws Exception
+    private void doWebService(OldWebRequest wr) throws Exception
     {
 
         try {
@@ -96,7 +96,7 @@ public class Servlet extends javax.servlet.http.HttpServlet
         }
     }
 
-    private void handleException(Exception e, WebRequest wr)
+    private void handleException(Exception e, OldWebRequest wr)
     {
         try
         {

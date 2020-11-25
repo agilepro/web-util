@@ -14,9 +14,9 @@
 %><%@page import="com.purplehillsbooks.xml.SchemaGen"
 %><%@page import="com.purplehillsbooks.xml.ValidationResults"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="org.workcast.wu.WebRequest"
+%><%@page import="org.workcast.wu.OldWebRequest"
 %><%
-    WebRequest wr = WebRequest.getOrCreate(request, response, out);
+    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     String f = wr.reqParam("f");
 

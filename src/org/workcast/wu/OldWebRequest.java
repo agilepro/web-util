@@ -1,6 +1,3 @@
-/*
- * WebRequest.java
- */
 package org.workcast.wu;
 
 import java.io.OutputStream;
@@ -10,14 +7,15 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Vector;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import com.purplehillsbooks.streams.MemFile;
+
 import com.purplehillsbooks.streams.HTMLWriter;
-import org.workcast.wu.UtilityMethods;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
 * WebRequest is the "Authorized Web Request and Response" class for the
@@ -57,7 +55,7 @@ import org.workcast.wu.UtilityMethods;
 * License: This code is made available under the GNU Lesser GPL license.
 */
 @SuppressWarnings("serial")
-public class WebRequest extends javax.servlet.http.HttpServlet
+public class OldWebRequest extends javax.servlet.http.HttpServlet
 {
 
     public HttpServletRequest            req;
@@ -100,12 +98,12 @@ public class WebRequest extends javax.servlet.http.HttpServlet
     * From a JSP you have to pass in the writer, because the JSP framework plays
     * with the writer.  From other places you can pass null.
     */
-    public static WebRequest getOrCreate(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
+    public static OldWebRequest getOrCreate(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
     {
-        WebRequest wr = (WebRequest) areq.getAttribute("WebRequest");
+        OldWebRequest wr = (OldWebRequest) areq.getAttribute("WebRequest");
         if (wr == null)
         {
-            wr = new WebRequest(areq,aresp,aw);
+            wr = new OldWebRequest(areq,aresp,aw);
             areq.setAttribute("AuthRequest", wr);
         }
         else if (aw!=null)
@@ -124,7 +122,7 @@ public class WebRequest extends javax.servlet.http.HttpServlet
     * been called on the request, and you must pass the writer in here
     * so that we can avoid calling this method twice
     */
-    private WebRequest(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
+    private OldWebRequest(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
     {
         try
         {
@@ -185,7 +183,7 @@ public class WebRequest extends javax.servlet.http.HttpServlet
     * rights of the original request, but substitute a different writer
     * so that you can, for example, create a file, or generate test output.
     */
-    private WebRequest(WebRequest oldAr, Writer newWriter)
+    private OldWebRequest(OldWebRequest oldAr, Writer newWriter)
     {
         this(oldAr.req, oldAr.resp, newWriter);
     }

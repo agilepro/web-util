@@ -5,7 +5,6 @@
 %><%@page import="java.io.InputStream"
 %><%@page import="java.io.Reader"
 %><%@page import="java.io.InputStreamReader"
-%><%@page import="org.workcast.wu.WebRequest"
 %><%
     request.setCharacterEncoding("UTF-8");
     String path = request.getParameter("path");

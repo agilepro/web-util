@@ -1,1 +1,3 @@
-{"trustedProviderUrl":"http://bobcat:8080/eid/"}
+{
+    "trustedProviderUrl":"https://s06.circleweaver.com/ssofi/"
+}

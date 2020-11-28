@@ -7,14 +7,14 @@
   <link href='https://fonts.googleapis.com/css?family=Montserrat:200,400,700' 
         rel='stylesheet' type='text/css'>
   <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
-  <script src="../eid/$/slap.js"></script>
+  <script src="js/slap.js"></script>
   <style>
   .fixColumn {
-      width:300px;
+      min-width:250px;
       border: 1px solid #AA00FF;
   }
   .fixColumnUser {
-      width:300px;
+      min-width:300px;
       background-color: white;
       border: 1px solid #AA00FF;
   }
@@ -111,8 +111,17 @@
         };
         
         $scope.tableStyle = function() {
-            let width = 600+ 300*$scope.commenters.length;
-            var res = {width: width+"px"};
+            let width = 250+ (550*$scope.commenters.length);
+            if (userId) {
+                width=width+250;
+            }
+            var res = {
+                width: width+"px", 
+                "max-width": width+"px", 
+                "min-width": width+"px",
+                "padding"  : "5px",
+                "table-layout": "fixed"
+            };
             return res;
         }
     
@@ -123,11 +132,13 @@
 <body ng-app="myApp" ng-controller="myCtrl">
 <div style="margin:auto">
 
-<div ng-hide="userId"><button ng-click="login()">Login</button></div>
+<div ng-hide="userId"><button ng-click="login()">Login</button> if you want to make comments.</div>
 <div ng-show="userId">Login: {{userId}}  <button ng-click="logout()">Logout</button></div>
 
 
 <h1><a href="discus.htm"><img src="discus.png" style="width:100px"></a>{{discussion.fullName}}</h1>
+
+<div ng-style="tableStyle()" style="background-color:blue"> xxx </div>
 
 <p>{{discussion.description}}</p>
 
@@ -135,13 +146,13 @@
 <tr>
   <th>#</th>
   <th class="fixColumn">Original</th>
-  <th class="fixColumn">{{userId}}</th>
+  <th class="fixColumn" ng-show="userId">{{userId}}</th>
   <th class="fixColumn" ng-repeat="user in commenters">{{user}}</th>
 </tr>
 <tr ng-repeat="(row,obj) in discussion.content track by row">
   <td style="width:30px">{{row-10000}}</td>
   <td class="fixColumn" ng-dblclick="userComment.content[row] = obj">{{obj.txt}}</td>
-  <td class="fixColumnUser" 
+  <td class="fixColumnUser" ng-show="userId"
       ng-dblclick="openCommentator(row)">
       {{userComment.content[row].txt}}</td>
   <td class="fixColumn"  ng-repeat="user in commenters">
@@ -154,7 +165,10 @@
 <pre>{{restext|json}}</pre>
 
 <div style="height:400px"></div>
-<% wr.invokeJSP("tileBottom.jsp"); %>
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+<div style="font-size:small;text-align:center">© 2020, Keith D Swenson</div>
 
 </div>
 

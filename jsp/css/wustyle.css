@@ -63,11 +63,15 @@ a:hover {
     border: solid 1px purple;
     border-radius:10px;
     background-color: white;
-    width:300px;
     height:300px;
+    width:300px;
     padding:0px;
     margin:10px;
     box-shadow: 5px 5px 5px grey;
+    cursor:pointer;
+}
+.floater:hover {
+    background-color: #FF9BFF;
 }
 
 .floater-top {

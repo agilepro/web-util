@@ -15,8 +15,12 @@
 %>
 <head>
   <title>Discusser</title>
-  <script src="js/angular.min.js"></script>
-  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <script src="js/angular.1.8.js"></script>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/angular.js"></script>
+  <script src="js/ui-bootstrap-tpls.min.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:200,400,700' 
+        rel='stylesheet' type='text/css'>
   <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
 
   <script>

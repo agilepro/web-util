@@ -1,0 +1,165 @@
+<html>
+<head>
+  <title>Article Comments</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/angular.js"></script>
+  <script src="js/ui-bootstrap-tpls.min.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:200,400,700' 
+        rel='stylesheet' type='text/css'>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script src="../eid/$/slap.js"></script>
+  <style>
+  .fixColumn {
+      width:300px;
+      border: 1px solid #AA00FF;
+  }
+  .fixColumnUser {
+      width:300px;
+      background-color: white;
+      border: 1px solid #AA00FF;
+  }
+  </style>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+
+    var myApp = angular.module('myApp', ['ui.bootstrap']);
+    
+
+    myApp.controller('myCtrl', function ($scope, $http, $modal) {
+
+        $scope.art = urlParams.get('art');
+        $scope.discussion = {};
+        $scope.allComments = {};
+        $scope.userComment = {content:{}};
+        
+        SLAP.initLogin({serverUrl: "auth/"}, {}, function() {
+            $scope.userId = SLAP.loginInfo.userId;$scope.$apply()
+        });
+        $scope.userId = SLAP.loginInfo.userId;
+        $scope.login = function() {
+            SLAP.loginUserRedirect();
+        }
+        $scope.logout = function() {
+            SLAP.logoutUser();
+        }
+        
+        function reportError(data) {
+            console.log("ERROR", data);
+        }
+        $scope.commenters = Object.keys($scope.allComments);
+
+        function getDocument() {
+            var getURL = "ds/d="+$scope.art+"/Article";
+            $http.get(getURL)
+            .then( function(data) {
+                    console.log("getDocument RECEIVED", data);
+                    $scope.discussion = data.data;
+                },
+                function(data, status, headers, config) {
+                    reportError(data);
+                });
+        }
+        function getComments() {
+            var getURL = "ds/d="+$scope.art+"/AllComments";
+            $http.get(getURL)
+            .then( function(newCmts) {
+                    $scope.allComments = newCmts.data;
+                    if ($scope.allComments[$scope.userId]) {
+                        $scope.userComment = $scope.allComments[$scope.userId];
+                        delete $scope.allComments[$scope.userId];
+                    }
+                    $scope.commenters = Object.keys($scope.allComments);
+                },
+                function(data, status, headers, config) {
+                    reportError(data);
+                });
+        }
+        getDocument();
+        getComments();
+        
+        $scope.openCommentator = function (row) {
+
+            var modalInstance = $modal.open({
+                animation: false,
+                templateUrl: "templates/EnterCommentModal.html?t="+new Date().getTime(),
+                controller: 'CommentatorCtrl',
+                size: 'lg',
+                backdrop: "static",
+                resolve: {
+                    art: function () {
+                        return $scope.art;
+                    },
+                    user: function () {
+                        return $scope.userId;
+                    },
+                    row: function () {
+                        return row;
+                    },
+                    comment: function () {
+                        return $scope.userComment;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (modifiedComment) {
+                console.log("Usr Comment updated to", modifiedComment);
+                $scope.userComment = modifiedComment;
+            }, function () {
+                console.log("CommentatorCtrl was cancelled")
+                //cancel action - nothing really to do
+            });
+        };
+        
+        $scope.tableStyle = function() {
+            let width = 600+ 300*$scope.commenters.length;
+            var res = {width: width+"px"};
+            return res;
+        }
+    
+    });
+
+</script>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div style="margin:auto">
+
+<div ng-hide="userId"><button ng-click="login()">Login</button></div>
+<div ng-show="userId">Login: {{userId}}  <button ng-click="logout()">Logout</button></div>
+
+
+<h1><a href="discus.htm"><img src="discus.png" style="width:100px"></a>{{discussion.fullName}}</h1>
+
+<p>{{discussion.description}}</p>
+
+<table class="table" ng-style="tableStyle()">
+<tr>
+  <th>#</th>
+  <th class="fixColumn">Original</th>
+  <th class="fixColumn">{{userId}}</th>
+  <th class="fixColumn" ng-repeat="user in commenters">{{user}}</th>
+</tr>
+<tr ng-repeat="(row,obj) in discussion.content track by row">
+  <td style="width:30px">{{row-10000}}</td>
+  <td class="fixColumn" ng-dblclick="userComment.content[row] = obj">{{obj.txt}}</td>
+  <td class="fixColumnUser" 
+      ng-dblclick="openCommentator(row)">
+      {{userComment.content[row].txt}}</td>
+  <td class="fixColumn"  ng-repeat="user in commenters">
+      {{allComments[user].content[row].txt}}</td>
+</tr>
+</table>
+
+<hr/>
+
+<pre>{{restext|json}}</pre>
+
+<div style="height:400px"></div>
+<% wr.invokeJSP("tileBottom.jsp"); %>
+
+</div>
+
+<script src="templates/EnterCommentModal.js"></script>
+</body>
+</html>
+
+

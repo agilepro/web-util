@@ -42,5 +42,14 @@
         <servlet-name>DiscusServlet</servlet-name>
         <url-pattern>/ds/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>AuthServlet</servlet-name>
+        <servlet-class>org.workcast.wu.AuthServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthServlet</servlet-name>
+        <url-pattern>/auth/*</url-pattern>
+    </servlet-mapping>
     
 </web-app>

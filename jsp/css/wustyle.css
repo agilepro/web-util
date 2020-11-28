@@ -12,22 +12,29 @@ body {
 
 /****************************  NEW STYLE SHEET ****************************/
 /* Default style for links */
+a {
+    padding:6px;
+}
 a:active { 
     color: #000099;
     text-decoration: none;
-}
-a:hover { 
-    color: #0000FF;
-    text-decoration: none;
-    background-color: #FFFF00;
-}
-a:link { 
-    color: #000099;
-    text-decoration: none;
+    border: 2px solid #FFEEFF;
 }
 a:visited { 
     color: #008888;
     text-decoration: none;
+    border: 2px solid #FFEEFF;
+}
+a:link { 
+    color: #000099;
+    text-decoration: none;
+    border: 2px solid #FFEEFF;
+}
+a:hover { 
+    color: #0000FF;
+    text-decoration: none;
+    background-color: white;
+    border: 2px solid #FF9BFF;
 }
 
 

@@ -18,9 +18,19 @@ public class DiscusHandler extends JSONHandler {
 
     public DiscusHandler(WebRequest wr, SessionManager smgr) throws Exception {
         super(wr, smgr);
-        dataFolder = new File("d:/cogData/discus/");
+        dataFolder = new File(smgr.getAppDataFolder(), "discus");
     }
 
+    /**
+     * This is the root level.   All paths start with /ds/  here are the options
+     *
+     * /ds/          -- a hello world ping response
+     * /ds/List      -- list all discussions
+     * /ds/Create    -- create a new discussion article (POST)
+     * /ds/d={art}/  -- go to article specific commands
+     *
+     *
+     */
     @Override
     public JSONObject handleRequest() throws Exception {
         if (!dataFolder.exists()) {
@@ -43,6 +53,9 @@ public class DiscusHandler extends JSONHandler {
         if ("List".equals(token)) {
             return getDiscussionListing();
         }
+        else if ("Create".equals(token)) {
+            return createNewTopic();
+        }
         else if (token.startsWith("d=")) {
             return handleDiscussion(token.substring(2));
         }
@@ -64,7 +77,7 @@ public class DiscusHandler extends JSONHandler {
             }
             else if (childName.endsWith(".comm")) {
                 String combo = childName.substring(0, childName.length()-5);
-                int dotPos = combo.lastIndexOf(".");
+                int dotPos = combo.indexOf(".");
                 String topic = combo.substring(0, dotPos);
                 String user = combo.substring(dotPos+1);
                 JSONObject discussion = discussionList.requireJSONObject(topic);
@@ -73,6 +86,48 @@ public class DiscusHandler extends JSONHandler {
             }
         }
         return discussionList;
+    }
+
+    private JSONObject createNewTopic() throws Exception {
+        try {
+            if (!wr.isPost()) {
+                throw new Exception("The Create command requires a JSON object posted to it.");
+            }
+            JSONObject newTopic = wr.getPostedObject();
+            if (!newTopic.has("key")) {
+                throw new Exception("The Create request needs a 'key' value fo rthe new article.");
+            }
+            String key = newTopic.getString("key");
+            assertKeyIsUnique(key);
+
+            JSONObject newArticle = new JSONObject();
+            newArticle.put("fullName",    newTopic.optString("fullName"));
+            newArticle.put("description", newTopic.optString("description"));
+            newArticle.put("content",     newTopic.optJSONObject("fullName"));
+            newTopic.requireJSONObject("content");
+
+            String targetName = key + ".disc";
+            File targetFile = new File(dataFolder, targetName);
+
+            if (targetFile.exists()) {
+                throw new JSONException("An article with the key '{0}' is already in use.", key);
+            }
+            newArticle.writeToFile(targetFile);
+            return newArticle;
+        }
+        catch (Exception e) {
+            throw new JSONException("Unable to create new discussion article");
+        }
+    }
+
+    private void assertKeyIsUnique(String key) throws Exception {
+        String targetName = key + ".comm";
+        for( File child : dataFolder.listFiles()) {
+            String childName = child.getName();
+            if (childName.equals(targetName)) {
+                throw new JSONException("The key '{0}' is already in use.", key);
+            }
+        }
     }
 
     /*
@@ -97,6 +152,9 @@ public class DiscusHandler extends JSONHandler {
             else if ("AllComments".equals(token)) {
                 return getAllComments();
             }
+            else if ("MakeComment".equals(token)) {
+                return makeUserComment();
+            }
         }
         catch (Exception e) {
             throw new JSONException("Failure handling path element ({0})", e, token);
@@ -107,6 +165,19 @@ public class DiscusHandler extends JSONHandler {
     private JSONObject getOneDiscussionDocument() throws Exception {
         File discussionFile = new File(dataFolder, article+".disc");
         JSONObject discussion = JSONObject.readFromFile(discussionFile);
+        if (wr.isPost()) {
+            JSONObject updateObj = wr.getPostedObject();
+            if (updateObj.has("fullName")) {
+                discussion.put("fullName", updateObj.getString("fullName"));
+            }
+            if (updateObj.has("description")) {
+                discussion.put("description", updateObj.getString("description"));
+            }
+            if (updateObj.has("content")) {
+                discussion.put("content", updateObj.getJSONObject("content"));
+            }
+            discussion.writeToFile(discussionFile);
+        }
         return discussion;
     }
 
@@ -119,7 +190,7 @@ public class DiscusHandler extends JSONHandler {
             }
             if (childName.endsWith(".comm")) {
                 String combo = childName.substring(0, childName.length()-5);
-                int dotPos = combo.lastIndexOf(".");
+                int dotPos = combo.indexOf(".");
                 String user = combo.substring(dotPos+1);
                 commenters.add(user);
             }
@@ -136,5 +207,28 @@ public class DiscusHandler extends JSONHandler {
         return allComments;
     }
 
+    private JSONObject makeUserComment() throws Exception {
+        if (!wr.isPost()) {
+            throw new Exception("The MakeComment command requires a posted object");
+        }
+        JSONObject newComment = wr.getPostedObject();
+        String user = newComment.getString("user");
+        String rowNo = newComment.getString("row");
+        String text = newComment.getString("text");
 
+        File commentFile = new File(dataFolder, article + "." + user + ".comm");
+        JSONObject comments;
+        if (commentFile.exists()) {
+            comments = JSONObject.readFromFile(commentFile);
+        }
+        else {
+            comments = new JSONObject();
+        }
+        JSONObject content = comments.requireJSONObject("content");
+        JSONObject newEntry = new JSONObject();
+        newEntry.put("txt", text);
+        content.put(rowNo, newEntry);
+        comments.writeToFile(commentFile);
+        return comments;
+    }
 }

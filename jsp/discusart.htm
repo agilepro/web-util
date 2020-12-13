@@ -18,6 +18,11 @@
       background-color: white;
       border: 1px solid #AA00FF;
   }
+  .sectionsplit {
+      border-bottom: 1px solid #AA00FF;
+      background-color: #5F4170;
+      color: white;
+  }
   </style>
   <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -102,7 +107,7 @@
             });
 
             modalInstance.result.then(function (modifiedComment) {
-                console.log("Usr Comment updated to", modifiedComment);
+                console.log("User Comment updated to", modifiedComment);
                 $scope.userComment = modifiedComment;
             }, function () {
                 console.log("CommentatorCtrl was cancelled")
@@ -111,16 +116,14 @@
         };
         
         $scope.tableStyle = function() {
-            let width = 250+ (550*$scope.commenters.length);
-            if (userId) {
+            let width = 250+ (250*$scope.commenters.length);
+            if ($scope.userId) {
                 width=width+250;
             }
             var res = {
                 width: width+"px", 
                 "max-width": width+"px", 
-                "min-width": width+"px",
-                "padding"  : "5px",
-                "table-layout": "fixed"
+                "min-width": width+"px"
             };
             return res;
         }
@@ -138,8 +141,6 @@
 
 <h1><a href="discus.htm"><img src="discus.png" style="width:100px"></a>{{discussion.fullName}}</h1>
 
-<div ng-style="tableStyle()" style="background-color:blue"> xxx </div>
-
 <p>{{discussion.description}}</p>
 
 <table class="table" ng-style="tableStyle()">
@@ -149,15 +150,20 @@
   <th class="fixColumn" ng-show="userId">{{userId}}</th>
   <th class="fixColumn" ng-repeat="user in commenters">{{user}}</th>
 </tr>
-<tr ng-repeat="(row,obj) in discussion.content track by row">
-  <td style="width:30px">{{row-10000}}</td>
-  <td class="fixColumn" ng-dblclick="userComment.content[row] = obj">{{obj.txt}}</td>
-  <td class="fixColumnUser" ng-show="userId"
-      ng-dblclick="openCommentator(row)">
-      {{userComment.content[row].txt}}</td>
-  <td class="fixColumn"  ng-repeat="user in commenters">
-      {{allComments[user].content[row].txt}}</td>
-</tr>
+<tbody ng-repeat="(row,obj) in discussion.content track by row">
+  <tr ng-show="obj.txt.startsWith('!')">
+    <td colspan="{{3+commenters.length}}" class="sectionsplit"><h3>{{obj.txt.substring(1)}}</h3></td>
+  </tr>
+  <tr ng-hide="obj.txt.startsWith('!')">
+    <td style="width:30px">{{row-10000}}</td>
+    <td class="fixColumn"     ng-dblclick="userComment.content[row] = obj">{{obj.txt}}</td>
+    <td class="fixColumnUser" ng-show="userId"
+        ng-dblclick="openCommentator(row)">
+        {{userComment.content[row].txt}}</td>
+    <td class="fixColumn"  ng-repeat="user in commenters">
+        {{allComments[user].content[row].txt}}</td>
+  </tr>
+</tbody>
 </table>
 
 <hr/>

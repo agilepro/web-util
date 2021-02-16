@@ -6,15 +6,17 @@
   <script src="js/ui-bootstrap-tpls.min.js"></script>
   <link href='https://fonts.googleapis.com/css?family=Montserrat:200,400,700' 
         rel='stylesheet' type='text/css'>
-  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"           rel="stylesheet" type="text/css"/>
+  <link href="css/font-awesome-all.css"  rel="stylesheet" type="text/css"/>
+  
   <script src="js/slap.js"></script>
   <style>
   .fixColumn {
-      min-width:250px;
+      width:250px;
       border: 1px solid #AA00FF;
   }
   .fixColumnUser {
-      min-width:300px;
+      width:300px;
       background-color: white;
       border: 1px solid #AA00FF;
   }
@@ -36,6 +38,7 @@
         $scope.discussion = {};
         $scope.allComments = {};
         $scope.userComment = {content:{}};
+        $scope.hideUser = {};
         
         SLAP.initLogin({serverUrl: "auth/"}, {}, function() {
             $scope.userId = SLAP.loginInfo.userId;$scope.$apply()
@@ -116,16 +119,51 @@
         };
         
         $scope.tableStyle = function() {
-            let width = 250+ (250*$scope.commenters.length);
+            let width = 304;
+            if ($scope.showWide) {
+                width += 300;
+            }
+            $scope.commenters.forEach( function(item) {
+                if ($scope.hideUser[item]) {
+                    width += 37;
+                }
+                else {
+                    width += 267;
+                }
+            });
             if ($scope.userId) {
-                width=width+250;
+                width=width+317;
             }
             var res = {
-                width: width+"px", 
+                "width": width+"px", 
                 "max-width": width+"px", 
-                "min-width": width+"px"
+                "min-width": width+"px",
+                "border": "1px solid #AA00FF"
             };
             return res;
+        }
+        
+        $scope.openColumn = function(name) {
+            $scope.hideUser[name] = false;
+        }
+        $scope.closeColumn = function(name) {
+            $scope.hideUser[name] = true;
+        }
+        $scope.userColumnStyle = function(name) {
+            if ($scope.hideUser[name]) {
+                return {"width":"20px","border":"1px solid #AA00FF"};
+            }
+            else {
+                return {"width":"300px","border":"1px solid #AA00FF"};
+            }
+        }
+        $scope.readingColumnStyle = function() {
+            if ($scope.showWide) {
+                return {"width":"600px","border":"1px solid #AA00FF"};
+            }
+            else {
+                return {"width":"250px","border":"1px solid #AA00FF"};
+            }
         }
     
     });
@@ -145,10 +183,23 @@
 
 <table class="table" ng-style="tableStyle()">
 <tr>
-  <th>#</th>
-  <th class="fixColumn">Original</th>
+  <th style="width:30px">#</th>
+  <th ng-style="readingColumnStyle()">
+      <div ng-show="showWide">
+          Original <i class="fas fa-backward" ng-click="showWide=false"></i>
+      </div>
+      <div ng-hide="showWide"> 
+          Original <i class="fas fa-forward" ng-click="showWide=true"></i>
+      </div>
+  </th>
   <th class="fixColumn" ng-show="userId">{{userId}}</th>
-  <th class="fixColumn" ng-repeat="user in commenters">{{user}}</th>
+  <th ng-style="userColumnStyle(user)"   ng-repeat="user in commenters">
+      <div ng-hide="hideUser[user]">
+          {{user}} <i class="fas fa-backward" ng-click="closeColumn(user)"></i> </div>
+      <div ng-show="hideUser[user]"> 
+          <i class="fas fa-forward" ng-click="openColumn(user)"></i>
+      </div>
+  </th>
 </tr>
 <tbody ng-repeat="(row,obj) in discussion.content track by row">
   <tr ng-show="obj.txt.startsWith('!')">
@@ -156,12 +207,13 @@
   </tr>
   <tr ng-hide="obj.txt.startsWith('!')">
     <td style="width:30px">{{row-10000}}</td>
-    <td class="fixColumn"     ng-dblclick="userComment.content[row] = obj">{{obj.txt}}</td>
+    <td ng-style="readingColumnStyle()" >{{obj.txt}}</td>
     <td class="fixColumnUser" ng-show="userId"
         ng-dblclick="openCommentator(row)">
         {{userComment.content[row].txt}}</td>
-    <td class="fixColumn"  ng-repeat="user in commenters">
-        {{allComments[user].content[row].txt}}</td>
+    <td ng-style="userColumnStyle(user)"  ng-repeat="user in commenters">
+        <div ng-hide="hideUser[user]">{{allComments[user].content[row].txt}}</div>
+    </td>
   </tr>
 </tbody>
 </table>

@@ -144,6 +144,10 @@
             });
         };
         
+        $scope.sentenceDiscus = function(art) {
+            var url = "discusart.htm?art="+$scope.art;
+            window.location.assign(url);
+        }
         $scope.tableStyle = function() {
             let width = 517;
             if ($scope.showWide) {
@@ -197,8 +201,12 @@
 <body ng-app="myApp" ng-controller="myCtrl">
 <div style="margin:auto">
 
-<div ng-hide="userId"><button ng-click="login()">Login</button> if you want to make comments.</div>
-<div ng-show="userId">Login: {{userId}}  <button ng-click="logout()">Logout</button></div>
+<div ng-hide="userId">
+    <button ng-click="login()">Login</button> if you want to make comments.   
+    To see sentences: <button ng-click="sentenceDiscus()">Sentences</button></div>
+<div ng-show="userId">
+    Login: {{userId}}  <button ng-click="logout()">Logout</button>
+    To see sentences: <button ng-click="sentenceDiscus()">Sentences</button></div>
 
 
 <h1><a href="discus.htm"><img src="discus.png" style="width:100px"></a>{{discussion.fullName}}</h1>

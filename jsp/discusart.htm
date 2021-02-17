@@ -117,6 +117,11 @@
                 //cancel action - nothing really to do
             });
         };
+
+        $scope.paraDiscus = function(art) {
+            var url = "discuspara.htm?art="+$scope.art;
+            window.location.assign(url);
+        }
         
         $scope.tableStyle = function() {
             let width = 304;
@@ -185,8 +190,10 @@
 <body ng-app="myApp" ng-controller="myCtrl">
 <div style="margin:auto">
 
-<div ng-hide="userId"><button ng-click="login()">Login</button> if you want to make comments.</div>
-<div ng-show="userId">Login: {{userId}}  <button ng-click="logout()">Logout</button></div>
+<div ng-hide="userId"><button ng-click="login()">Login</button> if you want to make comments.   
+ To see paragraphs: <button ng-click="paraDiscus()">Paragraphs</button></div>
+<div ng-show="userId">Login: {{userId}}  <button ng-click="logout()">Logout</button>
+To see paragraphs: <button ng-click="paraDiscus()">Paragraphs</button></div>
 
 
 <h1><a href="discus.htm"><img src="discus.png" style="width:100px"></a>{{discussion.fullName}}</h1>

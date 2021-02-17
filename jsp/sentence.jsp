@@ -14,7 +14,7 @@
 
 %>
 <head>
-  <title>Discusser</title>
+  <title>Sentence Parser</title>
   <script src="js/angular.1.8.js"></script>
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <script src="js/angular.js"></script>
@@ -107,6 +107,18 @@
         }
         if (quesPos>0 && quesPos<res) {
             res = quesPos;
+        }
+        while (str.charAt(res+1)=='.') {
+            res++;
+        }
+        if (str.charAt(res+1)=='\"') {
+            res++;
+        }
+        else if (str.charAt(res+1)=='\'') {
+            res++;
+        }
+        else if (str.charAt(res+1)=='\’') {
+            res++;
         }
         return res;
     }

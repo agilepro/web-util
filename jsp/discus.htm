@@ -32,6 +32,10 @@
             var url = "discusart.htm?art="+art;
             window.location.assign(url);
         }
+        $scope.paraDiscus = function(art) {
+            var url = "discuspara.htm?art="+art;
+            window.location.assign(url);
+        }
         $scope.editDiscus = function(art) {
             var url = "discusedit.htm?art="+art;
             window.location.assign(url);
@@ -89,7 +93,8 @@
 
   <tr ng-repeat="(key, obj) in discList">
     <td><a href="discusart.htm?art={{key}}">{{key}}</a></td>
-    <td><button ng-click="viewDiscus(key)">View</button></td>
+    <td><button ng-click="viewDiscus(key)">Sentence</button>
+        <button ng-click="paraDiscus(key)">Paragraph</button></td>
     <td ng-show="userId=='kswenson@fujitsu.com'"><button ng-click="editDiscus(key)">Edit</button></td>
     <td></td>
     <td>

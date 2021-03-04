@@ -98,6 +98,7 @@
         var dotPos = str.indexOf(".", 10);
         var semiPos = str.indexOf(";", 10);
         var quesPos = str.indexOf("?", 10);
+        var bangPos = str.indexOf("!", 10);
         var res = 99999;
         if (dotPos>0 && dotPos<res) {
             res = dotPos;
@@ -107,6 +108,9 @@
         }
         if (quesPos>0 && quesPos<res) {
             res = quesPos;
+        }
+        if (bangPos>0 && bangPos<res) {
+            res = bangPos;
         }
         while (str.charAt(res+1)=='.') {
             res++;

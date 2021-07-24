@@ -1,0 +1,390 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Unicode / UTF-8 Genie</title>
+  <script src="js/angular.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:200,400,700' rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+
+  <script>
+    var genieApp = angular.module('genieApp', []);
+
+
+    genieApp.controller('genieCtrl', function ($scope) {
+        $scope.srctext = "";
+
+        $scope.reportLength = function() {
+            return $scope.srctext.length;
+        }
+        $scope.convert = function() {
+            var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+            var res = "";
+            for ( var i = 0; i < $scope.srctext.length; i++ ) {
+                var ch = $scope.srctext.charCodeAt(i);
+                if (ch==0x0A) {
+                    res += fourHex(ch) + "\n";
+                }
+                else {
+                    res += fourHex(ch) + " ";
+                }
+            }
+            return res;
+        };
+
+        $scope.convert2 = function() {
+            var res = "";
+            var highSurrogate = 0;
+            for ( var i = 0; i < $scope.srctext.length; i++ ) {
+                var ch = $scope.srctext.charCodeAt(i);
+                if (ch<0xD800) {
+                    res += UTF8Encode(ch) + " ";
+                }
+                else if (ch<0xDC00) {
+                    highSurrogate = ch;
+                }
+                else if (ch<0xE000) {
+                    var completeChar = (highSurrogate - 0xD800) * 0x400 + ch - 0xDC00 + 0x10000;
+                    res += UTF8Encode(completeChar) + " ";
+                }
+                else {
+                    res += UTF8Encode(ch) + " ";
+                }
+            }
+            return res;
+        };
+
+        $scope.convert3 = function() {
+            var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+            var res = [];
+            var highSurrogate = 0;
+            for ( var i = 0; i < $scope.srctext.length; i++ ) {
+                var ch = $scope.srctext.charCodeAt(i);
+                if (ch==0x0A) {
+                    res.push(sixHex(ch));
+                }
+                else if (ch<0xD800) {
+                    res.push(sixHex(ch));
+                }
+                else if (ch<0xDC00) {
+                    highSurrogate = ch;
+                }
+                else if (ch<0xE000) {
+                    var completeChar = (highSurrogate - 0xD800) * 0x400 + ch - 0xDC00 + 0x10000;
+                    res.push(sixHex(completeChar))
+                }
+                else {
+                    res.push(sixHex(ch));
+                }
+            }
+            console.log("convert 3 returned", res);
+            return res;
+        };
+        
+        $scope.convertStringLiteral = function() {
+            var res = "\"";
+            for ( var i = 0; i < $scope.srctext.length; i++ ) {
+                var ch = $scope.srctext.charCodeAt(i);
+                if (ch==0x0D) {
+                    res += "\\r";
+                }
+                else if (ch==0x0A) {
+                    res += "\\n";
+                }
+                else if (ch<0x20) {
+                    res += "\\u"+fourHex(ch);
+                }
+                else if (ch==0x5C) {
+                    res += "\\\\";
+                }
+                else if (ch==0x22) {
+                    res += "\\\"";
+                }
+                else if (ch<=0xFE) {
+                    res += String.fromCharCode(ch);
+                }
+                else if (ch<=0xFFFF) {
+                    res += "\\u"+fourHex(ch);
+                }
+                
+            }
+            return res+"\"";
+        };
+        
+        $scope.convertStringLiteral2 = function() {
+            var res = "\"";
+            var highSurrogate = 0;
+            for ( var i = 0; i < $scope.srctext.length; i++ ) {
+                var ch = $scope.srctext.charCodeAt(i);
+                if (ch==0x0D) {
+                    res += "\\r";
+                }
+                else if (ch==0x0A) {
+                    res += "\\n";
+                }
+                else if (ch<0x1F) {
+                    res += "\\u"+fourHex(ch);
+                }
+                else if (ch==0x5C) {
+                    res += "\\\\";
+                }
+                else if (ch==0x22) {
+                    res += "\\\"";
+                }
+                else if (ch<0x20) {
+                    res += "\\u"+fourHex(ch);
+                }
+                else if (ch<=0x7E) {
+                    res += String.fromCharCode(ch);
+                }
+                else if (ch<0xD800) {
+                    res += "\\u{"+varHex(ch)+"}"
+                }
+                else if (ch<0xDC00) {
+                    //first half of surrogate sequence
+                    highSurrogate = ch;
+                }
+                else if (ch<0xE000) {
+                    //second half of surrogate
+                    var completeChar = (highSurrogate - 0xD800) * 0x400 + ch - 0xDC00 + 0x10000;
+                    res += "\\u{"+varHex(completeChar)+"}"
+                }
+                else if (ch<=0xFFFF) {
+                    res += "\\u{"+varHex(ch)+"}"
+                }
+                
+            }
+            return res+"\"";
+        };
+        $scope.case1 = function() {
+            $scope.srctext = "Addr\u00E8\u0219\u0219 \u041B\u043E\u0440\u0435\u043C a\u030A\u25CC\u030A";
+        }
+        
+        $scope.case2 = function() {
+            $scope.srctext = "\uD83D\uDC07\uD83D\uDC08\uD83D\uDC10\u2615";
+        }
+        $scope.case3 = function() {
+            $scope.srctext = "Investigate (\u8ABF\u67FB)";
+        }
+        $scope.case4 = function() {
+            $scope.srctext = "\uD83D\uDC69\u200D\u2764\uFE0F\u200D\uD83D\uDC8B\u200D\uD83D\uDC69\uD83D\uDC6A \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67";
+        }
+        
+        $scope.parseInput = function() {
+            var newPart = parseLiteral($scope.newValue);
+            $scope.srctext  += newPart;
+        }
+        
+    });
+
+    function UTF8Encode(ch) {
+        if (ch<=0x7F) {
+            return twoHex(ch);
+        }
+        var n1 = 0x80 + ch % 64;
+        var x = Math.floor(ch/64);
+        if (ch<=0x7FF) {
+            return twoHex(0xC0 + x % 32) + twoHex(n1);
+        }
+        var n2 = 0x80 + x % 64;
+        x = Math.floor(x/64);
+        if (ch<=0xFFFF) {
+            return twoHex(0xE0 + x % 16) + twoHex(n2) + twoHex(n1);
+        }
+        var n3 = 0x80 + x % 64;
+        x = Math.floor(x/64);
+        if (ch<=0x10FFFF) {
+            return twoHex(0xF0 + x % 8) + twoHex(n3) + twoHex(n2) + twoHex(n1);
+        }
+        var n4 = 0x80 + x % 64;
+        x = Math.floor(x/64);
+        return twoHex(0xF8 + x % 4) + twoHex(n4) + twoHex(n3) + twoHex(n2) + twoHex(n1);
+    }
+
+    
+    function varHex(x) {
+        var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        if (x<=0) {
+            return "0";
+        }
+        res = "";
+        while (x>0) { 
+            res = map[x % 16] + res;
+            x = Math.floor(x/16);
+        }
+        return res;
+    }
+    function sixHex(x) {
+        var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        if (x<=0) {
+            return "0";
+        }
+        res = "";
+        var count = 6;
+        while (count-- > 0) { 
+            res = map[x % 16] + res;
+            x = Math.floor(x/16);
+        }
+        return res;
+    }
+    function fourHex(x) {
+        var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        var n1 = x % 16;
+        x = Math.floor(x/16);
+        var n2 = x % 16;
+        x = Math.floor(x/16);
+        var n3 = x % 16;
+        x = Math.floor(x/16);
+        var n4 = x % 16;
+        return  map[n4] + map[n3] + map[n2] + map[n1];
+    }
+    function twoHex(x) {
+        var map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        var n1 = x % 16;
+        x = Math.floor(x/16);
+        var n2 = x % 16;
+        return map[n2] + map[n1];
+    }
+    function parseLiteral(input) {
+        var pos = 0;
+        
+        var inUTF = false;
+        var inUnicode = false;
+        var result = "";
+        
+        while (pos<input.length) {
+            var ch = input.charAt(pos++);
+            if (ch!='\\') {
+                result += ch;
+                continue;
+            }
+            ch = input.charAt(pos++);
+            if (ch != 'u') {
+                result += ch;
+                continue;
+            }
+            ch = input.charAt(pos++);
+            var curHexValue = 0;
+            if (ch != '{') {
+                curHexValue = hexValue(ch);
+                ch = input.charAt(pos++);
+                curHexValue = curHexValue*16 + hexValue(ch);
+                ch = input.charAt(pos++);
+                curHexValue = curHexValue*16 + hexValue(ch);
+                ch = input.charAt(pos++);
+                curHexValue = curHexValue*16 + hexValue(ch);
+                result += String.fromCharCode(curHexValue);
+            }
+            else {
+                ch = input.charAt(pos++);
+                while (ch!='}') {
+                    curHexValue = curHexValue*16 + hexValue(ch);
+                    ch = input.charAt(pos++);
+                }
+                if (curHexValue<=0xFFFF) {
+                    result += String.fromCharCode(curHexValue);
+                }
+                else {
+                    curHexValue = curHexValue - 0x10000
+                    var highSurrogate = Math.floor(curHexValue / 0x400) + 0xD800;
+                    var lowSurrogate =  (curHexValue % 0x400) + 0xDC00;
+                    result += String.fromCharCode(highSurrogate);
+                    result += String.fromCharCode(lowSurrogate);
+                }
+            }
+        }
+        return result;
+    }
+    function hexValue(ch) {
+        if (ch>='0' && ch <= '9') {
+            return ( ch.charCodeAt(0) - 48 );
+        }
+        if (ch>='A' && ch <= 'F') {
+            return ( ch.charCodeAt(0) - 55 );
+        }
+        if (ch>='a' && ch <= 'f') {
+            return ( ch.charCodeAt(0) - 87 );
+        }
+        return 0;
+    }
+    
+
+    
+
+</script>
+</head>
+
+<body ng-app="genieApp" ng-controller="genieCtrl">
+<div class="mainFrame">
+
+<h1>Unicode / UTF-8 Genie</h1>
+
+<style>
+.codeBox {
+    background-color: lightyellow;
+    max-width: 720px;
+    font-family: monospace;
+}
+.btn-special {
+    margin:5px;
+    width:60px;
+}
+</style>
+
+<p><font size="-1">Type or paste text into the box, and the UTF-16 code values and UTF-8 encodings
+will appear in the space below it</font></p>
+<table class="table">
+<tr>
+<td>Source:</td>
+<td>
+<div style="float:left"><textarea type="text" ng-model="srctext" cols="80" rows="10"></textarea></div>
+<div style="float:left;padding:5px">
+   <button class="btn btn-sm btn-default btn-special">Len: {{reportLength()}}</button><br/>
+   <button class="btn btn-sm btn-primary btn-special" ng-click="case1()">Euro</button></br>
+   <button class="btn btn-sm btn-primary btn-special" ng-click="case2()">Emoji</button></br>
+   <button class="btn btn-sm btn-primary btn-special" ng-click="case3()">Kanji</button></br>
+   <button class="btn btn-sm btn-primary btn-special" ng-click="case4()">Combo</button>
+</div>
+<div style="clear:all"></div>
+<br/>
+
+</td>
+</tr>
+<tr>
+<td>UTF-16:</td>
+<td><div class="codeBox">{{convert()}}</div></td>
+</tr>
+<tr>
+<td>UTF-8:</td>
+<td><div class="codeBox">{{convert2()}}</div></td>
+</tr>
+<tr>
+<tr>
+<td>Unicode:</td>
+<td><div class="codeBox"><span ng-repeat="ccc in convert3() track by $index"><a href="https://unicode-table.com/en/{{ccc}}">{{ccc}}</a> </span></div></td>
+</tr>
+<tr>
+<td>Java Exp:</td>
+<td><div class="codeBox">{{convertStringLiteral()}}</div></td>
+</tr>
+<tr>
+<td>JS Exp:</td>
+<td><div class="codeBox">{{convertStringLiteral2()}}</div></td>
+</tr>
+<tr>
+<td>Input:</td>
+<td><input ng-model="newValue"/><button ng-click="parseInput()">Parse</button></td>
+</tr>
+</table>
+
+
+
+<div class="footLine">
+    <a href="index.htm">Purple Hills Tools</a></div>
+</div>
+<div style="font-size:small;text-align:center">© 2019, Keith D Swenson</div>
+</body>
+</html>
+
+

@@ -7,6 +7,7 @@ import java.util.List;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONSchema;
 import com.purplehillsbooks.web.JSONHandler;
 import com.purplehillsbooks.web.SessionManager;
 import com.purplehillsbooks.web.WebRequest;
@@ -59,6 +60,13 @@ public class DiscusHandler extends JSONHandler {
         else if (token.startsWith("d=")) {
             return handleDiscussion(token.substring(2));
         }
+        else  if ("GenerateSchema".equals(token)) {
+            return handleSchemaGen();
+        }
+        else  if ("validateJSON".equals(token)) {
+            return validateJSON();
+        }
+        
         throw new JSONException("Don't understand the path element ({0})", token);
     }
 
@@ -231,4 +239,34 @@ public class DiscusHandler extends JSONHandler {
         comments.writeToFile(commentFile);
         return comments;
     }
+    
+    private JSONObject  handleSchemaGen() throws Exception {
+        if (!wr.isPost()) {
+            throw new Exception("schema generator needs a JSON object passed to it");
+        }
+        JSONObject source = wr.getPostedObject().getJSONObject("src");
+        JSONObject schema = JSONSchema.generateSchema(source);
+        return schema;
+    }
+
+    private JSONObject  validateJSON() throws Exception {
+        if (!wr.isPost()) {
+            throw new Exception("schema generator needs a JSON object passed to it");
+        }
+        JSONObject src = wr.getPostedObject().getJSONObject("src");
+        JSONObject schema = wr.getPostedObject().getJSONObject("schema");
+        JSONSchema converter = new JSONSchema();
+        boolean isOK = converter.checkSchema(src, schema);
+        JSONObject result = new JSONObject();
+        result.put("success", isOK);
+        if (!isOK) {
+            JSONArray errors = new JSONArray();
+            for (String err : converter.getErrorList()) {
+                errors.put(err);
+            }
+            result.put("errors", errors);
+        }
+        return schema;
+    }
+    
 }

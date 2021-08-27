@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'web-util'
-include('app')
+include('WebUtilWar')

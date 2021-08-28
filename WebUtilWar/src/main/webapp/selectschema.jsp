@@ -13,10 +13,9 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
-    if (ht == null)
-    {
-        ht = FileCache.getPreloadedHashtable();
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
+    if (ht == null) {
+        ht = new Hashtable<String,FileCache>();
         session.setAttribute("fileCache", ht);
     }
     FileCache mainDoc = (FileCache) ht.get(f);
@@ -38,11 +37,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>Select MinSch for <% wr.writeHtml(f); %></title>
+  <title>Select Schema for <% wr.writeHtml(f); %></title>
   <link href="mystyle.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<h1>Select MinSch for <% wr.writeHtml(f); %></h1>
+<h1>Select Schema for <% wr.writeHtml(f); %></h1>
 <hr>
 <ul>
 <%

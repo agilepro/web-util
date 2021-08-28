@@ -12,10 +12,9 @@
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
     String f = wr.reqParam("f");
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
-    if (ht == null)
-    {
-        ht = FileCache.getPreloadedHashtable();
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
+    if (ht == null) {
+        ht = new Hashtable<String,FileCache>();
         session.setAttribute("fileCache", ht);
     }
     FileCache mainDoc = (FileCache) ht.get(f);

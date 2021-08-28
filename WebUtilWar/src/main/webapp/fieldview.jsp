@@ -10,15 +10,16 @@
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.NamedNodeMap"
-%><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="com.purplehillsbooks.json.JSONObject"
+%><%@page import="com.purplehillsbooks.json.JSONArray"
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     String f = wr.reqParam("f");
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
     if (ht == null)
     {
         //this is a clear indication of no session, so just redirect to the
@@ -34,7 +35,7 @@
         response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
     }
-    if (!mainDoc.isValidXML())
+    if (!mainDoc.isValidJSON())
     {
         response.sendRedirect("xmledit.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
@@ -44,16 +45,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>XML Grinder: <%wr.writeHtml(f);%></title>
+  <title>JSON Grinder: <%wr.writeHtml(f);%></title>
   <link href="mystyle.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<h1>XML Grinder: <%wr.writeHtml(f);%></h1>
+<h1>JSON Grinder: <%wr.writeHtml(f);%></h1>
 <p><form action="xmleditAction.jsp" method="GET">
    <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
    <input type="submit" name="act" value="Data View">
    </form></p>
-<p>MinSch is
+<p>Schema is
 <%
     FileCache fcs = mainDoc.getSchema();
     if (fcs==null)
@@ -74,7 +75,7 @@
 <input type="hidden" name="f" value="<%wr.writeHtml(f);%>">
 
 <table><tr><td bgcolor="skyblue">
-<% generateTables(wr, 800, mainDoc.getMel()); %>
+<% generateTables(wr, 800, "MAIN", mainDoc.getJSON()); %>
 </td></tr></table>
 </form>
 
@@ -86,74 +87,95 @@
 <!-- %@ include file="functions.jsp"% -->
 <%!
 
-    public void generateTables(OldWebRequest wr, int width, Mel me)
+
+
+
+    public void generateTables(OldWebRequest wr, int width, String name, Object me)
         throws Exception
     {
-        String color = "skyblue";
+        String color = "LightCyan";
         if (width%50==0)
         {
             color = "lightyellow";
         }
         int cellwidth = width-25;
-        if (me.isContainer())
-        {
+        if (me instanceof JSONObject) {
+            JSONObject jo = ((JSONObject)me);
             wr.write("\n<table width=\""+(width-4)+"\">");
             wr.write("\n<col width=\"16\">");
             wr.write("\n<col width=\""+(cellwidth-4)+"\">");
             wr.write("\n  <tr><td colspan=\"2\"><b>");
-            wr.writeHtml(me.getName());
+            wr.writeHtml(name);
             wr.write("</b>");
-            Vector attrs = me.getAllAttributeNames();
-            Vector cs = me.getAllChildren();
-            if (attrs.size()==0 && cs.size()==0)
-            {
-                wr.write(" = <i>empty</i>");
-            }
-            else
-            {
+            if (true) {
                 wr.write("\n  </td></tr><tr><td>");
                 wr.write("\n  </td><td bgcolor=\""+color+"\">");
-                if (attrs.size()>0)
-                {
-                    Enumeration e = attrs.elements();
-                    while (e.hasMoreElements())
-                    {
-                        String aName = (String) e.nextElement();
-                        wr.write("@");
-                        wr.writeHtml(aName);
+                for (String key : jo.keySet()) {
+                    Object o = jo.get(key);
+                    if (o instanceof JSONObject) {
+                        generateTables(wr, cellwidth, key, ((JSONObject)o));
+                    }
+                    else if (o instanceof JSONArray) {
+                        generateTables(wr, cellwidth, key, ((JSONArray)o));
+                    }
+                    else if (o instanceof String) {
+                        wr.writeHtml(key);
                         wr.write(" = <input type=\"text\" name=\"xxx\" value=\"");
-                        wr.writeHtml(me.getAttribute(aName));
+                        wr.writeHtml((String)o);
                         wr.write("\"><br/>");
                     }
-                }
-                if (cs.size()>0)
-                {
-                    Enumeration e = cs.elements();
-                    while (e.hasMoreElements())
-                    {
-                        Mel child = (Mel) e.nextElement();
-                        if (!child.isContainer())
-                        {
-                            wr.writeHtml(child.getName());
-                            wr.write(" = <input type=\"text\" name=\"xxx\" value=\"");
-                            wr.writeHtml(child.getDataValue());
-                            wr.write("\"><br/>");
-                        }
-                        else
-                        {
-                            generateTables(wr, cellwidth, child);
-                        }
+                    else  {
+                        wr.writeHtml(key);
+                        wr.write(" = ");
+                        wr.writeHtml("no impplemented yet");
+                        wr.write("<br/>");
                     }
                 }
             }
             wr.write("\n  </td></tr>");
             wr.write("\n</table>");
         }
-        else
-        {
-            wr.writeHtml(me.getName());
+        else if (me instanceof JSONArray) {
+            JSONArray ja = ((JSONArray)me);
+            //wr.write("\n<table width=\""+(width-4)+"\">");
+            //wr.write("\n<col width=\"16\">");
+            //wr.write("\n<col width=\""+(cellwidth-4)+"\">");
+            //wr.write("\n  <tr><td colspan=\"2\">");
+            for (int i=0; i<ja.length(); i++) {
+                Object o = ja.get(i);
+                if (o instanceof JSONObject) {
+                    generateTables(wr, width, name+"["+i+"]", ((JSONObject)o));
+                }
+                else if (o instanceof JSONArray) {
+                    generateTables(wr, width, name+"["+i+"]", ((JSONArray)o));
+                }
+                else if (o instanceof String) {
+                    wr.writeHtml(name+"["+i+"]");
+                    wr.write(" = <input type=\"text\" name=\"xxx\" value=\"");
+                    wr.writeHtml((String)o);
+                    wr.write("\"><br/>");
+                }
+                else  {
+                    wr.writeHtml(name+"["+i+"]");
+                    wr.write(" = ");
+                    wr.writeHtml("no impplemented yet");
+                    wr.write("<br/>");
+                }
+            }
+            //wr.write("\n  </td></tr>");
+            //wr.write("\n  </table>");
+        }
+        else if (me instanceof String) {
+            wr.writeHtml(name);
+            wr.write(" = <input type=\"text\" name=\"xxx\" value=\"");
+            wr.writeHtml((String)me);
+            wr.write("\"><br/>");
+        }
+        else {
+            wr.writeHtml(name);
             wr.write(" = ");
-            wr.writeHtml(me.getDataValue());
+            wr.writeHtml("No implemento");
+            wr.write("<br/>");
         }
     }
 

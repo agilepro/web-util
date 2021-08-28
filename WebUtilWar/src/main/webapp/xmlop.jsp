@@ -17,7 +17,7 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
     if (ht == null)
     {
         //this is a clear indication of no session, so just redirect to the
@@ -34,7 +34,7 @@
         response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
     }
-    if (!mainDoc.isValidXML())
+    if (!mainDoc.isValidJSON())
     {
         throw new Exception("How did you get here?  File '"+f+"' is not valid XML, and this page works only with valid XML.");
     }
@@ -69,7 +69,7 @@
 <p><form action="xmleditAction.jsp" method="POST">
    <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
    <input type="submit" name="act" value="Change File">
-   <input type="submit" name="act" value="XML View">
+   <input type="submit" name="act" value="JSON View">
    <input type="submit" name="act" value="Data View">
    <input type="submit" name="act" value="Java View">
    </form></p>
@@ -77,7 +77,7 @@
 
 <h2>Operations</h2>
 <p>File: <b><%wr.writeHtml(f);%></b>
-  &nbsp; &nbsp; &nbsp; MinSch is
+  &nbsp; &nbsp; &nbsp; Schema is
 <%
     FileCache fcs = mainDoc.getSchema();
     if (fcs==null)
@@ -96,8 +96,8 @@
 
 <p><form action="xmleditAction.jsp" method="POST">
    <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-   <input type="submit" name="act" value="Gen MinSch">
-   to file name: <input type="text" name="destFile" value="MinSch for <%wr.writeHtml(f);%>">
+   <input type="submit" name="act" value="Gen Schema">
+   to file name: <input type="text" name="destFile" value="Schema for <%wr.writeHtml(f);%>">
    </form></p>
 
 <p><form action="xmleditAction.jsp" method="POST">
@@ -106,22 +106,6 @@
    to put the file in canonical form
    </form></p>
 
-<p><form action="xmleditAction.jsp" method="POST">
-   <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-   <input type="submit" name="act" value="Transform">
-   using XSLT: <select type="text" name="otherFile">
-<%
-    e = otherFiles.elements();
-    while (e.hasMoreElements())
-    {
-        wr.write("<option>");
-        wr.writeHtml((String)e.nextElement());
-        wr.write("</option>");
-    }
-%>
-   </select>
-   output to: <input type="text" name="destFile" value="Transform of <%wr.writeHtml(f);%>">
-   </form></p>
 
 
 <p><form action="xmleditAction.jsp" method="POST">
@@ -143,7 +127,7 @@
 
 <p><form action="xmleditAction.jsp" method="POST">
    <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-   <input type="submit" name="act" value="Set MinSch">
+   <input type="submit" name="act" value="Set Schema">
    to the file:  <select type="text" name="otherFile">
 <%
     e = otherFiles.elements();
@@ -171,12 +155,6 @@
 
 
 
-<p><form action="xmleditAction.jsp" method="POST">
-   <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-   <input type="submit" name="act" value="Eliminate CData">
-   to convert CData into normal data
-   </form></p>
-
 <p><form action="showxpath.jsp" method="GET">
    <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
    <input type="hidden" name="s" value="false">
@@ -189,10 +167,7 @@
    <input type="submit" name="act" value="Register XMLSchema">
    </form></p>
 
-<p><form action="kmlSmoothing.jsp" method="POST">
-   <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-   <input type="submit" name="act" value="Smooth KML File">
-   </form></p>
+
 
 <hr>
 <% wr.invokeJSP("tileBottom.jsp"); %>

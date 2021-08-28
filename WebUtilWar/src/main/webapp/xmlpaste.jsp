@@ -25,7 +25,7 @@
 <h1>XML Editor - Paste Value</h1>
 <hr>
 <p><form action="xmlpasteAction.jsp" method="POST">
-   <input type="submit" name="act" value="Parse Value"><br/>
+   <input type="submit" name="act" value="Save Contents"><br/>
    <textarea name="value" cols="80" rows="20"></textarea><br/>
    Name for this file: <input type="text" name="f" value="<% wr.writeHtml(f); %>"><br/>
    <input type="submit" name="act" value="Cancel">

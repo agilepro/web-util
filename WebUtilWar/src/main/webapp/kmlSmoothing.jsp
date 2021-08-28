@@ -36,7 +36,7 @@
     String f = wr.reqParam("f");
     String destFile = wr.defParam("destFile", null);
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
     if (ht == null) {
         //this is a clear indication of no session, so just redirect to the
         //file input page.

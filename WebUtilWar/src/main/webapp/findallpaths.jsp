@@ -7,7 +7,6 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Vector"
 %><%@page import="java.util.Collections"
 %><%@page import="org.w3c.dom.NamedNodeMap"
@@ -50,7 +49,7 @@
 <p><form action="xmleditAction.jsp" method="GET">
    <input type="hidden" name="f" value="File 1">
    <input type="submit" name="act" value="Change File">
-   <input type="submit" name="act" value="XML View">
+   <input type="submit" name="act" value="JSON View">
    <input type="submit" name="act" value="Field Edit">
    <input type="submit" name="act" value="Operation">
    </form></p>

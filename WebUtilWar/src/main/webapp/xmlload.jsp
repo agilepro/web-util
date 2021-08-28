@@ -28,7 +28,7 @@
    <input type="submit" name="act" value="Paste">
    <input type="submit" name="act" value="Clear">
    <input type="submit" name="act" value="Reformat">
-   <input type="submit" name="act" value="Generate MinSch">
+   <input type="submit" name="act" value="Generate Schema">
    </form>
 <hr>
 <% if (mainDoc != null) { %>

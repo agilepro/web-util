@@ -28,7 +28,7 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
     if (ht == null)
     {
         //this is a clear indication of no session, so just redirect to the
@@ -54,10 +54,6 @@
     String validMarker = "NOT XML";
 
     String nameSpace = "unknown";
-    if (mainDoc.isValidXML())
-    {
-        nameSpace = mainDoc.findNamespace();
-    }
 
 %>
 
@@ -73,7 +69,7 @@
 <p><form action="xmleditAction.jsp" method="POST">
     <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
     <input type="submit" name="act" value="Change File">
-    <% if (mainDoc.isValidXML()) { %>
+    <% if (mainDoc.isValidJSON()) { %>
     <input type="submit" name="act" value="Data View">
     <input type="submit" name="act" value="Edit">
     <input type="submit" name="act" value="Operation">
@@ -92,13 +88,11 @@
    </form></p>
 <p>
 <%
-    if (!mainDoc.isValidXML())
-    {
-        wr.write("<font color=\"red\">NOT XML</font>");
+    if (!mainDoc.isValidJSON()) {
+        wr.write("<font color=\"red\">NOT JSON</font>");
     }
-    else
-    {
-        out.write("Valid XML,   MinSch is");
+    else {
+        out.write("Valid XML,   Schema is");
         FileCache fcs = mainDoc.getSchema();
         if (fcs==null)
         {

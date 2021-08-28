@@ -11,6 +11,8 @@
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="com.purplehillsbooks.json.JSONObject"
+%><%@page import="com.purplehillsbooks.json.JSONArray"
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
@@ -21,10 +23,9 @@
     String password = wr.defParam("password", "");
 
     System.out.println("Starting to read XML file -- "+System.currentTimeMillis());
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
-    if (ht == null)
-    {
-        ht = FileCache.getPreloadedHashtable();
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
+    if (ht == null) {
+        ht = new Hashtable<String,FileCache>();
         session.setAttribute("fileCache", ht);
     }
 
@@ -49,11 +50,9 @@
             throw new Exception("Some sort of strange problem here, should not happen: "+urlPath+" & "+urlPath.lastIndexOf("/"));
         }
         System.out.println("Reading file: "+urlPath+" -- "+System.currentTimeMillis());
-        FileCache fc = new FileCache(f, FileCache.LOAD_WEB_RESOURCE, urlPath, charset, ht);
-        System.out.println("Cached, now parsing: "+urlPath+" -- "+System.currentTimeMillis());
-        ht.put(f, fc);
-        response.sendRedirect("xmledit.jsp?f="+URLEncoder.encode(f, "UTF-8"));
-        System.out.println("all done: -- "+System.currentTimeMillis());
+        JSONObject empty = new JSONObject();
+        FileCache fc = new FileCache(f, empty);
+        fc.loadContentsFromWeb(urlPath);
     }
     else if ("Load From Local File".equals(act))
     {

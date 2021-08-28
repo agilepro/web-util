@@ -9,7 +9,6 @@
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Vector"
-%><%@page import="java.util.Hashtable"
 %><%@page import="com.purplehillsbooks.xml.Schema"
 %><%@page import="com.purplehillsbooks.xml.SchemaGen"
 %><%@page import="com.purplehillsbooks.xml.ValidationResults"
@@ -20,7 +19,7 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
     if (ht == null)
     {
         //this is a clear indication of no session, so just redirect to the

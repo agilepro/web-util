@@ -11,12 +11,11 @@
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
-    if (ht == null)
-    {
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
+    if (ht == null) {
         //this will be the start page for many people, so very important
         //to create this object at this time.
-        ht = FileCache.getPreloadedHashtable();
+        ht = new Hashtable<String,FileCache>();
         session.setAttribute("fileCache", ht);
     }
 
@@ -63,7 +62,7 @@
             schemaName = fcSchema.getName();
         }
         count++;
-        if (fc.isValidXML())
+        if (fc.isValidJSON())
         {
 %>
 <li><a href="<%=wr.retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">
@@ -80,7 +79,7 @@
     }
 %>
 </ul>
-<h1>Select or Load MinSch</h1>
+<h1>Select or Load Schema</h1>
 <ul><%
     e = ht.elements();
     while (e.hasMoreElements())
@@ -98,7 +97,7 @@
             schemaName = fcSchema.getName();
         }
         count++;
-        if (fc.isValidXML())
+        if (fc.isValidJSON())
         {
 %>
 <li><a href="<%=wr.retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">

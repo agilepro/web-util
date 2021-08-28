@@ -15,10 +15,9 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
-    if (ht == null)
-    {
-        ht = FileCache.getPreloadedHashtable();
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
+    if (ht == null) {
+        ht = new Hashtable<String,FileCache>();
         session.setAttribute("fileCache", ht);
     }
     FileCache mainDoc = (FileCache) ht.get(f);
@@ -40,25 +39,25 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>Fix XML: <%wr.writeHtml(f);%></title>
+  <title>Edit File: <%wr.writeHtml(f);%></title>
   <link href="mystyle.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<h1>Fix XML: <%wr.writeHtml(f);%></h1>
+<h1>Edit File: <%wr.writeHtml(f);%></h1>
 <%
     if (error!=null)
     {
 %>
-<p>text below is not valid XML.  You might be able to manually correct the problem for further work.</p>
+<p>text below is not valid JSON.  You might be able to manually correct the problem for further work.</p>
 <%
     }
 %>
 <hr>
 <p><form action="xmlpasteAction.jsp" method="POST">
-   <input type="submit" name="act" value="Parse Value"><br/>
-   <textarea name="value" cols="80" rows="20"><% wr.writeHtml(mainDoc.getContents()); %></textarea><br/>
+   <input type="submit" name="act" value="Save Contents"><br/>
+   <textarea name="value" cols="80" rows="20"><% mainDoc.writeContents(out); %></textarea><br/>
    Name for this file: <input type="text" name="f" value="<% wr.writeHtml(f); %>"><br/>
-   MinSch: <input type="text" name="schema" value="<% wr.writeHtml(schemaName); %>"><br/>
+   Schema Name: <input type="text" name="schema" value="<% wr.writeHtml(schemaName); %>"><br/>
    <input type="submit" name="act" value="Cancel">
    </form>
 <hr>

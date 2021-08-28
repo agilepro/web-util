@@ -55,7 +55,10 @@
             console.log("conversion complete");
         }
         
-        
+        $scope.reformat = function() {
+            var dataObj = JSON.parse($scope.srctext);
+            $scope.srctext = JSON.stringify(dataObj, null, 2);
+        }
     });
     
   </script>
@@ -74,14 +77,14 @@
     style="width:600px;height:600px;font-family:'Lucida Console', monospace"></textarea>
 </td>
 <td>
-<button ng-click="convert()" class="btn btn-primary">Gen&gt;&gt;</button>
+<button ng-click="convert()" class="btn btn-primary">&gt;&gt;</button>
 </td>
 <td>
 <textarea ng-model="restext" class="form-control" 
     style="width:600px;height:600px;font-family:'Lucida Console', monospace"></textarea>
 </div>
 </td></tr></table>
-
+<button ng-click="reformat()" class="btn btn-primary">Reformat</button>
 
 <div style="height:400px"></div>
 <% wr.invokeJSP("tileBottom.jsp"); %>

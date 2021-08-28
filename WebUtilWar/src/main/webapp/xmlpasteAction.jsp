@@ -3,6 +3,7 @@
 %><%@page import="java.io.InputStream"
 %><%@page import="java.io.InputStreamReader"
 %><%@page import="java.io.Reader"
+%><%@page import="java.io.StringReader"
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"
@@ -10,41 +11,45 @@
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="com.purplehillsbooks.json.JSONObject"
+%><%@page import="com.purplehillsbooks.json.JSONArray"
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
-    if (ht == null)
-    {
-        ht = FileCache.getPreloadedHashtable();
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
+    if (ht == null) {
+        ht = new Hashtable<String,FileCache>();
         session.setAttribute("fileCache", ht);
     }
 
     String act = wr.reqParam("act");
     String f = wr.reqParam("f");
+    FileCache mainDoc = (FileCache) ht.get(f);
+    if (mainDoc==null) {
+        mainDoc = new FileCache(f);
+        ht.put(f, mainDoc);
+    }
 
-    if ("Parse Value".equals(act))
-    {
+    if ("Save Contents".equals(act)) {
         String value = wr.reqParam("value");
-        FileCache fc = new FileCache(f, value);
-        ht.put(f, fc);
+        if (value==null) {
+            throw new Exception("value is null");
+        }
+        mainDoc.setContents(value);
+
         String schema = wr.defParam("schema", null);
-        if (schema!=null)
-        {
+        if (schema!=null) {
             FileCache schemaFile = (FileCache) ht.get(schema);
-            if (schemaFile!=null)
-            {
-                fc.setSchema(schemaFile);
+            if (schemaFile!=null) {
+                mainDoc.setSchema(schemaFile);
             }
         }
         response.sendRedirect("xmledit.jsp?f="+URLEncoder.encode(f, "UTF-8"));
     }
-    else if ("Cancel".equals(act))
-    {
+    else if ("Cancel".equals(act)) {
         //ignore this
         response.sendRedirect("selectfile.jsp");
     }
-    else
-    {
+    else {
         throw new Exception("Don't understand the action: "+act);
     }
 %>

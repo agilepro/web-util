@@ -9,19 +9,19 @@
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Vector"
+%><%@page import="java.util.TreeSet"
 %><%@page import="org.w3c.dom.NamedNodeMap"
-%><%@page import="com.purplehillsbooks.xml.Mel"
-%><%@page import="com.purplehillsbooks.xml.Schema"
-%><%@page import="com.purplehillsbooks.xml.SchemaDef"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="com.purplehillsbooks.json.JSONObject"
+%><%@page import="com.purplehillsbooks.json.JSONArray"
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     String f = wr.reqParam("f");
 
-    Hashtable ht = (Hashtable) session.getAttribute("fileCache");
+    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
     if (ht == null)
     {
         //this is a clear indication of no session, so just redirect to the
@@ -37,7 +37,7 @@
         response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
     }
-    if (!mainDoc.isValidXML())
+    if (!mainDoc.isValidJSON())
     {
         response.sendRedirect("xmledit.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
@@ -45,41 +45,28 @@
 
     String s = wr.reqParam("s");
     boolean useSchema = (s.equals("true"));
-    FileCache schemaFile = mainDoc.getSchema();
 
-    if (schemaFile==null) {
-        throw new Exception("Unable to find a schema file for the current XML file.  You might need to generate one before getting the XPath expressions.");
-    }
-
-    Schema schema = schemaFile.getAsSchema();
-    String rootName = schema.getScalar("root");
-
-    if (schema==null)
-    {
-        throw new Exception("XML file ('"+f+"') must have an associated schema for this function");
-    }
-
-    Vector allPaths = new Vector();
-    potentialXPaths(allPaths, "/", rootName, false, schema, 10);
+    TreeSet<String> allPaths = new TreeSet<String>();
+    generateXPaths(allPaths, "", mainDoc.getJSON());
 
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>XML Grinder: <%wr.writeHtml(f);%></title>
+  <title>All Paths: <%wr.writeHtml(f);%></title>
   <link href="mystyle.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<h1>XML Grinder: <%wr.writeHtml(f);%></h1>
+<h1>All Paths: <%wr.writeHtml(f);%></h1>
 <p><form action="xmleditAction.jsp" method="GET">
    <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
    <input type="submit" name="act" value="Change File">
-   <input type="submit" name="act" value="XML View">
+   <input type="submit" name="act" value="JSON View">
    <input type="submit" name="act" value="Field Edit">
    <input type="submit" name="act" value="Operation">
    </form></p>
-<p>MinSch is
+<p>Schema is
 <%
     FileCache fcs = mainDoc.getSchema();
     if (fcs==null)
@@ -97,12 +84,10 @@
 
 <table width="800">
 <%
-    Enumeration e = allPaths.elements();
-    while (e.hasMoreElements())
-    {
-        String path = (String) e.nextElement();
+
+    for (String line : allPaths) {
         %><tr><td><%
-        wr.writeHtml(path);
+        wr.writeHtml(line);
         %></td></tr><%
     }
 
@@ -117,130 +102,37 @@
 <!-- %@ include file="functions.jsp"% -->
 <%!
 
-    public void generateXPaths(Vector v, String pre, Mel me,
-            int index, boolean isPlural, Schema schema)
+    public void generateXPaths(TreeSet<String> v, String pre, JSONObject jo)
         throws Exception
     {
-        String thisTag = me.getName();
-        boolean isMultiple = false;
-        SchemaDef sd = schema.lookUpDefinition(thisTag);
-        if (sd!=null)
-        {
+        for (String key : jo.keySet()) {
+            String newPre = pre + "." + key;
+            Object o = jo.get(key);
+            if (o instanceof JSONObject) {
+                generateXPaths(v, newPre, (JSONObject)o);
+            }
+            else if (o instanceof JSONArray) {
+                generateXPaths(v, newPre, (JSONArray)o);
+            }
+            else {
+                v.add(newPre);
+            }
+        }
 
-        }
-        String newPre = null;
-        if (isPlural)
-        {
-            newPre = pre + me.getName() +"[" + Integer.toString(index) + "]/";
-        }
-        else
-        {
-            newPre = pre + me.getName() +"/";
-        }
-        v.add(newPre);
-        if (!me.isContainer())
-        {
-            return;
-        }
-        Vector attrs = me.getAllAttributeNames();
-        Vector cs = me.getAllChildren();
-        if (attrs.size()==0 && cs.size()==0)
-        {
-        }
-        else
-        {
-            if (attrs.size()>0)
-            {
-                Enumeration e = attrs.elements();
-                while (e.hasMoreElements())
-                {
-                    String aName = (String) e.nextElement();
-                    v.add(newPre + "@" + aName);
-                }
-            }
-            if (cs.size()>0)
-            {
-                int childIndex = 1;
-                String lastTag = "";
-                Enumeration e = cs.elements();
-                while (e.hasMoreElements())
-                {
-                    Mel child = (Mel) e.nextElement();
-                    String childName = child.getName();
-                    boolean childIsPlural = false;
-                    if(sd!=null)
-                    {
-                        childIsPlural = sd.childIsPlural(childName);
-                    }
-                    if (lastTag.equals(childName))
-                    {
-                        childIndex++;
-                    }
-                    else
-                    {
-                        childIndex = 1;
-                        lastTag = childName;
-                    }
-                    generateXPaths(v, newPre, child, childIndex, childIsPlural, schema);
-                }
-            }
-        }
     }
-
-
-
-    public void potentialXPaths(Vector v, String pre, String tagName,
-            boolean isPlural, Schema schema, int depthLimit)
-        throws Exception
-    {
-        if (depthLimit<=0)
-        {
-            return;
-        }
-        int newDepthLimit = depthLimit - 1;
-        SchemaDef sd = schema.lookUpDefinition(tagName);
-        String newPre = null;
-        if (isPlural)
-        {
-            newPre = pre + tagName +"[*]/";
-        }
-        else
-        {
-            newPre = pre + tagName +"/";
-        }
-        v.add(newPre);
-        if (sd.isContainer())
-        {
-            Vector attrs = sd.getChildren("attr");
-            Vector children = sd.getChildren("contains");
-            if (attrs.size()==0 && children.size()==0)
-            {
-                return;
+    public void generateXPaths(TreeSet<String> v, String pre, JSONArray ja) 
+        throws Exception {
+        for (int i=0; i<ja.length(); i++) {
+            String newPre = pre + "[#]";
+            Object o = ja.get(i);
+            if (o instanceof JSONObject) {
+                generateXPaths(v, newPre, (JSONObject)o);
             }
-            if (attrs.size()>0)
-            {
-                Enumeration e = attrs.elements();
-                while (e.hasMoreElements())
-                {
-                    Mel ae = (Mel) e.nextElement();
-                    v.add(newPre + "@" + ae.getAttribute("name"));
-                }
+            else if (o instanceof JSONArray) {
+                generateXPaths(v, newPre, (JSONArray)o);
             }
-            if (children.size()>0)
-            {
-                Enumeration e = children.elements();
-                while (e.hasMoreElements())
-                {
-                    Mel child = (Mel) e.nextElement();
-                    String childName = child.getAttribute("name");
-                    String pluralAttr = child.getAttribute("plural");
-                    boolean childIsPlural = (pluralAttr!=null && pluralAttr.equals("true"));
-                    if(sd!=null)
-                    {
-                        childIsPlural = sd.childIsPlural(childName);
-                    }
-                    potentialXPaths(v, newPre, childName, childIsPlural, schema, newDepthLimit);
-                }
+            else {
+                v.add(newPre);
             }
         }
     }

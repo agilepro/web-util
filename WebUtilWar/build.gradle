@@ -38,8 +38,8 @@ dependencies {
 
 }
 
-//jar.archivesBaseName = 'webutil'
-jar.baseName = 'webutil'
+project.archivesBaseName = 'webutil'
+
 
 application {
     // Define the main class for the application.

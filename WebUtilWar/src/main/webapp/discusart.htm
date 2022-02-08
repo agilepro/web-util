@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8"/>
   <title>Article Comments</title>
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <script src="js/angular.js"></script>
@@ -8,7 +10,9 @@
         rel='stylesheet' type='text/css'>
   <link href="css/wustyle.css"           rel="stylesheet" type="text/css"/>
   <link href="css/font-awesome-all.css"  rel="stylesheet" type="text/css"/>
-  
+  <script src="js/MarkdownToHtml.js"></script>
+  <script src="js/textAngular-sanitize.min.js"></script>
+
   <script src="js/slap.js"></script>
   <style>
   .fixColumn {
@@ -29,7 +33,7 @@
   <script>
     const urlParams = new URLSearchParams(window.location.search);
 
-    var myApp = angular.module('myApp', ['ui.bootstrap']);
+    var myApp = angular.module('myApp', ['ui.bootstrap', 'ngSanitize']);
     
 
     myApp.controller('myCtrl', function ($scope, $http, $modal) {
@@ -72,6 +76,7 @@
             $http.get(getURL)
             .then( function(newCmts) {
                     $scope.allComments = newCmts.data;
+                    console.log("getComments RECEIVED", newCmts);
                     if ($scope.allComments[$scope.userId]) {
                         $scope.userComment = $scope.allComments[$scope.userId];
                         delete $scope.allComments[$scope.userId];
@@ -124,6 +129,7 @@
         }
         
         $scope.tableStyle = function() {
+            var availableWidth = document.getElementsByTagName('body')[0].clientWidth;
             let width = 304;
             if ($scope.showWide) {
                 width += 300;
@@ -138,6 +144,9 @@
             });
             if ($scope.userId) {
                 width=width+317;
+            }
+            if (width<availableWidth) {
+                width = availableWidth;
             }
             var res = {
                 "width": width+"px", 
@@ -182,7 +191,22 @@
                 return {"width":"250px","border":"1px solid #AA00FF","background-color":"#F0F0F0"};
             }
         }
-    
+        $scope.getHtml = function(i) {
+            var row = $scope.userComment.content[i];
+            if (!row || !row.txt) {
+                return "";
+            }
+            var t = convertMarkdownToHtml(row.txt);
+            return t;
+        }
+        $scope.getReading = function(obj) {
+            var line = obj.txt;
+            if (!line) {
+                return "";
+            }
+            var t = convertMarkdownToHtml(line);
+            return t;
+        }
     });
 
 </script>
@@ -222,16 +246,15 @@ To see paragraphs: <button ng-click="paraDiscus()">Paragraphs</button></div>
 </tr>
 <tbody ng-repeat="(row,obj) in discussion.content track by row">
   <tr ng-show="obj.txt.startsWith('!')">
-    <td colspan="{{3+commenters.length}}" class="sectionsplit"><h3>{{obj.txt.substring(1)}}</h3></td>
+    <td colspan="{{4+commenters.length}}" class="sectionsplit"><h3>{{obj.txt.substring(1)}}</h3></td>
   </tr>
   <tr ng-hide="obj.txt.startsWith('!')">
     <td ng-style="numberColumnStyle(row)" ng-click="setSelectedRow(row)">{{row-9999}}</td>
-    <td ng-style="readingColumnStyle()" >{{obj.txt}}</td>
+    <td ng-style="readingColumnStyle()"><span ng-bind-html="getReading(obj)"></span></td>
     <td ng-style="mainColumnStyle()" ng-show="userId"
-        ng-dblclick="openCommentator(row)">
-        {{userComment.content[row].txt}}</td>
+        ng-dblclick="openCommentator(row)"><span ng-bind-html="getHtml(row)"></span><i class="fas fa-edit" ng-click="openCommentator(row)"></i></td>
     <td ng-style="userColumnStyle(user)"  ng-repeat="user in commenters">
-        <div ng-hide="hideUser[user]">{{allComments[user].content[row].txt}}</div>
+        <span ng-hide="hideUser[user]" ng-bind-html="convertMarkdownToHtml(allComments[user].content[row].txt)"></span>
     </td>
   </tr>
 </tbody>

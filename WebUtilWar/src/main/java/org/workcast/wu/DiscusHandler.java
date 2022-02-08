@@ -11,6 +11,7 @@ import com.purplehillsbooks.json.JSONSchema;
 import com.purplehillsbooks.web.JSONHandler;
 import com.purplehillsbooks.web.SessionManager;
 import com.purplehillsbooks.web.WebRequest;
+import com.purplehillsbooks.xml.Mel;
 
 public class DiscusHandler extends JSONHandler {
 
@@ -124,7 +125,7 @@ public class DiscusHandler extends JSONHandler {
             return newArticle;
         }
         catch (Exception e) {
-            throw new JSONException("Unable to create new discussion article");
+            throw new JSONException("Unable to create new discussion article", e);
         }
     }
 
@@ -142,6 +143,8 @@ public class DiscusHandler extends JSONHandler {
      * handles
      *    ds/d={art}/Article
      *    ds/d={art}/AllComments
+     *    ds/d={art}/MakeComment
+     *    ds/d={art}/row={row}
      */
     private JSONObject handleDiscussion(String art) throws Exception {
         article = art;
@@ -162,6 +165,9 @@ public class DiscusHandler extends JSONHandler {
             }
             else if ("MakeComment".equals(token)) {
                 return makeUserComment();
+            }
+            else if (token.startsWith("row=")) {
+                return getOneRow(token.substring(4));
             }
         }
         catch (Exception e) {
@@ -240,6 +246,61 @@ public class DiscusHandler extends JSONHandler {
         return comments;
     }
     
+    
+    /**
+     * returns a single object for a row.  
+     * There is a "line" that represents the original line of text
+     * and "content" which is a map from an individual user 
+     * id to their comment.
+     * 
+     * This is useful when you want to display everything about one
+     * row of the table, for example a dialog box.
+     */
+    private JSONObject getOneRow(String rowStr) throws Exception {
+        int rowNum = Mel.safeConvertInt(rowStr);
+        if (rowNum<10000 || rowNum>20000) {
+            throw new Exception("Unable to retrieve row number '"+rowStr+"'");
+        }
+        
+        List<String> commenters = new ArrayList<String>();
+        for( File child : dataFolder.listFiles()) {
+            String childName = child.getName();
+            if (!childName.startsWith(article)) {
+                continue;
+            }
+            if (childName.endsWith(".comm")) {
+                String combo = childName.substring(0, childName.length()-5);
+                int dotPos = combo.indexOf(".");
+                String user = combo.substring(dotPos+1);
+                commenters.add(user);
+            }
+        }
+
+        File discussionFile = new File(dataFolder, article+".disc");
+        JSONObject discussion = JSONObject.readFromFile(discussionFile);
+        JSONObject rowObject = new JSONObject();
+        JSONObject content = discussion.requireJSONObject("content");
+        if (content.has(rowStr)) {
+            JSONObject rowObj = content.getJSONObject(rowStr);
+            rowObject.put("line", rowObj.optString("txt",""));
+        }
+        JSONObject comments = new JSONObject();
+        rowObject.put("comments", comments);
+        
+        for (String user : commenters) {
+            File commentFile = new File(dataFolder, article + "." + user + ".comm");
+            if (commentFile.exists()) {
+                JSONObject ucomm = JSONObject.readFromFile(commentFile);
+                content = ucomm.requireJSONObject("content");
+                if (content.has(rowStr)) {
+                    JSONObject rowObj = content.getJSONObject(rowStr);
+                    comments.put(user, rowObj.optString("txt",""));
+                }
+            }
+        }
+        return rowObject;
+    }
+
     private JSONObject  handleSchemaGen() throws Exception {
         if (!wr.isPost()) {
             throw new Exception("schema generator needs a JSON object passed to it");

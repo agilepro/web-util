@@ -27,7 +27,7 @@
 <h1>Swenson Utilities - Page Source Display</h1>
 <%
 
-    makeTabs(out, "Links");
+    //makeTabs(out, "Links");
 
 %>
 <hr>

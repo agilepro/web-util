@@ -16,12 +16,12 @@
         pageSource = stripIndent(pageSource);
         DOMFace d = null;
         try {
-            d = DOMFace.parseString(pageSource);
+            //d = DOMFace.parseString(pageSource);
         }
         catch (Exception e) {
             throw new Exception("The XML supplied could not be parsed.  Possibly it is not well formed XML.  "+e.toString(), e);
         }
-        seekAndDestroy(d.getDocumentElement(), tag);
+        //seekAndDestroy(d.getDocumentElement(), tag);
         pageSource = d.convertToString();
     }
 

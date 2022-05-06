@@ -32,7 +32,7 @@
 <h1>Swenson Utilities - Set Up & Load Page</h1>
 <%
 
-    makeTabs(out, "Set Up");
+    //makeTabs(out, "Set Up");
 
 %>
 <hr>

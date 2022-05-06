@@ -13,7 +13,6 @@
 %><%@page import="java.util.Hashtable"
 %><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="org.workcast.wu.MemFile"
 %><%@page import="org.workcast.wu.OldWebRequest"
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);

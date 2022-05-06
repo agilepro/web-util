@@ -26,7 +26,7 @@
 <h1>Swenson Utilities - Page Source Display</h1>
 <%
 
-    makeTabs(out, "Source");
+    //makeTabs(out, "Source");
 
 %>
 <hr>
@@ -35,7 +35,7 @@
     if (pageSource != null) {
         out.write("\n<table><tr><td><tt>");
         out.flush();
-        wr.writeHtmlWithLines(pageSource);
+        //wr.writeHtmlWithLines(pageSource);
         out.write("</tt></td></tr></table>");
     }
     else {

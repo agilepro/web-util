@@ -3,7 +3,8 @@ package org.workcast.wu;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import com.purplehillsbooks.xml.Mel;
 
 /**
@@ -38,7 +39,7 @@ public class SynchStatus
         status = Mel.readFile(statFile, Mel.class);
     }
 
-    public static Vector<String> scanProjects()
+    public static List<String> scanProjects()
         throws Exception
     {
         if (!rootFolder.exists())
@@ -49,7 +50,7 @@ public class SynchStatus
         {
             throw new Exception("The c:\\projects\\ file exists, but it must be a folder on your machine in order to use this page.");
         }
-        Vector<String> res = new Vector<String>();
+        ArrayList<String> res = new ArrayList<String>();
         for (File child : rootFolder.listFiles())
         {
             if (!child.isDirectory())

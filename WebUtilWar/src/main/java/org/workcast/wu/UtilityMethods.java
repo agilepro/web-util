@@ -1,9 +1,9 @@
 package org.workcast.wu;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 /**
 *
@@ -30,7 +30,7 @@ public class UtilityMethods
 
     static public List<String> splitOnDelimiter (String str, char delim)
     {
-        Vector<String> vec = new Vector<String>();
+        ArrayList<String> vec = new ArrayList<String>();
         int pos = 0;
         int last = str.length();
         while (pos<last) {

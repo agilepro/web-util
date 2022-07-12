@@ -5,9 +5,8 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -257,7 +256,7 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
         int bindx = indx + ctxtroot.length() + 1;
 
         List<String> pieces = UtilityMethods.splitOnDelimiter(requrl.substring(bindx), '/');
-        Vector<String> decoded = new Vector<String>();
+        List<String> decoded = new ArrayList<String>();
 
         //must do the URLDecoding AFTER parsing the slashes out
         for (String piece : pieces)

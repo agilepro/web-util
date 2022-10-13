@@ -1,0 +1,2088 @@
+/**
+ * outline styles
+ */
+
+.djs-outline {
+  fill: none;
+  visibility: hidden;
+}
+
+.djs-element.hover .djs-outline,
+.djs-element.selected .djs-outline {
+  visibility: visible;
+  shape-rendering: crispEdges;
+  stroke-dasharray: 3,3;
+}
+
+.djs-element.selected .djs-outline {
+  stroke: #8888FF;
+  stroke-width: 1px;
+}
+
+.djs-element.hover .djs-outline {
+  stroke: #FF8888;
+  stroke-width: 1px;
+}
+
+.djs-shape.connect-ok .djs-visual > :nth-child(1) {
+  fill: #DCFECC /* light-green */ !important;
+}
+
+.djs-shape.connect-not-ok .djs-visual > :nth-child(1),
+.djs-shape.drop-not-ok .djs-visual > :nth-child(1) {
+  fill: #f9dee5 /* light-red */ !important;
+}
+
+.djs-shape.new-parent .djs-visual > :nth-child(1) {
+  fill: #F7F9FF !important;
+}
+
+svg.drop-not-ok {
+  background: #f9dee5 /* light-red */ !important;
+}
+
+svg.new-parent {
+  background: #F7F9FF /* light-blue */ !important;
+}
+
+.djs-connection.connect-ok .djs-visual > :nth-child(1),
+.djs-connection.drop-ok .djs-visual > :nth-child(1) {
+  stroke: #90DD5F /* light-green */ !important;
+}
+
+.djs-connection.connect-not-ok .djs-visual > :nth-child(1),
+.djs-connection.drop-not-ok .djs-visual > :nth-child(1) {
+  stroke: #E56283 /* light-red */ !important;
+}
+
+.drop-not-ok,
+.connect-not-ok {
+  cursor: not-allowed;
+}
+
+.djs-element.attach-ok .djs-visual > :nth-child(1) {
+  stroke-width: 5px !important;
+  stroke: rgba(255, 116, 0, 0.7) !important;
+}
+
+.djs-frame.connect-not-ok .djs-visual > :nth-child(1),
+.djs-frame.drop-not-ok .djs-visual > :nth-child(1) {
+  stroke-width: 3px !important;
+  stroke: #E56283 /* light-red */ !important;
+  fill: none !important;
+}
+
+/**
+* Selection box style
+*
+*/
+.djs-lasso-overlay {
+  fill: rgb(255, 116, 0);
+  fill-opacity: 0.1;
+
+  stroke-dasharray: 5 1 3 1;
+  stroke: rgb(255, 116, 0);
+
+  shape-rendering: crispEdges;
+  pointer-events: none;
+}
+
+/**
+ * Resize styles
+ */
+.djs-resize-overlay {
+  fill: none;
+
+  stroke-dasharray: 5 1 3 1;
+  stroke: rgb(255, 116, 0);
+
+  pointer-events: none;
+}
+
+.djs-resizer-hit {
+  fill: none;
+  pointer-events: all;
+}
+
+.djs-resizer-visual {
+  fill: white;
+  stroke-width: 1px;
+  stroke: #BBB;
+  shape-rendering: geometricprecision;
+}
+
+.djs-resizer:hover .djs-resizer-visual {
+  stroke: #555;
+}
+
+.djs-cursor-resize-ns,
+.djs-resizer-n,
+.djs-resizer-s {
+  cursor: ns-resize;
+}
+
+.djs-cursor-resize-ew,
+.djs-resizer-e,
+.djs-resizer-w {
+  cursor: ew-resize;
+}
+
+.djs-cursor-resize-nwse,
+.djs-resizer-nw,
+.djs-resizer-se {
+  cursor: nwse-resize;
+}
+
+.djs-cursor-resize-nesw,
+.djs-resizer-ne,
+.djs-resizer-sw {
+  cursor: nesw-resize;
+}
+
+.djs-shape.djs-resizing > .djs-outline {
+  visibility: hidden !important;
+}
+
+.djs-shape.djs-resizing > .djs-resizer {
+  visibility: hidden;
+}
+
+.djs-dragger > .djs-resizer {
+  visibility: hidden;
+}
+
+/**
+ * drag styles
+ */
+.djs-dragger * {
+  fill: none !important;
+  stroke: rgb(255, 116, 0) !important;
+}
+
+.djs-dragger tspan,
+.djs-dragger text {
+  fill: rgb(255, 116, 0) !important;
+  stroke: none !important;
+}
+
+marker.djs-dragger circle,
+marker.djs-dragger path,
+marker.djs-dragger polygon,
+marker.djs-dragger polyline,
+marker.djs-dragger rect {
+  fill: rgb(255, 116, 0) !important;
+  stroke: none !important;
+}
+
+marker.djs-dragger text,
+marker.djs-dragger tspan {
+  fill: none !important;
+  stroke: rgb(255, 116, 0) !important;
+}
+
+.djs-dragging {
+  opacity: 0.3;
+}
+
+.djs-dragging,
+.djs-dragging > * {
+  pointer-events: none !important;
+}
+
+.djs-dragging .djs-context-pad,
+.djs-dragging .djs-outline {
+  display: none !important;
+}
+
+/**
+ * no pointer events for visual
+ */
+.djs-visual,
+.djs-outline {
+  pointer-events: none;
+}
+
+.djs-element.attach-ok .djs-hit {
+  stroke-width: 60px !important;
+}
+
+/**
+ * all pointer events for hit shape
+ */
+.djs-element > .djs-hit-all {
+  pointer-events: all;
+}
+
+.djs-element > .djs-hit-stroke,
+.djs-element > .djs-hit-click-stroke {
+  pointer-events: stroke;
+}
+
+/**
+ * all pointer events for hit shape
+ */
+.djs-drag-active .djs-element > .djs-hit-click-stroke {
+  pointer-events: all;
+}
+
+/**
+ * shape / connection basic styles
+ */
+.djs-connection .djs-visual {
+  stroke-width: 2px;
+  fill: none;
+}
+
+.djs-cursor-grab {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  cursor: grab;
+}
+
+.djs-cursor-grabbing {
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: grabbing;
+}
+
+.djs-cursor-crosshair {
+  cursor: crosshair;
+}
+
+.djs-cursor-move {
+  cursor: move;
+}
+
+.djs-cursor-resize-ns {
+  cursor: ns-resize;
+}
+
+.djs-cursor-resize-ew {
+  cursor: ew-resize;
+}
+
+
+/**
+ * snapping
+ */
+.djs-snap-line {
+  stroke: rgb(255, 195, 66);
+  stroke: rgba(255, 195, 66, 0.50);
+  stroke-linecap: round;
+  stroke-width: 2px;
+  pointer-events: none;
+}
+
+/**
+ * snapping
+ */
+.djs-crosshair {
+  stroke: #555;
+  stroke-linecap: round;
+  stroke-width: 1px;
+  pointer-events: none;
+  shape-rendering: crispEdges;
+  stroke-dasharray: 5, 5;
+}
+
+/**
+ * palette
+ */
+
+.djs-palette {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+
+  box-sizing: border-box;
+  width: 48px;
+}
+
+.djs-palette .separator {
+  margin: 0 5px;
+  padding-top: 5px;
+
+  border: none;
+  border-bottom: solid 1px #DDD;
+
+  clear: both;
+}
+
+.djs-palette .entry:before {
+  vertical-align: text-bottom;
+}
+
+.djs-palette .djs-palette-toggle {
+  cursor: pointer;
+}
+
+.djs-palette .entry,
+.djs-palette .djs-palette-toggle {
+  color: #333;
+  font-size: 30px;
+
+  text-align: center;
+}
+
+.djs-palette .entry {
+  float: left;
+}
+
+.djs-palette .entry img {
+  max-width: 100%;
+}
+
+.djs-palette .djs-palette-entries:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.djs-palette .djs-palette-toggle:hover {
+  background: #666;
+}
+
+.djs-palette .entry:hover {
+  color: rgb(255, 116, 0);
+}
+
+.djs-palette .highlighted-entry {
+  color: rgb(255, 116, 0) !important;
+}
+
+.djs-palette .entry,
+.djs-palette .djs-palette-toggle {
+  width: 46px;
+  height: 46px;
+  line-height: 46px;
+  cursor: default;
+}
+
+/**
+ * Palette open / two-column layout is controlled via
+ * classes on the palette. Events to hook into palette
+ * changed life-cycle are available in addition.
+ */
+.djs-palette.two-column.open {
+  width: 94px;
+}
+
+.djs-palette:not(.open) .djs-palette-entries {
+  display: none;
+}
+
+.djs-palette:not(.open) {
+  overflow: hidden;
+}
+
+.djs-palette.open .djs-palette-toggle {
+  display: none;
+}
+
+/**
+ * context-pad
+ */
+.djs-overlay-context-pad {
+  width: 72px;
+}
+
+.djs-context-pad {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+}
+
+.djs-context-pad .entry {
+  width: 22px;
+  height: 22px;
+  text-align: center;
+  display: inline-block;
+  font-size: 22px;
+  margin: 0 2px 2px 0;
+
+  border-radius: 3px;
+
+  cursor: default;
+
+  background-color: #FEFEFE;
+  box-shadow: 0 0 2px 1px #FEFEFE;
+  pointer-events: all;
+}
+
+.djs-context-pad .entry:before {
+  vertical-align: top;
+}
+
+.djs-context-pad .entry:hover {
+  background: rgb(255, 252, 176);
+}
+
+.djs-context-pad.open {
+  display: block;
+}
+
+/**
+ * popup styles
+ */
+.djs-popup .entry {
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* larger font for prefixed icons */
+.djs-popup .entry:before {
+  vertical-align: middle;
+  font-size: 20px;
+}
+
+.djs-popup .entry > span {
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.djs-popup .entry:hover,
+.djs-popup .entry.active:hover {
+  background: rgb(255, 252, 176);
+}
+
+.djs-popup .entry.disabled {
+  background: inherit;
+}
+
+.djs-popup .djs-popup-header .entry {
+  display: inline-block;
+  padding: 2px 3px 2px 3px;
+
+  border: solid 1px transparent;
+  border-radius: 3px;
+}
+
+.djs-popup .djs-popup-header .entry.active {
+  color: rgb(255, 116, 0);
+  border: solid 1px rgb(255, 116, 0);
+  background-color: #F6F6F6;
+}
+
+.djs-popup-body .entry {
+  padding: 4px 10px 4px 5px;
+}
+
+.djs-popup-body .entry > span {
+  margin-left: 5px;
+}
+
+.djs-popup-body {
+  background-color: #FEFEFE;
+}
+
+.djs-popup-header {
+  border-bottom: 1px solid #DDD;
+}
+
+.djs-popup-header .entry {
+  margin: 1px;
+  margin-left: 3px;
+}
+
+.djs-popup-header .entry:last-child {
+  margin-right: 3px;
+}
+
+/**
+ * popup / palette styles
+ */
+.djs-popup, .djs-palette {
+  background: #FAFAFA;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+}
+
+/**
+ * touch
+ */
+
+.djs-shape,
+.djs-connection {
+  touch-action: none;
+}
+
+.djs-segment-dragger,
+.djs-bendpoint {
+  display: none;
+}
+
+/**
+ * bendpoints
+ */
+.djs-segment-dragger .djs-visual {
+  fill: rgba(255, 255, 121, 0.2);
+  stroke-width: 1px;
+  stroke-opacity: 1;
+  stroke: rgba(255, 255, 121, 0.3);
+}
+
+.djs-bendpoint .djs-visual {
+  fill: rgba(255, 255, 121, 0.8);
+  stroke-width: 1px;
+  stroke-opacity: 0.5;
+  stroke: black;
+}
+
+.djs-segment-dragger:hover,
+.djs-bendpoints.hover .djs-segment-dragger,
+.djs-bendpoints.selected .djs-segment-dragger,
+.djs-bendpoint:hover,
+.djs-bendpoints.hover .djs-bendpoint,
+.djs-bendpoints.selected .djs-bendpoint {
+  display: block;
+}
+
+.djs-drag-active .djs-bendpoints * {
+  display: none;
+}
+
+.djs-bendpoints:not(.hover) .floating {
+  display: none;
+}
+
+.djs-segment-dragger:hover .djs-visual,
+.djs-segment-dragger.djs-dragging .djs-visual,
+.djs-bendpoint:hover .djs-visual,
+.djs-bendpoint.floating .djs-visual {
+  fill: yellow;
+  stroke-opacity: 0.5;
+  stroke: black;
+}
+
+.djs-bendpoint.floating .djs-hit {
+  pointer-events: none;
+}
+
+.djs-segment-dragger .djs-hit,
+.djs-bendpoint .djs-hit {
+  pointer-events: all;
+  fill: none;
+}
+
+.djs-segment-dragger.horizontal .djs-hit {
+  cursor: ns-resize;
+}
+
+.djs-segment-dragger.vertical .djs-hit {
+  cursor: ew-resize;
+}
+
+.djs-segment-dragger.djs-dragging .djs-hit {
+  pointer-events: none;
+}
+
+.djs-updating,
+.djs-updating > * {
+  pointer-events: none !important;
+}
+
+.djs-updating .djs-context-pad,
+.djs-updating .djs-outline,
+.djs-updating .djs-bendpoint,
+.connect-ok .djs-bendpoint,
+.connect-not-ok .djs-bendpoint,
+.drop-ok .djs-bendpoint,
+.drop-not-ok .djs-bendpoint {
+  display: none !important;
+}
+
+.djs-segment-dragger.djs-dragging,
+.djs-bendpoint.djs-dragging {
+  display: block;
+  opacity: 1.0;
+}
+
+.djs-segment-dragger.djs-dragging .djs-visual,
+.djs-bendpoint.djs-dragging .djs-visual {
+  fill: yellow;
+  stroke-opacity: 0.5;
+}
+
+
+/**
+ * tooltips
+ */
+.djs-tooltip-error {
+  font-size: 11px;
+  line-height: 18px;
+  text-align: left;
+
+  padding: 5px;
+
+  opacity: 0.7;
+}
+
+.djs-tooltip-error > * {
+  width: 160px;
+
+  background: rgb(252, 236, 240);
+  color: rgb(158, 76, 76);
+  padding: 3px 7px;
+  border-radius: 5px;
+  border-left: solid 5px rgb(174, 73, 73);
+}
+
+.djs-tooltip-error:hover {
+  opacity: 1;
+}
+
+
+/**
+ * search pad
+ */
+.djs-search-container {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+
+  width: 25%;
+  min-width: 300px;
+  max-width: 400px;
+  z-index: 10;
+
+  font-size: 1.05em;
+  opacity: 0.9;
+  background: #FAFAFA;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+}
+
+.djs-search-container:not(.open) {
+  display: none;
+}
+
+.djs-search-input input {
+  font-size: 1.05em;
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+}
+
+.djs-search-input input:focus {
+  outline: none;
+  border-color: #52B415;
+}
+
+.djs-search-results {
+  position: relative;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.djs-search-results:hover {
+  /*background: #fffdd7;*/
+  cursor: pointer;
+}
+
+.djs-search-result {
+  width: 100%;
+  padding: 6px 10px;
+  background: white;
+  border-bottom: solid 1px #AAA;
+  border-radius: 1px;
+}
+
+.djs-search-highlight {
+  color: black;
+}
+
+.djs-search-result-primary {
+  margin: 0 0 10px;
+}
+
+.djs-search-result-secondary {
+  font-family: monospace;
+  margin: 0;
+}
+
+.djs-search-result:hover {
+  background: #fdffd6;
+}
+
+.djs-search-result-selected {
+  background: #fffcb0;
+}
+
+.djs-search-result-selected:hover {
+  background: #f7f388;
+}
+
+.djs-search-overlay {
+  background: yellow;
+  opacity: 0.3;
+}
+
+/**
+ * hidden styles
+ */
+.djs-element-hidden,
+.djs-element-hidden .djs-hit,
+.djs-element-hidden .djs-outline,
+.djs-label-hidden .djs-label {
+  display: none !important;
+}
+
+.dmn-drd-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.dmn-drd-container * {
+  box-sizing: border-box;
+}
+
+.djs-overlay .drill-down-overlay {
+  font-size: 16px;
+  background: #52b415;
+  color: white;
+  text-align: left;
+  border-radius: 1px;
+  padding: 0 2px;
+}
+
+.dmn-definitions {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #FAFAFA;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  padding: 4px;
+}
+
+.dmn-definitions .dmn-definitions-name {
+  font-size: 1.5em;
+  padding: 3px;
+}
+
+.dmn-definitions .dmn-definitions-name:focus {
+  outline: none;
+}
+
+.dmn-definitions .dmn-definitions-id {
+  font-family: monospace;
+  margin-top: 2px;
+  padding: 3px;
+}
+
+.dmn-definitions .dmn-definitions-id:focus {
+  outline: none;
+}
+
+.dmn-definitions > [contenteditable]:hover,
+.dmn-definitions > [contenteditable]:focus {
+  padding: 2px;
+  background-color: white;
+  border-radius: 2px;
+  border: 1px solid #aaaaaa;
+}
+
+.djs-container.with-palette .dmn-definitions {
+  left: 80px;
+}
+
+.djs-container.with-palette-two-column .dmn-definitions {
+  left: 130px;
+}
+.dmn-decision-table-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.dmn-decision-table-container .input-cell .input-label,
+.dmn-decision-table-container .input-cell .output-label,
+.dmn-decision-table-container .input-cell .output-name {
+  display: block;
+}
+
+.dmn-decision-table-container * {
+  box-sizing: border-box;
+}
+
+/* basic styles */
+
+.dmn-decision-table-container {
+  color: #444;
+
+  max-height: 100%;
+}
+
+/* end basic styles */
+
+
+/* basic table styles */
+
+.dmn-decision-table-container {
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+}
+
+.dmn-decision-table-container .tjs-container {
+  display: grid;
+  grid-template-columns: min-content auto;
+
+}
+
+.dmn-decision-table-container .tjs-table {
+  grid-column: 1;
+  grid-row: 3;
+
+  width: min-content;
+  table-layout: fixed;
+  border-collapse: collapse;
+
+  border: solid 1px #444;
+}
+
+.dmn-decision-table-container .tjs-table > tbody:empty {
+  display: none;
+}
+
+.dmn-decision-table-container table thead {
+  border-bottom: 3px double #444;
+}
+
+.dmn-decision-table-container td,
+.dmn-decision-table-container th {
+  border: solid 1px #444;
+  padding: 4px;
+}
+
+.dmn-decision-table-container .tjs-table tr .output-cell {
+  border-left: 3px double #444;
+}
+
+.dmn-decision-table-container .tjs-table tr .output-cell + .output-cell {
+  border-left: 1px solid #444;
+}
+
+.dmn-decision-table-container .tjs-table tr .annotation {
+  border-left: 3px double #444;
+}
+
+.dmn-decision-table-container th.index-column {
+  width: 56px;
+}
+
+.dmn-decision-table-container th {
+  width: 192px;
+
+  font-weight: normal;
+}
+
+.dmn-decision-table-container th.header {
+  text-align: center;
+}
+
+.dmn-decision-table-container td.rule-index {
+  text-align: right;
+  padding-right: 8px;
+}
+
+.dmn-decision-table-container thead .type-ref,
+.dmn-decision-table-container .script-editor {
+  font-family: monospace;
+}
+
+.dmn-decision-table-container .tjs-table tbody tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.dmn-decision-table-container .input-cell.add-rule,
+.dmn-decision-table-container .input-cell :not(.focussed).empty {
+  text-align: center;
+
+}
+
+.dmn-decision-table-container .cell {
+  white-space: pre-wrap;
+}
+
+/* end basic table styles */
+
+
+/* selection styles */
+
+.dmn-decision-table-container th,
+.dmn-decision-table-container h3,
+.dmn-decision-table-container h5 {
+  position: relative;
+}
+
+.dmn-decision-table-container .selected {
+  outline: solid 2px #4285f4;
+  outline-offset: -1px;
+}
+
+.dmn-decision-table-container th.selected:not(.focussed) {
+  background: #e9f1ff;
+}
+
+/* end selection styles */
+
+
+/* footer styles */
+
+.dmn-decision-table-container tfoot.add-rule td.add-rule-add {
+  text-align: right;
+}
+
+.dmn-decision-table-container tfoot.add-rule td {
+  border-color: #AAA;
+  color: #AAA;
+}
+
+.dmn-decision-table-container tfoot.add-rule:hover td {
+  border-color: #444;
+  color: #444;
+}
+
+.dmn-decision-table-container tfoot.add-rule .output-cell {
+  border-left-color: #AAA;
+}
+
+
+/* end footer styles */
+
+
+/* content editable styles */
+
+.dmn-decision-table-container [contenteditable],
+.dmn-decision-table-container [tabindex] {
+  outline: none;
+}
+
+/* end content editable styles */
+
+
+/* context menu styles */
+
+.dmn-decision-table-container {
+  overflow: auto;
+  position: relative;
+}
+
+/* decision table header */
+.dmn-decision-table-container .decision-table-header {
+  text-align: left;
+
+  padding: 10px;
+}
+
+
+.dmn-decision-table-container .decision-table-header * {
+  vertical-align: middle;
+}
+
+/* decision table properties */
+.dmn-decision-table-container .decision-table-properties {
+  grid-column: 1;
+  grid-row: 2;
+
+  display: flex;
+  border: 1px solid black;
+  border-bottom: none;
+  padding: 10px;
+
+  align-items: center;
+}
+
+.dmn-decision-table-container .decision-table-name {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+
+  min-width: 100px;
+  max-width: 300px;
+
+  font-size: 21px;
+  font-weight: normal;
+}
+
+.dmn-decision-table-container .decision-table-name.focussed .content-editable {
+  text-overflow: unset;
+}
+
+.dmn-decision-table-container .decision-table-name:not(.editable),
+.dmn-decision-table-container .decision-table-name .content-editable {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.dmn-decision-table-container .decision-table-header-separator {
+  display: inline-block;
+  height: 32px;
+
+  border-left: 2px solid #bfbfbf;
+
+  margin: 0 10px;
+}
+
+.dmn-decision-table-container .hit-policy {
+  display: inline-block;
+}
+
+.dmn-decision-table-container .hit-policy-explanation {
+  margin-left: 5px;
+  color: #545454;
+}
+
+/* end decision table properties */
+
+/* input and output headers */
+.dmn-decision-table-container thead .input-cell,
+.dmn-decision-table-container thead .output-cell {
+  text-align: left;
+}
+
+.dmn-decision-table-container thead .input-label,
+.dmn-decision-table-container thead .input-expression,
+.dmn-decision-table-container thead .output-label,
+.dmn-decision-table-container thead .output-name {
+  margin: 16px 6px;
+
+  font-size: 16px;
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dmn-decision-table-container thead .input-variable,
+.dmn-decision-table-container thead .output-variable {
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dmn-decision-table-container thead .input-cell .clause,
+.dmn-decision-table-container thead .output-cell .clause,
+.dmn-decision-table-container thead .input-cell .input-variable,
+.dmn-decision-table-container thead .output-cell .output-variable {
+  font-size: 12px;
+
+  color: #545454;
+}
+
+.dmn-decision-table-container thead .input-cell .clause,
+.dmn-decision-table-container thead .output-cell .clause {
+  text-align: left;
+}
+
+.dmn-decision-table-container thead .input-variable,
+.dmn-decision-table-container thead .output-variable {
+  text-align: right;
+}
+
+
+/** actionable icon */
+.dmn-decision-table-container .action-icon {
+  margin-left: 5px;
+
+  border-radius: 2px;
+  box-shadow: 0px 0px 0px 2px white;
+  color: #52b415;
+}
+
+.dmn-decision-table-container .action-icon:before {
+  margin-left: .1em;
+  margin-right: .1em;
+}
+
+.dmn-decision-table-container .actionable:hover .action-icon {
+  background-color: #52b415;
+  color: white;
+}
+
+.dmn-decision-table-container .create-inputs .action-icon,
+.dmn-decision-table-container .add-input .action-icon,
+.dmn-decision-table-container .add-output .action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 16px;
+  height: 16px;
+  margin: 0;
+
+  border-radius: 50%;
+
+  color: white;
+  background-color: #545454;
+}
+
+.dmn-decision-table-container .input-editor .add-input,
+.dmn-decision-table-container .output-editor .add-output {
+  position: absolute;
+
+  top: 50%;
+  right: -1px;
+  transform: translate(50%, -50%);
+
+  z-index: 1;
+
+  border-radius: 100%;
+
+  padding: 6px;
+}
+
+/** end actionable icon */
+
+/* view drd */
+.dmn-decision-table-container .view-drd {
+  grid-column: 1;
+  grid-row: 1;
+
+  margin-bottom: 10px;
+}
+
+.dmn-decision-table-container .view-drd .view-drd-button {
+  background: #fff;
+  padding: 8px;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #444;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+
+.dmn-decision-table-container .view-drd .view-drd-button:hover {
+  background: #f6f6f6;
+}
+
+/* end view drd */
+
+
+/* powered by */
+.dmn-decision-table-container .powered-by {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+
+  grid-column: 1;
+  grid-row: 2;
+
+  padding-right: 10px;
+}
+
+.dmn-decision-table-container .powered-by__logo {
+  z-index: 10;
+}
+
+.dmn-decision-table-container .powered-by-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.dmn-decision-table-container .powered-by-overlay .powered-by-overlay-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  max-width: 260px;
+
+  background: #fff;
+  color: #444;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  font-size: 14px;
+}
+
+.dmn-decision-table-container .powered-by-overlay .powered-by-overlay-content .logo {
+  margin: 15px 20px 15px 10px;
+
+  color: #404040;
+}
+
+/* end powered by */
+
+
+/* simple mode */
+
+.dmn-decision-table-container .simple-mode-button {
+  color: #444;
+  background-color: #f6f6f6;
+  position: absolute;
+  background: #fff;
+  padding: 4px;
+  border-radius: 2px;
+  border: solid 1px #CCC;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 2;
+  opacity: .8;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.dmn-decision-table-container .simple-mode-button:hover {
+  opacity: 1;
+}
+
+.dmn-decision-table-container .simple-mode-button.disabled,
+.dmn-decision-table-container .simple-mode-button.disabled:hover {
+  color: #CCC;
+}
+
+/* end simple mode  */
+
+/**
+ * badges
+ */
+.dms-badge {
+  border-radius: 2px;
+  padding: 3px 6px;
+  font-size: .8em;
+  height: 19px;
+}
+
+.dms-badge-icon + .dms-badge-label {
+  margin-left: 3px;
+}
+
+.dms-badge.dmn-expression-language {
+  background: rgba(84, 146, 250, 0.3);
+  color: white;
+}
+
+.dms-badge + .dms-badge {
+  margin-left: 3px;
+}
+
+.dmn-decision-table-container .dmn-expression-language .dms-badge-label {
+  display: none;
+}
+
+.dmn-decision-table-container .input-cell:hover .dmn-expression-language .dms-badge-label,
+.dmn-decision-table-container .output-cell:hover .dmn-expression-language .dms-badge-label {
+  display: inline-block;
+}
+
+.dmn-decision-table-container .input-editor .dmn-expression-language {
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.dmn-decision-table-container .cell:hover .dms-badge.dmn-expression-language {
+  background: #92b9fc;
+  z-index: 1;
+}
+
+.dmn-decision-table-container .cell .dms-badge.dmn-expression-language {
+  z-index: -1;
+}
+
+/* cell expression language */
+
+.dmn-decision-table-container .cell .dmn-expression-language {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  pointer-events: none;
+}
+
+/* end cell expression language */
+
+/* drag and drop */
+.dmn-decision-table-container .dragover:before {
+  content: '';
+  display: block;
+  position: absolute;
+  background-color: #666;
+  border-radius: 5px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.dmn-decision-table-container .dragover.top:before {
+  left: -6px;
+  right: -6px;
+  height: 5px;
+
+  top: -3px;
+}
+
+.dmn-decision-table-container .dragover.right:before {
+  top: -6px;
+  bottom: -6px;
+  width: 5px;
+
+  right: -3px;
+}
+
+.dmn-decision-table-container .dragover.bottom:before {
+  left: -6px;
+  right: -6px;
+  height: 5px;
+
+  bottom: -3px;
+}
+
+.dmn-decision-table-container .dragover.left:before {
+  top: -6px;
+  bottom: -6px;
+  width: 5px;
+
+  left: -3px;
+}
+
+.dmn-decision-table-container .dragged {
+  color: #999;
+}
+
+/* cell description */
+
+.dmn-decision-table-container .description-indicator {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid black;
+  transform: rotate(45deg);
+  transform-origin: top;
+}
+
+/* end cell description */
+
+/* simple string edit */
+.dmn-decision-table-container .simple-string-edit,
+.dmn-decision-table-container .simple-date-edit {
+  width: 250px;
+}
+
+.dmn-decision-table-container .input-expression-edit {
+  width: 300px;
+}
+
+.dmn-decision-table-container .allowed-values-edit .values {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dmn-decision-table-container .allowed-values-edit .placeholder {
+  color: #ccc;
+}
+
+/** create inputs **/
+.dmn-decision-table-container .create-inputs {
+  white-space: normal;
+  border-color: #AAA;
+  color: #AAA;
+  min-width: 50px;
+  width: 50px;
+}
+
+.dmn-decision-table-container .create-inputs .add-input {
+  margin-left: 0;
+  margin-top: 15px;
+  display: inline-block;
+}
+
+.dmn-decision-table-container .create-inputs:hover {
+  border-color: #444;
+  color: #444;
+}
+
+.dmn-decision-table-container th.create-inputs {
+  vertical-align: top;
+}
+/** end create inputs **/
+
+
+/* TODO(nikku): namespace and refactor context menu styles */
+.dmn-decision-table-container .context-menu {
+  position: absolute;
+  background: #fff;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #444;
+  z-index: 10;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.dmn-decision-table-container .context-menu .context-menu-container {
+  margin: 8px;
+}
+
+.dmn-decision-table-container .context-menu p {
+  margin: 10px 0;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-group .context-menu-group-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  padding: 8px 16px;
+
+  white-space: nowrap;
+}
+
+.dmn-decision-table-container .context-menu-group .context-menu-group-entry:hover {
+  background-color: #efefef;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-group .context-menu-group-entry.disabled {
+  pointer-events: none;
+  color: #ccc;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-group .context-menu-group-entry .context-menu-group-entry-icon {
+  display: inline-block;
+  text-align: center;
+  width: 14px;
+  margin-right: 6px;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-group .context-menu-group-entry .context-menu-group-entry-icon:before {
+  margin: 0;
+}
+
+.dmn-decision-table-container .context-menu-group:not(:last-child):after {
+  content: '';
+
+  display: block;
+
+  margin: 0 8px;
+  border-bottom: 1px solid #cdcdcd;
+  height: 1px;
+}
+
+/* input/output editor */
+
+.dmn-decision-table-container .context-menu .context-menu-container.input-edit,
+.dmn-decision-table-container .context-menu .context-menu-container.output-edit {
+  margin: 34px 10px 10px 10px;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-container.type-ref-edit,
+.dmn-decision-table-container .context-menu .context-menu-container.allowed-values-edit {
+  margin: 10px;
+}
+
+.dmn-decision-table-container .dms-output-label,
+.dmn-decision-table-container .dms-input-label {
+  padding-right: 30px;
+  padding-left: 0;
+
+  border: none;
+
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.dmn-decision-table-container .dms-form-control:first-child {
+  padding-top: 0;
+}
+
+.dmn-decision-table-container .dms-form-control {
+  padding: 9px 0;
+}
+
+.dmn-decision-table-container .dms-form-control .dms-label {
+  display: block;
+  margin: unset;
+  margin-bottom: 6px;
+
+  color: #909090;
+  font-weight: normal;
+}
+
+.dmn-decision-table-container .dms-form-control .dms-input {
+  padding-right: 24px;
+  border-radius: 3px;
+}
+
+.dmn-decision-table-container .dms-form-control .dms-list-component {
+  max-width: 179px;
+}
+
+/* expression language */
+.dmn-decision-table-container .context-menu .context-menu-group .context-menu-entry-set-expression-language {
+  flex-direction: column;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-group .context-menu-entry-set-expression-language:hover {
+  background-color: unset;
+}
+
+.dmn-decision-table-container .context-menu .context-menu-group .context-menu-entry-set-expression-language .expression-language {
+  margin-top: 8px;
+}
+
+.dmn-decision-table-container p.dms-hint {
+  font-size: 0.85em;
+  margin-top: 5px;
+  color: #888;
+}
+
+/* drag and drop */
+.dmn-icon-drag {
+  color: transparent;
+}
+
+.dmn-decision-table-container th .dmn-icon-drag {
+  position: absolute;
+  left: 4px;
+  top: 10px;
+  transform: translateY(-50%);
+}
+
+.dmn-decision-table-container th:hover .dmn-icon-drag,
+.dmn-decision-table-container td:hover .dmn-icon-drag {
+  color: #999;
+}
+
+.dmn-decision-table-container .input-cell:hover .clause,
+.dmn-decision-table-container .output-cell:hover .clause {
+  visibility: hidden;
+}
+
+.dmn-icon-drag.horizontal,
+.dmn-icon-drag.vertical {
+
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.dmn-icon-drag:hover {
+  color: #444;
+}
+
+/* description editor */
+
+.dmn-decision-table-container .context-menu .description-editor {
+  margin: 0;
+  padding: 5px 0;
+  width: 192px;
+  border-left: solid 3px #444;
+}
+
+.dmn-decision-table-container .description-editor .dms-input {
+  border: none;
+  min-height: 0;
+}
+
+/* end description editor */
+
+.dmn-decision-table-container .resize-column-handle {
+  width: 20px;
+  height: 100%;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  cursor: col-resize;
+}
+
+.dmn-literal-expression-container {
+  font-family: 'Arial', sans-serif;
+  position: relative;
+  color: #444;
+
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.dmn-literal-expression-container .viewer-container {
+  display: grid;
+  grid-template-columns: auto;
+
+  width: 100%;
+}
+
+.dmn-literal-expression-container * {
+  box-sizing: border-box;
+}
+
+/* decision properties */
+.dmn-literal-expression-container .decision-properties {
+  grid-column: 1;
+  grid-row: 2;
+
+  border: 1px solid #444;
+  border-bottom: none;
+  padding: 10px;
+  padding-right: 75px;
+
+  color: #444;
+  background-color: #fff;
+  position: relative;
+  min-width: 192px;
+}
+
+.dmn-literal-expression-container .decision-name:not(.editor) {
+  cursor: default;
+}
+
+.dmn-literal-expression-container .decision-name.editor {
+  cursor: text;
+}
+
+.dmn-literal-expression-container .decision-name div {
+  outline: none;
+}
+
+.dmn-literal-expression-container .decision-name.editor:not(.focussed):hover {
+  cursor: text;
+}
+
+.dmn-literal-expression-container .decision-name {
+  margin: 0;
+
+  font-size: 21px;
+  font-weight: normal;
+  white-space: pre;
+}
+
+.dmn-literal-expression-container .decision-name.focussed .content-editable {
+  text-overflow: unset;
+}
+
+.dmn-literal-expression-container .decision-name:not(.editable),
+.dmn-literal-expression-container .decision-name .content-editable {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* textarea */
+.dmn-literal-expression-container .textarea {
+  grid-row: 3;
+
+  box-sizing: border-box;
+  width: 100%;
+  font-family: monospace;
+  border: 1px solid #444;
+  border-bottom-width: 1px;
+  white-space: pre;
+  font-size: 14px;
+  color: #444;
+  height: 250px;
+
+  overflow: auto;
+}
+
+.dmn-literal-expression-container .textarea .content,
+.dmn-literal-expression-container .textarea .content-editable {
+  padding: 12px;
+}
+
+.dmn-literal-expression-container .textarea .content-editable {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.dmn-literal-expression-container .textarea div:focus {
+  outline: none;
+}
+
+.dmn-literal-expression-container .textarea.editor {
+  cursor: text;
+}
+
+.dmn-literal-expression-container .textarea:not(.editor) {
+  cursor: default;
+}
+
+/* literal expression properties */
+.dmn-literal-expression-container .literal-expression-properties {
+  grid-row: 4;
+
+  box-sizing: border-box;
+  width: 100%;
+  padding:  0;
+  border: 1px solid #444;
+  border-top: none;
+  font-size: 14px;
+  color: #444;
+}
+
+.dmn-literal-expression-container .literal-expression-properties table {
+  border-spacing: 8px;
+}
+
+.dmn-literal-expression-container .literal-expression-properties table tr td:first-child {
+  font-weight: bold;
+}
+
+.dmn-literal-expression-container .literal-expression-properties table tr td:last-child {
+  min-width: 100px;
+}
+
+.dmn-literal-expression-container .literal-expression-properties .variable-name-input {
+  width: 100%;
+}
+
+/* view drd */
+.dmn-literal-expression-container .view-drd {
+  grid-row: 1;
+
+  margin-right: 10px;
+  padding-bottom: 10px;
+}
+
+.dmn-literal-expression-container .view-drd .view-drd-button {
+  background: #fff;
+  padding: 8px;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #444;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+
+.dmn-literal-expression-container .view-drd .view-drd-button:hover {
+  background: #f6f6f6;
+}
+
+/* powered by */
+.dmn-literal-expression-container .powered-by {
+  grid-column: 1;
+  grid-row: 2;
+
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+
+  padding-right: 10px;
+}
+
+.dmn-literal-expression-container .powered-by__logo {
+  z-index: 10;
+}
+
+.dmn-literal-expression-container .powered-by-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.dmn-literal-expression-container .powered-by-overlay .powered-by-overlay-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  max-width: 260px;
+
+  background: #fff;
+  color: #444;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  font-size: 14px;
+}
+
+.dmn-literal-expression-container .powered-by-overlay .powered-by-overlay-content .logo {
+  margin: 15px 20px 15px 10px;
+
+  color: #404040;
+}
+
+.dms-list-component .items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.7em;
+}
+
+.dms-list-component .items .item .remove {
+  float: right;
+}
+
+.dms-fill-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.dms-fill-row > * {
+  flex: 0 0 auto;
+}
+
+.dms-fill-row > :last-child {
+  flex: 1 1 auto;
+}
+
+.dms-label {
+  font-weight: bold;
+  white-space: nowrap;
+  margin-right: 5px;
+}
+
+.dms-hrule {
+  border: 0;
+  border-top: dotted 1px #DDD;
+
+  margin: 10px auto;
+}
+
+.dms-heading {
+  margin: 12px 0 8px;
+  font-weight: bold;
+}
+
+p.dms-hint button {
+  color: #3960a2;
+  text-decoration: none;
+  display: inline;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  background: none;
+}
+
+p.dms-hint button:hover {
+  color: #4285f4;
+}
+
+/* validated input */
+p.dms-validation-warning {
+  color: #c9302c;
+}
+
+h3.dms-heading {
+  font-size: 16px;
+}
+
+h4.dms-heading {
+  font-size: 14px;
+}
+
+.dms-validated-input.dms-block .dms-input,
+.dms-block {
+  display: block;
+  width: 100%;
+}
+
+.dms-input,
+.dms-select {
+  outline: none;
+  padding: 3px 6px;
+  border: 1px solid #ccc;
+  background: none;
+  font-size: 14px;
+  color: #444;
+  min-height: 26px;
+}
+
+.dms-input {
+  min-height: 26px;
+  white-space: pre-wrap;
+}
+
+.dms-select {
+  height: 26px;
+}
+
+.dms-input:focus,
+.dms-select:focus {
+  border-color: #52B415;
+}
+
+.dms-select.invalid:focus,
+.dms-input.invalid:focus {
+  border-color: #c9302c;
+}
+
+.dms-input.invalid,
+.dms-select.invalid {
+  background: #f4cecd;
+  border-color: #c9302c;
+  color: #c9302c;
+}
+
+.dms-script-input {
+  height: 150px;
+
+  white-space: pre-wrap;
+
+  overflow: auto;
+}
+
+.dms-input-select {
+  display: inline-block;
+  position: relative;
+  min-width: 128px;
+}
+
+.dms-input-select .dms-input {
+  padding-right: 24px;
+}
+
+.dms-input-select .dms-input-select-icon {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dms-input-select .options {
+  background: #fff;
+}
+
+.dms-select-options {
+  position: fixed;
+  background-color: #fff;
+  border: solid 1px #CCC;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #444;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  cursor: pointer;
+}
+
+.dms-select-options .option {
+  padding: 4px 9px 4px 9px;
+}
+
+.dms-select-options .option.active {
+  background: #FAFAF0;
+}
+
+.dms-select-options .option:focus,
+.dms-select-options .option:hover {
+  color: #52B415;
+}
+
+@font-face {
+  font-family: 'dmn';
+  src: url(./dmn.eot);
+  src: url(./dmn.eot#iefix) format('embedded-opentype'),
+       url(./dmn.woff2) format('woff2'),
+       url(./dmn.woff) format('woff'),
+       url(./dmn.ttf) format('truetype'),
+       url(./dmn.svg#dmn) format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'dmn';
+    src: url('../font/dmn.svg?64354174#dmn') format('svg');
+  }
+}
+*/
+
+ [class^="dmn-icon-"]:before, [class*=" dmn-icon-"]:before {
+  font-family: "dmn";
+  font-style: normal;
+  font-weight: normal;
+  speak: never;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.dmn-icon-up:before { content: '\e800'; } /* '' */
+.dmn-icon-down:before { content: '\e801'; } /* '' */
+.dmn-icon-clear:before { content: '\e802'; } /* '' */
+.dmn-icon-plus:before { content: '\e803'; } /* '' */
+.dmn-icon-minus:before { content: '\e804'; } /* '' */
+.dmn-icon-info:before { content: '\e805'; } /* '' */
+.dmn-icon-left:before { content: '\e806'; } /* '' */
+.dmn-icon-decision:before { content: '\e807'; } /* '' */
+.dmn-icon-right:before { content: '\e808'; } /* '' */
+.dmn-icon-input:before { content: '\e809'; } /* '' */
+.dmn-icon-output:before { content: '\e80a'; } /* '' */
+.dmn-icon-copy:before { content: '\e80b'; } /* '' */
+.dmn-icon-keyboard:before { content: '\e80c'; } /* '' */
+.dmn-icon-undo:before { content: '\e80d'; } /* '' */
+.dmn-icon-redo:before { content: '\e80e'; } /* '' */
+.dmn-icon-menu:before { content: '\e80f'; } /* '' */
+.dmn-icon-setting:before { content: '\e810'; } /* '' */
+.dmn-icon-wrench:before { content: '\e811'; } /* '' */
+.dmn-icon-eraser:before { content: '\e812'; } /* '' */
+.dmn-icon-attention:before { content: '\e813'; } /* '' */
+.dmn-icon-resize-big:before { content: '\e814'; } /* '' */
+.dmn-icon-resize-small:before { content: '\e815'; } /* '' */
+.dmn-icon-file-code:before { content: '\e816'; } /* '' */
+.dmn-icon-business-knowledge:before { content: '\e817'; } /* '' */
+.dmn-icon-knowledge-source:before { content: '\e818'; } /* '' */
+.dmn-icon-input-data:before { content: '\e819'; } /* '' */
+.dmn-icon-text-annotation:before { content: '\e81a'; } /* '' */
+.dmn-icon-connection:before { content: '\e81b'; } /* '' */
+.dmn-icon-connection-multi:before { content: '\e81c'; } /* '' */
+.dmn-icon-drag:before { content: '\e81d'; } /* '' */
+.dmn-icon-lasso-tool:before { content: '\e81e'; } /* '' */
+.dmn-icon-screw-wrench:before { content: '\e81f'; } /* '' */
+.dmn-icon-trash:before { content: '\e820'; } /* '' */
+.dmn-icon-bpmn-io:before { content: '\e821'; } /* '' */
+.dmn-icon-decision-table:before { content: '\e822'; } /* '' */
+.dmn-icon-literal-expression:before { content: '\e823'; } /* '' */
+.dmn-icon-edit:before { content: '\e824'; } /* '' */
+.dmn-icon-cut:before { content: '\e825'; } /* '' */
+.dmn-icon-paste:before { content: '\f0ea'; } /* '' */
+.dmn-decision-table-container th,
+.dmn-decision-table-container td {
+  white-space: normal;
+}
+

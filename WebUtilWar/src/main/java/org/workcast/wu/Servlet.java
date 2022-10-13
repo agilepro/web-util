@@ -3,6 +3,7 @@
  */
 package org.workcast.wu;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import javax.servlet.ServletConfig;
@@ -22,16 +23,21 @@ import javax.servlet.http.HttpServletResponse;
 public class Servlet extends javax.servlet.http.HttpServlet
 {
 
-    protected void service(HttpServletRequest req, HttpServletResponse resp)
+    protected void service(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, java.io.IOException
     {
-        OldWebRequest wr = OldWebRequest.getOrCreate(req, resp, null);
         try {
-            doWebService(wr);
+            OldWebRequest wr = OldWebRequest.getOrCreate(request, response, null);
+            try {
+                doWebService(wr);
+            }
+            catch (Exception e)
+            {
+                handleException(e, wr);
+            }
         }
-        catch (Exception e)
-        {
-            handleException(e, wr);
+        catch (Exception e) {
+            throw new IOException("Wrapped exception to conform to signature", e);
         }
         //wr.logCompletedRequest();
     }
@@ -58,7 +64,7 @@ public class Servlet extends javax.servlet.http.HttpServlet
             //note: element 0 is always a zero length string
 
             String firstPart = parsedPath.get(1);
-            wr.req.setAttribute("p", firstPart);
+            wr.request.setAttribute("p", firstPart);
 
             //resource is anything after the book id, could a complex path
             //itself, if it involves attachments or subaddressing
@@ -102,7 +108,7 @@ public class Servlet extends javax.servlet.http.HttpServlet
         {
             //wr.logException("NG Leaf Servlet", e);
 
-            wr.resp.setContentType("text/html;charset=UTF-8");
+            wr.response.setContentType("text/html;charset=UTF-8");
             wr.write("<html><body><ul><li>Exception: ");
             wr.writeHtml(e.toString());
             wr.write("</li></ul>\n");

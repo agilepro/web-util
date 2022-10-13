@@ -21,17 +21,9 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
-    if (ht == null)
-    {
-        //this is a clear indication of no session, so just redirect to the
-        //file input page.
-        response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
-        return;
-    }
-    FileCache mainDoc = (FileCache) ht.get(f);
-    if (mainDoc==null)
-    {
+    FileCache mainDoc = FileCache.findFile(session, f);
+
+    if (mainDoc==null) {
         //this is a clear indication of no session, so just redirect to the
         //file input page.
         response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
@@ -44,21 +36,57 @@
     }
 
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>XML Grinder: <%wr.writeHtml(f);%></title>
-  <link href="mystyle.css" rel="stylesheet" type="text/css"/>
+
+  <title>Structured View: <%wr.writeHtml(f);%></title>
+  <script src="js/angular.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.fileName = "<%=f%>";
+        
+        $scope.goMode = function(page) {
+            window.location.assign(page+"?f="+encodeURIComponent($scope.fileName));
+        }
+
+    });
+  </script>
+  <style>
+  .datacell {
+      padding:5px;
+      cursor: pointer;
+  }
+  tr td {
+      padding:5px;
+  }
+  </style>
 </head>
-<body>
-<h1>XML Grinder: <%wr.writeHtml(f);%></h1>
-<p><form action="xmleditAction.jsp" method="GET">
-   <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-   <input type="submit" name="act" value="Change File">
-   <input type="submit" name="act" value="JSON View">
-   <input type="submit" name="act" value="Field Edit">
-   <input type="submit" name="act" value="Operation">
-   </form></p>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div class="mainFrame">
+<h1>Structured View: <%wr.writeHtml(f);%></h1>
+<table>
+<tr><td>
+   <button ng-click="goMode('selectfile.jsp')" class="btn btn-primary">Change File</button>
+</td><td>
+   <button ng-click="goMode('xmledit.jsp')" class="btn btn-primary">Text View</button>
+<% if (mainDoc.isValidJSON()) { %>
+</td><td>
+   <button ng-click="goMode('dataview.jsp')" class="btn btn-warning">Data View</button>
+</td><td>
+   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
+<% } %>
+<% if (mainDoc.isValidJSON() || mainDoc.isValidXML()) { %>
+</td><td>
+   <button ng-click="goMode('xmlop.jsp')" class="btn btn-primary">Operation</button>
+<% } %>
+</td></tr>
+<tr><td>
+</table>
+
 <p>Schema is
 <%
     FileCache fcs = mainDoc.getSchema();
@@ -81,15 +109,22 @@
 
 <hr>
 <% wr.invokeJSP("tileBottom.jsp"); %>
+</div>
 </body>
 </html>
 
 <!-- %@ include file="functions.jsp"% -->
 <%!
 
+    int nextValue = (int) System.currentTimeMillis() % 9999 + 10000;
+    public int getUnique() {
+        return nextValue++;
+    }
+
     public void generateTables(OldWebRequest wr, int width, String name, Object me)
         throws Exception
     {
+        int unique = getUnique();
         String color = "LightCyan";
         if (width%50==0)
         {
@@ -101,13 +136,13 @@
             wr.write("\n<table width=\""+(width-4)+"\">");
             wr.write("\n<col width=\"16\">");
             wr.write("\n<col width=\""+(cellwidth-4)+"\">");
-            wr.write("\n  <tr><td colspan=\"2\"><b>");
+            wr.write("\n  <tr><td colspan=\"2\" class=\"datacell\" ng-click=\"f"+unique+"=!f"+unique+"\"><b>");
             wr.writeHtml(name);
             wr.write("</b>");
             if (true) {
-                wr.write("\n  </td></tr><tr><td>");
-                wr.write("\n  </td><td bgcolor=\""+color+"\">");
-                for (String key : jo.keySet()) {
+                wr.write("\n  </td></tr><tr ng-hide=\"f"+unique+"\"><td>");
+                wr.write("\n  </td><td bgcolor=\""+color+"\" class=\"datacell\">");
+                for (String key : jo.sortedKeySet()) {
                     Object o = jo.get(key);
                     if (o instanceof JSONObject) {
                         generateTables(wr, cellwidth, key, ((JSONObject)o));

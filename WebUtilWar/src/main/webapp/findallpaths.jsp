@@ -7,6 +7,8 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.util.Enumeration"
+%><%@page import="java.util.List"
+%><%@page import="java.util.ArrayList"
 %><%@page import="java.util.Vector"
 %><%@page import="java.util.Collections"
 %><%@page import="org.w3c.dom.NamedNodeMap"
@@ -105,19 +107,15 @@
         {
             return;
         }
-        Vector attrs = me.getAllAttributeNames();
-        Vector cs = me.getAllChildren();
+        List<String> attrs = me.getAllAttributeNames();
+        List<Mel> cs = me.getAllChildren();
         if (attrs.size()==0 && cs.size()==0)
         {
         }
         else
         {
-            if (attrs.size()>0)
-            {
-                Enumeration e = attrs.elements();
-                while (e.hasMoreElements())
-                {
-                    String aName = (String) e.nextElement();
+            if (attrs.size()>0) {
+                for (String aName : attrs) {
                     v.add(newPre + "@" + aName);
                 }
             }
@@ -125,10 +123,7 @@
             {
                 int childIndex = 1;
                 String lastTag = "";
-                Enumeration e = cs.elements();
-                while (e.hasMoreElements())
-                {
-                    Mel child = (Mel) e.nextElement();
+                for (Mel child : cs) {
                     String childName = child.getName();
                     boolean childIsPlural = false;
                     if(sd!=null)
@@ -174,27 +169,19 @@
         v.add(newPre);
         if (sd.isContainer())
         {
-            Vector attrs = sd.getChildren("attr");
-            Vector children = sd.getChildren("contains");
+            List<Mel> attrs = sd.getChildren("attr");
+            List<Mel> children = sd.getChildren("contains");
             if (attrs.size()==0 && children.size()==0)
             {
                 return;
             }
-            if (attrs.size()>0)
-            {
-                Enumeration e = attrs.elements();
-                while (e.hasMoreElements())
-                {
-                    Mel ae = (Mel) e.nextElement();
+            if (attrs.size()>0) {
+                for (Mel ae : attrs) {
                     v.add(newPre + "@" + ae.getAttribute("name"));
                 }
             }
-            if (children.size()>0)
-            {
-                Enumeration e = children.elements();
-                while (e.hasMoreElements())
-                {
-                    Mel child = (Mel) e.nextElement();
+            if (children.size()>0) {
+                for (Mel child: children) {
                     String childName = child.getAttribute("name");
                     String pluralAttr = child.getAttribute("plural");
                     boolean childIsPlural = (pluralAttr!=null && pluralAttr.equals("true"));

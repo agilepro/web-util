@@ -9,9 +9,6 @@
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Vector"
-%><%@page import="com.purplehillsbooks.xml.Schema"
-%><%@page import="com.purplehillsbooks.xml.SchemaGen"
-%><%@page import="com.purplehillsbooks.xml.ValidationResults"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.OldWebRequest"
 %><%
@@ -19,19 +16,12 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
-    if (ht == null)
-    {
+    FileCache mainDoc = FileCache.findFile(session, f);
+
+    if (mainDoc==null) {
         //this is a clear indication of no session, so just redirect to the
         //file input page.
         response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
-        return;
-    }
-    FileCache mainDoc = (FileCache) ht.get(f);
-
-    if (mainDoc==null)
-    {
-        response.sendRedirect("selectfile.jsp");
         return;
     }
 

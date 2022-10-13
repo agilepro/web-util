@@ -21,24 +21,16 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
-    if (ht == null)
-    {
+    FileCache mainDoc = FileCache.findFile(session, f);
+
+    if (mainDoc==null) {
         //this is a clear indication of no session, so just redirect to the
         //file input page.
         response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
     }
-    FileCache mainDoc = (FileCache) ht.get(f);
-    if (mainDoc==null)
-    {
-        //this is a clear indication of no session, so just redirect to the
-        //file input page.
-        response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
-        return;
-    }
-    if (!mainDoc.isValidJSON())
-    {
+
+    if (!mainDoc.isValidJSON()) {
         response.sendRedirect("xmledit.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
     }
@@ -55,17 +47,49 @@
 <html>
 <head>
   <title>All Paths: <%wr.writeHtml(f);%></title>
-  <link href="mystyle.css" rel="stylesheet" type="text/css"/>
+  <script src="js/angular.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.fileName = "<%=f%>";
+        
+        $scope.goMode = function(page) {
+            window.location.assign(page+"?f="+encodeURIComponent($scope.fileName));
+        }
+
+    });
+  </script>
+  <style>
+  .datacell {
+      padding:5px;
+  }
+  tr td {
+      padding:5px;
+  }
+  </style>
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div class="mainFrame">
 <h1>All Paths: <%wr.writeHtml(f);%></h1>
-<p><form action="xmleditAction.jsp" method="GET">
-   <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-   <input type="submit" name="act" value="Change File">
-   <input type="submit" name="act" value="JSON View">
-   <input type="submit" name="act" value="Field Edit">
-   <input type="submit" name="act" value="Operation">
-   </form></p>
+<table>
+<tr><td>
+   <button ng-click="goMode('selectfile.jsp')" class="btn btn-primary">Change File</button>
+</td><td>
+   <button ng-click="goMode('xmledit.jsp')" class="btn btn-primary">Text View</button>
+<% if (mainDoc.isValidJSON()) { %>
+</td><td>
+   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
+</td><td>
+   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
+</td><td>
+   <button ng-click="goMode('xmlop.jsp')" class="btn btn-primary">Operation</button>
+<% } %>
+</td></tr>
+<tr><td>
+</table>
 <p>Schema is
 <%
     FileCache fcs = mainDoc.getSchema();
@@ -96,6 +120,7 @@
 
 <hr>
 <% wr.invokeJSP("tileBottom.jsp"); %>
+</div>
 </body>
 </html>
 

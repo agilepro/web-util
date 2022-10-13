@@ -15,18 +15,13 @@
 %><%@page import="com.purplehillsbooks.json.JSONArray"
 %><%
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
-    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
-    if (ht == null) {
-        ht = new Hashtable<String,FileCache>();
-        session.setAttribute("fileCache", ht);
-    }
 
     String act = wr.reqParam("act");
     String f = wr.reqParam("f");
-    FileCache mainDoc = (FileCache) ht.get(f);
+    FileCache mainDoc = FileCache.findFile(session, f);
     if (mainDoc==null) {
         mainDoc = new FileCache(f);
-        ht.put(f, mainDoc);
+        FileCache.storeFile(session, mainDoc);
     }
 
     if ("Save Contents".equals(act)) {
@@ -38,7 +33,7 @@
 
         String schema = wr.defParam("schema", null);
         if (schema!=null) {
-            FileCache schemaFile = (FileCache) ht.get(schema);
+            FileCache schemaFile = FileCache.findFile(session, schema);
             if (schemaFile!=null) {
                 mainDoc.setSchema(schemaFile);
             }

@@ -49,7 +49,7 @@
     });
 </script>
 </head>
-<body ng-app="genieApp" ng-controller="genieCtrl">
+<body ng-app="myApp" ng-controller="myCtrl">
 <div class="mainFrame">
 
 <h1>Decimal Formatter</h1>

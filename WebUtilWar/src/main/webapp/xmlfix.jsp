@@ -5,6 +5,7 @@
 %><%@page import="java.io.Reader"
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
+%><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Hashtable"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
@@ -15,23 +16,15 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
-    if (ht == null) {
-        ht = new Hashtable<String,FileCache>();
-        session.setAttribute("fileCache", ht);
+    FileCache mainDoc = FileCache.findFile(session, f);
+
+    if (mainDoc==null) {
+        //this is a clear indication of no session, so just redirect to the
+        //file input page.
+        response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
+        return;
     }
-    FileCache mainDoc = (FileCache) ht.get(f);
-    if (mainDoc==null)
-    {
-        throw new Exception("Can't file a loaded file named '"+f
-            +"'.  Have you loaded a file with this anme, or has your session timed out?");
-    }
-    FileCache fcs = mainDoc.getSchema();
-    String schemaName = "";
-    if (fcs!=null)
-    {
-        schemaName = fcs.getName();
-    }
+
 
     Exception error = mainDoc.getError();
 
@@ -40,9 +33,20 @@
 <html>
 <head>
   <title>Edit File: <%wr.writeHtml(f);%></title>
-  <link href="mystyle.css" rel="stylesheet" type="text/css"/>
+  <script src="js/angular.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
+
+    myApp.controller('myCtrl', function ($scope) {
+        $scope.srctext = "<% mainDoc.writeContents(out); %>";
+
+    });
+  </script>
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div class="mainFrame">
 <h1>Edit File: <%wr.writeHtml(f);%></h1>
 <%
     if (error!=null)
@@ -57,7 +61,6 @@
    <input type="submit" name="act" value="Save Contents"><br/>
    <textarea name="value" cols="80" rows="20"><% mainDoc.writeContents(out); %></textarea><br/>
    Name for this file: <input type="text" name="f" value="<% wr.writeHtml(f); %>"><br/>
-   Schema Name: <input type="text" name="schema" value="<% wr.writeHtml(schemaName); %>"><br/>
    <input type="submit" name="act" value="Cancel">
    </form>
 <hr>
@@ -72,6 +75,7 @@
     }
 %>
 <% wr.invokeJSP("tileBottom.jsp"); %>
+</div>
 </body>
 </html>
 

@@ -24,12 +24,12 @@ import com.purplehillsbooks.xml.Mel;
 @SuppressWarnings("serial")
 public class JavaDocServlet extends javax.servlet.http.HttpServlet {
 
-    public void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
         OldWebRequest wr = null;
         try
         {
-            wr = OldWebRequest.getOrCreate(req, resp, null);
+            wr = OldWebRequest.getOrCreate(request, response, null);
             handleRequest(wr);
         }
         catch (Exception e)
@@ -42,11 +42,11 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
                     wr.write("\n<h3>Exception</h3><p>");
                     wr.writeHtml(e.toString());
                     wr.write("</p>\n<p>getRequestURI: ");
-                    wr.writeHtml(wr.req.getRequestURI());
+                    wr.writeHtml(wr.request.getRequestURI());
                     wr.write("</p>\n<p>getContextPath: ");
-                    wr.writeHtml(wr.req.getContextPath());
+                    wr.writeHtml(wr.request.getContextPath());
                     wr.write("</p>\n<p>getServletPath: ");
-                    wr.writeHtml(wr.req.getServletPath());
+                    wr.writeHtml(wr.request.getServletPath());
                     wr.write("</p>\n<pre>\n");
                     e.printStackTrace(new PrintWriter(wr.w));
                     wr.write("\n</pre>\n</body></html>");
@@ -65,16 +65,16 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
     {
         //get request URI includes a starting slash, everything after machine:port
         //format:  /wu/jd/version/com/example/foo/MyClass.html
-        String reqURI = wr.req.getRequestURI();
+        String reqURI = wr.request.getRequestURI();
 
         //get the name of the application, with slash before it
         //format:  /wu
-        String path3 = wr.req.getContextPath();
+        String path3 = wr.request.getContextPath();
         int lenOfContext = path3.length();
 
         //get the name within the application, that the servlet is at
         //format: /jd
-        String path2 = wr.req.getServletPath();
+        String path2 = wr.request.getServletPath();
         int lenOfServlet = path2.length();
 
 
@@ -88,7 +88,7 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
         {
             //this is the case that they are missing a slash on the end
             //and relative references will be messed up, so redirect to a better place
-            wr.resp.sendRedirect(reqURI+"/");
+            wr.response.sendRedirect(reqURI+"/");
             return;
         }
         if (reqURI.length()==docSetNameStart)
@@ -120,20 +120,20 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
         {
             //this is the case that they are missing a slash on the end
             //and relative references will be messed up, so redirect to a better place
-            wr.resp.sendRedirect(reqURI+"/index.html");
+            wr.response.sendRedirect(reqURI+"/index.html");
             return;
         }
         if (slashPos==reqURI.length()-1)
         {
             //path ends with a slash so redirect to default page.
-            wr.resp.sendRedirect(reqURI+"index.html");
+            wr.response.sendRedirect(reqURI+"index.html");
             return;
         }
 
         String docPath = reqURI.substring(slashPos+1);
 
 
-        String realPath = wr.req.getSession().getServletContext().
+        String realPath = wr.request.getSession().getServletContext().
                 getRealPath("/jd/"+docSetName+"/"+docPath);
 
         if (docPath.endsWith("$note"))
@@ -187,8 +187,8 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
         for (JavaDocSet jds : JavaDocSet.listSets())
         {
             wr.write("\n<li><a href=\"");
-            wr.write(wr.req.getContextPath());
-            wr.write(wr.req.getServletPath());
+            wr.write(wr.request.getContextPath());
+            wr.write(wr.request.getServletPath());
             wr.write("/");
             wr.writeURLData(jds.name);
             wr.write("\">");
@@ -391,21 +391,21 @@ public class JavaDocServlet extends javax.servlet.http.HttpServlet {
 
         String fileName = getFileNamePart(jdocPath);
         String fileWithAnchor = fileName + "#" + URLEncoder.encode(f, "UTF-8");
-        wr.resp.sendRedirect(fileWithAnchor);
+        wr.response.sendRedirect(fileWithAnchor);
         wr.flush();
     }
 
 
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
     {
-        doGet(req, resp);
+        doGet(request, response);
     }
 
-    public void doPut(HttpServletRequest req, HttpServletResponse resp)
+    public void doPut(HttpServletRequest request, HttpServletResponse response)
     {
     }
 
-    public void doDelete(HttpServletRequest req, HttpServletResponse resp)
+    public void doDelete(HttpServletRequest request, HttpServletResponse response)
     {
     }
 

@@ -8,14 +8,19 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Hashtable;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
+import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONSchema;
 import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.streams.JavaScriptWriter;
 import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.xml.Mel;
 
 /**
 * Manages a collection of "files" for session.  Each
@@ -30,10 +35,13 @@ public class FileCache
 {
 
     private String       name;
+    private String       fileType;
     public  MemFile      contents;
-    private JSONObject   parsedFile;
+    private JSONObject   parsedJSON;
+    private Mel          parsedXML;
     private FileCache    schemaFile;
     private Exception    parseError;
+    private Exception    parseErrorXML;
 
     //for XMLSchema support, we need to remember what the namespace of the root
     //element was before stripping the XMLSchema attributes out
@@ -46,12 +54,86 @@ public class FileCache
     public static int TRANSFORM = 2;
 
 
+    public static FileCache findFile(HttpSession session, String name) {
+        @SuppressWarnings("unchecked")
+        List<FileCache> fileList = (List<FileCache>) session.getAttribute("fileCache");
+        if (fileList == null) {
+            fileList = new ArrayList<FileCache>();
+            session.setAttribute("fileCache", fileList);
+        }
+        for (FileCache fc : fileList) {
+            if (name.equalsIgnoreCase(fc.name)) {
+                return fc;
+            }
+        }
+        return null;
+    }
+    public static void storeFile(HttpSession session, FileCache fc) {
+        @SuppressWarnings("unchecked")
+        List<FileCache> fileList = (List<FileCache>) session.getAttribute("fileCache");
+        List<FileCache> newFileList = new ArrayList<FileCache>();
+        newFileList.add(fc);
+        for (FileCache ofc : fileList) {
+            if (!fc.name.equalsIgnoreCase(ofc.name)) {
+                newFileList.add(ofc);
+            }
+        }
+        session.setAttribute("fileCache", newFileList);
+    }
+    public static List<FileCache> listFiles(HttpSession session) {
+        @SuppressWarnings("unchecked")
+        List<FileCache> fileList = (List<FileCache>) session.getAttribute("fileCache");
+        if (fileList == null) {
+            fileList = new ArrayList<FileCache>();
+            session.setAttribute("fileCache", fileList);
+        }
+        return fileList;
+    }
+    
+    
+    
+    
+    
     public FileCache(String newName) throws Exception {
         name = newName;
         contents = new MemFile();
         parseError = null;
+        String lcName = newName.toLowerCase();
+        if (lcName.endsWith(".dmn")) {
+            fileType = "DMN";
+        }
+        else if (lcName.endsWith(".xml")) {
+            fileType = "XML";
+        }
+        else if (lcName.endsWith(".json")) {
+            fileType = "JSON";
+        }
+        else {
+            fileType = "TXT";
+        }
+        normalizeFileName();
     }
 
+    public void normalizeFileName() {
+        String newName = name;
+        int dotPos = newName.lastIndexOf(".");
+        if (dotPos>0) {
+            newName = newName.substring(0,dotPos);
+        }
+        if ("DMN".equals(fileType)) {
+            newName = newName + ".dmn";
+        }
+        else if ("XML".equals(fileType)) {
+            newName = newName + ".xml";
+        }
+        else if ("JSON".equals(fileType)) {
+            newName = newName + ".json";
+        }
+        else {
+            newName = newName + ".txt";
+        }
+        name = newName;
+    }
 
     public FileCache(String newName, MemFile mf) throws Exception {
         this(newName);
@@ -66,7 +148,7 @@ public class FileCache
 
     public FileCache(String newName, JSONObject newTree) throws Exception {
         this(newName);
-        parsedFile = newTree;
+        parsedJSON = newTree;
     }
 
     /**
@@ -74,7 +156,7 @@ public class FileCache
     * second parameter is an input stream to read from.  Read it,
     * return a FileCached in memory.
     */
-    private static FileCache createFromInputStream(String name, InputStream is) throws Exception {
+    public static FileCache createFromInputStream(String name, InputStream is) throws Exception {
         MemFile mf = new MemFile();
         mf.fillWithInputStream(is);
         return new FileCache(name, mf);
@@ -99,28 +181,73 @@ public class FileCache
     public Reader getReader() throws Exception {
         return contents.getReader();
     }
+    public InputStream getInputStream() throws Exception {
+        return contents.getInputStream();
+    }
 
 
-
-    public void setContents(String newCont) throws Exception {
-        parsedFile = null;
+    private void clearContents() {
+        parsedJSON = null;
+        parsedXML = null;
         parseError = null;
+        parseErrorXML = null;
+        fileType = "TXT";
         contents.clear();
+    }
+
+    public String getContents() throws Exception {
+        return contents.toString();
+    }
+    public void setContents(String newCont) throws Exception {
+        clearContents();
         StringReader sr = new StringReader(newCont);
         contents.fillWithReader(sr);
 
         parseContents();
     }
+    public void fillWithInputStream(InputStream input) throws Exception {
+        clearContents();
+        contents.fillWithInputStream(input);
+        parseContents();
+    }
+    public void setContentsJSON(JSONObject newCont) throws Exception {
+        clearContents();
+        newCont.write(contents.getWriter(), 2, 0);
+        parseContents();
+    }
+    public void setContentsXML(Mel newCont) throws Exception {
+        clearContents();
+        newCont.writeToOutputStream(contents.getOutputStream());
+        parseContents();
+    }
 
     public void parseContents() {
-        parsedFile = null;
+        parsedJSON = null;
+        parsedXML = null;
         parseError = null;
+        fileType = "TXT";
         try {
-            parsedFile = new JSONObject(new JSONTokener(contents.getInputStream()));
+            parsedJSON = new JSONObject(new JSONTokener(contents.getInputStream()));
+            fileType = "JSON";
+            normalizeFileName();
         }
         catch (Exception e) {
             parseError = e;
         }
+        if (parsedJSON==null) {
+            try {
+                parsedXML = Mel.readInputStream(contents.getInputStream(), Mel.class);
+                fileType = "XML";
+                String rootNode = parsedXML.getName();
+                if ("definitions".equals(rootNode)) {
+                    fileType = "DMN";
+                }
+            }
+            catch (Exception e) {
+                parseErrorXML = e;
+            }
+        }
+        normalizeFileName();
     }
 
 
@@ -139,14 +266,20 @@ public class FileCache
     public String getName() {
         return name;
     }
-
-    public void setName(String newName) {
+    public void setName(HttpSession session, String newName) {
         name = newName;
+    }
+    
+    public String getType() {
+        return fileType;
+    }
+    public void setType(HttpSession session, String newName) {
+        fileType = newName;
     }
 
     public void writeContents(Writer w) throws Exception {
-        if (parsedFile!=null) {
-            parsedFile.write(w, 2, 0);
+        if (parsedJSON!=null) {
+            parsedJSON.write(w, 2, 0);
         }
         else if (contents!=null) {
             contents.outToWriter(w);
@@ -162,10 +295,21 @@ public class FileCache
         writeContents(hr);
         hr.flush();
     }
+    public void writeContentsJS(Writer wr) throws Exception {
+        JavaScriptWriter hr = new JavaScriptWriter(wr);
+        writeContents(hr);
+        hr.flush();
+    }
 
 
     public JSONObject getJSON() {
-        return parsedFile;
+        if (parsedJSON == null) {
+            parseContents();
+        }
+        return parsedJSON;
+    }
+    public Mel getXML() {
+        return parsedXML;
     }
 
     public void setSchema(FileCache otherFile) throws Exception {
@@ -178,7 +322,10 @@ public class FileCache
 
 
     public boolean isValidJSON() {
-        return (parsedFile!=null);
+        return (parsedJSON!=null);
+    }
+    public boolean isValidXML() {
+        return (parsedXML!=null);
     }
 
 
@@ -192,10 +339,45 @@ public class FileCache
 
     public List<String> validateSchema() throws Exception {
         JSONSchema converter = new JSONSchema();
-        boolean valid = converter.checkSchema(parsedFile, this.schemaFile.parsedFile);
+        boolean valid = converter.checkSchema(parsedJSON, this.schemaFile.parsedJSON);
         return converter.getErrorList();
     }
 
+    public static void recusiveStripNameSpace(JSONObject jo) throws Exception {
+        ArrayList<String> keys = new ArrayList<String>();
+        for (String key : jo.keySet()) {
+            keys.add(key);
+        }
+        for (String key : keys) {
+            int colonPos = key.indexOf(":");
+            if (colonPos>0) {
+                Object value = jo.get(key);
+                jo.remove(key);
+                String bareKey = key.substring(colonPos+1);
+                jo.put(bareKey, value);
+            }
+        }
+        for (String key : jo.keySet()) {
+            Object value = jo.get(key);
+            if (value instanceof JSONObject) {
+                recusiveStripNameSpace((JSONObject)value);
+            }
+            else if (value instanceof JSONArray) {
+                listStripNameSpace((JSONArray)value);
+            }
+        }
+    }
+    public static void listStripNameSpace(JSONArray ja) throws Exception {
+        for (int i=0; i<ja.length(); i++) {
+            Object value = ja.get(i);
+            if (value instanceof JSONObject) {
+                recusiveStripNameSpace((JSONObject)value);
+            }
+            else if (value instanceof JSONArray) {
+                listStripNameSpace((JSONArray)value);
+            }
+        }
+    }
 
 
 }

@@ -1,7 +1,6 @@
 package org.workcast.wu;
 
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -11,10 +10,10 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.streams.JavaScriptWriter;
 import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.web.WebRequest;
 
 /**
 * WebRequest is the "Authorized Web Request and Response" class for the
@@ -37,9 +36,9 @@ import com.purplehillsbooks.streams.MemFile;
 *
 * The standard patterns for all servlets should be:
 *
-* public void doGet(HttpServletRequest req, HttpServletResponse resp)
+* public void doGet(HttpServletRequest request, HttpServletResponse response)
 * {
-*      WebRequest wr = WebRequest.getOrCreate(req, resp, null);
+*      WebRequest wr = WebRequest.getOrCreate(request, response, null);
 *      ....
 *      ar.flush();
 * }
@@ -53,13 +52,8 @@ import com.purplehillsbooks.streams.MemFile;
 * Copyright: Keith Swenson, all rights reserved
 * License: This code is made available under the GNU Lesser GPL license.
 */
-@SuppressWarnings("serial")
-public class OldWebRequest extends javax.servlet.http.HttpServlet
-{
 
-    public HttpServletRequest            req;
-    public HttpServletResponseWithoutBug resp;
-    public HttpSession                   session;
+public class OldWebRequest extends com.purplehillsbooks.web.WebRequest {
 
     //openid is the user name
     public String   openid;
@@ -67,7 +61,7 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
 
 
     //address of this page that this servlet was mapped to, will be
-    //something like "/p" or "/b".   Same as "req.getServletPath()"
+    //something like "/p" or "/b".   Same as "request.getServletPath()"
     public String servletPath = "";
 
     //the relative path parsed and properly URLDecoded into an
@@ -77,7 +71,6 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     //The relative return path back to the base of the application
     public String retPath = "";
 
-    public Writer       w;
     public MemFile      memBuffer;
 
     //this request may take a few millisecond.  We record the time that
@@ -98,18 +91,19 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     * with the writer.  From other places you can pass null.
     */
     public static OldWebRequest getOrCreate(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
-    {
-        OldWebRequest wr = (OldWebRequest) areq.getAttribute("WebRequest");
-        if (wr == null)
-        {
-            wr = new OldWebRequest(areq,aresp,aw);
-            areq.setAttribute("AuthRequest", wr);
+            throws Exception {
+        WebRequest wr = WebRequest.findOrCreate(areq, aresp, aw);
+        if (wr == null || !(wr instanceof OldWebRequest)) {
+            OldWebRequest owr = new OldWebRequest(areq,aresp,aw);
+            areq.setAttribute("AuthRequest", owr);
+            return owr;
         }
-        else if (aw!=null)
-        {
-            wr.setWriter(aw);
+        else  {
+            OldWebRequest owr = (OldWebRequest) wr;
+            owr.setWriter(aw);
+            return owr;
         }
-        return wr;
+        //can't get here
     }
 
 
@@ -121,26 +115,19 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     * been called on the request, and you must pass the writer in here
     * so that we can avoid calling this method twice
     */
-    private OldWebRequest(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
-    {
+    private OldWebRequest(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw) throws Exception {
+        super(areq,aresp,aw);
         try
         {
-            req = areq;
-            req.setCharacterEncoding("UTF-8");
+            request.setCharacterEncoding("UTF-8");
 
-            //wrapping the response so that the getOutputStream can be pre-fetched
-            //and cached, and still call JSP Servlet which also gets the output stream.
-            //normal servlet response allows this to be called only once.
-            //Use this wrapped version for any further ServletResponse needs.
-            resp = new HttpServletResponseWithoutBug(aresp);
-            resp.setContentType("text/html;charset=UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
 
             nowTime = System.currentTimeMillis();
-            session = req.getSession();
 
             resolveUser();
 
-            servletPath = req.getServletPath();
+            servletPath = request.getServletPath();
             if (servletPath==null)
             {
                 throw new Exception("Hmmmmmmm, no servlet path???");
@@ -148,27 +135,6 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
 
             retPath = getRelPathFromCtx();
 
-            w = aw;
-
-            // the IF block below will avoid NPE - But
-            // the code inside the if block should not get executed when using the
-            // requestDispatcher's include/ forward method calls.
-            if (w == null)
-            {
-                w = resp.getWriter();
-            }
-            else
-            {
-                if (w instanceof PrintWriter)
-                {
-                    resp.writer = (PrintWriter)w;
-                }
-                else
-                {
-                    //don't have one, create one.  Probably not being used anyway.
-                    resp.writer = new PrintWriter(w, true);
-                }
-            }
         }
         catch (Exception e)
         {
@@ -182,15 +148,13 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     * rights of the original request, but substitute a different writer
     * so that you can, for example, create a file, or generate test output.
     */
-    private OldWebRequest(OldWebRequest oldAr, Writer newWriter)
-    {
-        this(oldAr.req, oldAr.resp, newWriter);
+    private OldWebRequest(OldWebRequest oldAr, Writer newWriter) throws Exception {
+        this(oldAr.request, oldAr.response, newWriter);
     }
 
 
 
-    public void setWriter(Writer aw)
-    {
+    public void setWriter(Writer aw) {
           w = aw;
     }
 
@@ -250,8 +214,8 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
         {
             return parsedPath;
         }
-        String ctxtroot = req.getContextPath();
-        String requrl = req.getRequestURL().toString();
+        String ctxtroot = request.getContextPath();
+        String requrl = request.getRequestURL().toString();
         int indx = requrl.indexOf(ctxtroot);
         int bindx = indx + ctxtroot.length() + 1;
 
@@ -281,7 +245,7 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
 
     private void resolveUser() throws Exception
     {
-        String userid = req.getHeader("Authorization");
+        String userid = request.getHeader("Authorization");
         if(userid != null)
         {
             String lid = null;
@@ -344,7 +308,7 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     public String getFormerId()
     {
         String possibleOpenID = "";
-        Cookie[] cookies = req.getCookies();
+        Cookie[] cookies = request.getCookies();
         if (cookies!=null)
         {
             for (int i=0; i<cookies.length; i++)
@@ -368,9 +332,9 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     */
     public String getRequestURL()
     {
-        if (req!=null)
+        if (request!=null)
         {
-            return req.getRequestURL().toString();
+            return request.getRequestURL().toString();
         }
         return "unknown request url";
     }
@@ -378,10 +342,10 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     public String getServerPath()
     {
         String serverURL = "";
-        if (req != null)
+        if (request != null)
         {
-            String ctxtroot = req.getContextPath();
-            String requrl = req.getRequestURL().toString();
+            String ctxtroot = request.getContextPath();
+            String requrl = request.getRequestURL().toString();
             int indx = requrl.indexOf(ctxtroot);
             serverURL = requrl.substring(0, indx) + ctxtroot + "/";
         }
@@ -408,18 +372,20 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
 
 
 
-    public void writeHtml(String t)
-        throws Exception
-    {
+    public void writeHtml(String t) throws Exception {
         HTMLWriter.writeHtml(w,t);
     }
 
-    public void writeHtmlWithLines(String t)
-        throws Exception
-    {
+    public void writeHtmlWithLines(String t) throws Exception {
         HTMLWriter.writeHtmlWithLines(w,t);
     }
 
+    public void writeJS(String t) throws Exception {
+        JavaScriptWriter.encode(w,t);
+    }
+
+    
+    
     public void writeURLData(String data)
         throws Exception
     {
@@ -502,7 +468,7 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     public String defParam(String paramName, String defaultValue)
         throws Exception
     {
-        String val = req.getParameter(paramName);
+        String val = request.getParameter(paramName);
         if (val!=null)
         {
             // this next line should not be needed, but I have seen this hack recommended
@@ -515,7 +481,7 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
         }
 
         //try and see if it a request attribute
-        val = (String)req.getAttribute(paramName);
+        val = (String)request.getAttribute(paramName);
         if (val != null)
         {
             return val;
@@ -559,10 +525,11 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
     public void invokeJSP(String JSPName)
         throws Exception
     {
-        resp.setContentType("text/html;charset=UTF-8");
+        w.flush();
+        response.setContentType("text/html;charset=UTF-8");
         String relPath = getRelPathFromCtx();
-        RequestDispatcher rd = req.getRequestDispatcher(relPath + JSPName);
-        rd.include(req, resp);
+        RequestDispatcher rd = request.getRequestDispatcher(relPath + JSPName);
+        rd.include(request, response);
         flush();
     }
 
@@ -571,13 +538,13 @@ public class OldWebRequest extends javax.servlet.http.HttpServlet
 
     private String getRelPathFromCtx() throws Exception
     {
-        if (req == null)
+        if (request == null)
         {
-            throw new Exception("getRelPathFromCtx requires a req object to be set, but it is null");
+            throw new Exception("getRelPathFromCtx requires a request object to be set, but it is null");
         }
 
-        String pageUrl = req.getRequestURL().toString();
-        String context = req.getContextPath() + "/";
+        String pageUrl = request.getRequestURL().toString();
+        String context = request.getContextPath() + "/";
         int contextPos = pageUrl.indexOf(context);
         if (contextPos == -1)
         {

@@ -1,7 +1,7 @@
 
 
 body {
-    background: #FFEEFF;
+    background: #FFFCFF;
     font: normal 18px/1.5 "Montserrat", helvetica, arial, sans-serif;
   font weight:    normal;
   font-size:      18px;
@@ -18,12 +18,12 @@ a {
 a:active { 
     color: #000099;
     text-decoration: none;
-    border: 2px solid #FFEEFF;
+    border: 2px solid #FFFCFF;
 }
 a:visited { 
     color: #008888;
     text-decoration: none;
-    border: 2px solid #FFEEFF;
+    border: 2px solid #FFFCFF;
 }
 a:link { 
     color: #000099;
@@ -40,7 +40,7 @@ a:hover {
 
 .mainFrame {
     padding: 15px;
-    width:1000px;
+    width:980px;
     margin:auto;
 }
 
@@ -64,7 +64,7 @@ a:hover {
     border-radius:10px;
     background-color: white;
     height:300px;
-    width:300px;
+    width:290px;
     padding:0px;
     margin:10px;
     box-shadow: 5px 5px 5px grey;

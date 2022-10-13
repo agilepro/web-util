@@ -23,14 +23,7 @@
 
     String f = wr.reqParam("f");
 
-    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
-    if (ht == null) {
-        //this is a clear indication of no session, so just redirect to the
-        //file input page.
-        response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
-        return;
-    }
-    FileCache mainDoc = (FileCache) ht.get(f);
+    FileCache mainDoc = FileCache.findFile(session, f);
 
     if (mainDoc==null) {
         //this is a clear indication of no session, so just redirect to the
@@ -45,23 +38,86 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>JSON Grinder: <%wr.writeHtml(f);%></title>
-  <link href="mystyle.css" rel="stylesheet" type="text/css"/>
-</head>
-<body>
-<h1>JSON Grinder: <%wr.writeHtml(f);%></h1>
-<p><form action="xmleditAction.jsp" method="POST">
-    <input type="hidden" name="f" value="<% wr.writeHtml(f); %>">
-    <input type="submit" name="act" value="Change File">
-    <% if (mainDoc.isValidJSON()) { %>
-    <input type="submit" name="act" value="Data View">
-    <input type="submit" name="act" value="Edit">
-    <input type="submit" name="act" value="Operation">
-    <% } else { %>
-    <input type="submit" name="act" value="Edit">
-    <% } %>
+  <title>File View: <%wr.writeHtml(f);%></title>
+  <script src="js/angular.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="css/wustyle.css"       rel="stylesheet" type="text/css"/>
+  <script>
+    var myApp = angular.module('myApp', []);
 
-   </form></p>
+    myApp.controller('myCtrl', function ($scope, $http) {
+        $scope.fileName = "<% wr.writeJS(f); %>";
+        $scope.fileType = "<% wr.writeJS(mainDoc.getType()); %>";
+        
+        $scope.content = "<% mainDoc.writeContentsJS(out); %>";
+        $scope.goof = function() {
+            window.open("dmn-test.jsp?f="+$scope.fileName);
+        }
+        $scope.goMode = function(page) {
+            window.location.assign(page+"?f="+encodeURIComponent($scope.fileName));
+        }
+        $scope.update = function() {
+            var postURL = "FileReceive.jsp?f="+encodeURIComponent($scope.fileName);
+            var oneProgress = {};
+            var payload = {
+                fileName: $scope.fileName,
+                content: $scope.content.trim()
+            }
+            sendPost(payload);
+        }
+        function sendPost(value) {
+            var postURL = "FileReceive.jsp?f="+encodeURIComponent($scope.fileName);
+            $scope.showError=false;
+            console.log("POSTING", value);
+            $http.post(postURL, JSON.stringify(value))
+            .success( function(data) {
+                $scope.goMode("selectfile.jsp");
+            })
+            .error( function(data, status, headers, config) {
+                $scope.reportError(data);
+            });
+        }
+
+    });
+  </script>
+  <style>
+  .datacell {
+      padding:5px;
+  }
+  tr td {
+      padding:5px;
+  }
+  </style>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div class="mainFrame">
+<h1>{{fileType}} View: {{fileName}}</h1>
+
+<table>
+<tr><td>
+   <button ng-click="goMode('selectfile.jsp')" class="btn btn-primary">Change File</button>
+</td><td>
+   <button ng-click="goMode('xmledit.jsp')" class="btn btn-warning">Text View</button>
+<% if (mainDoc.isValidJSON()) { %>
+</td><td>
+   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
+</td><td>
+   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
+<% } %>
+<% if (mainDoc.isValidJSON() || mainDoc.isValidXML()) { %>
+</td><td>
+   <button ng-click="goMode('xmlop.jsp')" class="btn btn-primary">Operation</button>
+<% } %>
+</td></tr>
+<tr><td>
+</table>
+
+
+   
+    <button ng-click="goof()">DMN Test {{fileName}}</button>
+   
+   
+   </p>
 <p>
 <%
     if (!mainDoc.isValidJSON()) {
@@ -78,20 +134,24 @@
             wr.writeHtml(fcs.getName());
         }
     }
+    if (!mainDoc.isValidXML()) {
+        wr.write("<font color=\"red\">NOT XML</font>");
+    }
+    else {
+        out.write("Valid XML");
+    }
 %>
 <a href="findallpaths.jsp">Find All Paths</a>
 </p>
-<hr/>
-<% if (mainDoc != null) { %>
-<pre><% mainDoc.writeContentsHtml(out); %></pre>
-<% } else { %>
-<p>No XML document is loaded into the editor.  Use the load option to bring in a document.</p>
-<% } %>
-<hr/>
+<textarea ng-model="content" style="width:800px;height:400px"></textarea>
+
+<table><tr><td>
+<button ng-click="update()" class="btn btn-primary">Update {{fileName}}</button>
+</td></tr></table>
 
 <hr/>
 <% wr.invokeJSP("tileBottom.jsp"); %>
-
+</div>
 
 </body>
 </html>

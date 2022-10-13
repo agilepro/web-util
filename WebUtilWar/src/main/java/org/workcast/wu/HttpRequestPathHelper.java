@@ -19,10 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
 
-    public void doGet(HttpServletRequest req, HttpServletResponse resp)  {
+    public void doGet(HttpServletRequest req, HttpServletResponse response)  {
         OldWebRequest wr = null;
         try {
-            wr = OldWebRequest.getOrCreate(req, resp, null);
+            wr = OldWebRequest.getOrCreate(req, response, null);
             handleRequest(wr);
             wr.flush();
         }
@@ -33,11 +33,11 @@ public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
                     wr.write("\n<h3>Exception</h3><p>");
                     wr.writeHtml(e.toString());
                     wr.write("</p>\n<p>getRequestURI: ");
-                    wr.writeHtml(wr.req.getRequestURI());
+                    wr.writeHtml(wr.request.getRequestURI());
                     wr.write("</p>\n<p>getContextPath: ");
-                    wr.writeHtml(wr.req.getContextPath());
+                    wr.writeHtml(wr.request.getContextPath());
                     wr.write("</p>\n<p>getServletPath: ");
-                    wr.writeHtml(wr.req.getServletPath());
+                    wr.writeHtml(wr.request.getServletPath());
                     wr.write("</p>\n<pre>\n");
                     e.printStackTrace(new PrintWriter(wr.w));
                     wr.write("\n</pre>\n</body></html>");
@@ -53,13 +53,13 @@ public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
     //request to http://machine:port/application/jd/version/com/example/foo/MyClass.html
     private void handleRequest(OldWebRequest wr) throws Exception {
 
-        String getContextPathStr = wr.req.getContextPath();
-        String getPathInfoStr = wr.req.getPathInfo();
-        String getPathTranslatedStr = wr.req.getPathTranslated();
-        String getQueryStringStr = wr.req.getQueryString();
-        String getRequestURIStr = wr.req.getRequestURI();
-        String getRequestURLStr = wr.req.getRequestURL().toString();
-        String getServletPathStr = wr.req.getServletPath();
+        String getContextPathStr = wr.request.getContextPath();
+        String getPathInfoStr = wr.request.getPathInfo();
+        String getPathTranslatedStr = wr.request.getPathTranslated();
+        String getQueryStringStr = wr.request.getQueryString();
+        String getRequestURIStr = wr.request.getRequestURI();
+        String getRequestURLStr = wr.request.getRequestURL().toString();
+        String getServletPathStr = wr.request.getServletPath();
 
         Writer out = wr.w;
         out.write("<html>\r\n");
@@ -76,13 +76,13 @@ public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
         out.write(" </td></tr>\r\n");
 
         out.write("<tr><td> request.getScheme();  </td><td> ");
-        wr.writeHtml(wr.req.getScheme());
+        wr.writeHtml(wr.request.getScheme());
         out.write(" </td></tr>\r\n");
         out.write("<tr><td> request.getServerName();  </td><td> ");
-        wr.writeHtml(wr.req.getServerName());
+        wr.writeHtml(wr.request.getServerName());
         out.write(" </td></tr>\r\n");
         out.write("<tr><td> request.getServerPort();  </td><td> ");
-        wr.writeHtml(Integer.toString(wr.req.getServerPort()));
+        wr.writeHtml(Integer.toString(wr.request.getServerPort()));
         out.write(" </td></tr>\r\n");
 
         out.write("<tr><td> request.getContextPath();  </td><td> ");
@@ -104,7 +104,7 @@ public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
         out.write(" </td></tr>\r\n");
 
         out.write("<tr><td> request.getProtocol();  </td><td> ");
-        wr.writeHtml(wr.req.getProtocol());
+        wr.writeHtml(wr.request.getProtocol());
         out.write(" </td></tr>\r\n");
         out.write("<tr><td> request.getPathTranslated();  </td><td> ");
         wr.writeHtml(getPathTranslatedStr);

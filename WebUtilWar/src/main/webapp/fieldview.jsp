@@ -83,15 +83,15 @@
    <button ng-click="goMode('selectfile.jsp')" class="btn btn-primary">Change File</button>
 </td><td>
    <button ng-click="goMode('xmledit.jsp')" class="btn btn-primary">Text View</button>
-<% if (mainDoc.isValidJSON()) { %>
-</td><td>
-   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
-</td><td>
-   <button ng-click="goMode('fieldview.jsp')" class="btn btn-warning">Field Edit</button>
-<% } %>
 <% if (mainDoc.isValidJSON() || mainDoc.isValidXML()) { %>
 </td><td>
    <button ng-click="goMode('xmlop.jsp')" class="btn btn-primary">Operation</button>
+</td><td>
+   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
+<% } %>
+<% if (mainDoc.isValidJSON()) { %>
+</td><td>
+   <button ng-click="goMode('fieldview.jsp')" class="btn btn-warning">Field Edit</button>
 <% } %>
 </td></tr>
 <tr><td>

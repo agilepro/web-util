@@ -2,10 +2,14 @@
 %><%@page errorPage="error.jsp"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.ArrayList"
+%><%@page import="java.util.Map"
+%><%@page import="java.util.HashMap"
 %><%@page import="java.io.Writer"
+%><%@page import="java.net.URLEncoder"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
 %><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="org.workcast.wu.XMLScrub"
 %><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="com.purplehillsbooks.streams.MemFile"
 %><%@page import="com.purplehillsbooks.json.JSONObject"
@@ -15,106 +19,76 @@
     OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
 
     String f = wr.reqParam("f");
-    Hashtable<String,FileCache> ht = (Hashtable<String,FileCache>) session.getAttribute("fileCache");
-    FileCache mainDoc = (FileCache) ht.get(f);
-    if (mainDoc==null) {
-        throw new Exception("Unable to find a file with name = "+f);
-    }
-    
-    Mel dmnFile = Mel.readInputStream(mainDoc.getInputStream(), Mel.class);
-    MemFile mf = new MemFile();
-    dmnFile.writeToOutputStream(mf.getOutputStream());
-    
-    Hashtable<String,Integer> hints = new Hashtable<String,Integer>();
-    hints.put("input", 3);
-    hints.put("output", 3);
-    hints.put("rule", 3);
-    hints.put("decision", 3);
-    hints.put("contextEntry", 3);
-    hints.put("decisionService", 3);
-    hints.put("semantic:input", 3);
-    
-    
-    JSONObject jo = Dom2JSON.convertDomToJSON(dmnFile.getDocument(), hints);
-    
-    recusiveStripNameSpace(jo);
-    recursiveStripTag(jo, "DMNDI");
-    recursiveStripTag(jo, "dc");
-    recursiveStripTag(jo, "di");
-    recursiveStripTag(jo, "dmn");
-    recursiveStripTag(jo, "dmndi");
-    recursiveStripTag(jo, "xmlns");
-    recursiveStripTag(jo, "extensionElements");
-    recursiveStripTag(jo, "kie");
-    recursiveStripTag(jo, "namespace"); 
-    
-    
-%><%!
+    FileCache mainDoc = FileCache.findFile(session, f);
 
-    void recusiveStripNameSpace(JSONObject jo) throws Exception {
-        ArrayList<String> keys = new ArrayList<String>();
-        for (String key : jo.keySet()) {
-            keys.add(key);
-        }
-        for (String key : keys) {
-            int colonPos = key.indexOf(":");
-            if (colonPos>0) {
-                Object value = jo.get(key);
-                jo.remove(key);
-                String bareKey = key.substring(colonPos+1);
-                jo.put(bareKey, value);
+    if (mainDoc==null) {
+        //this is a clear indication of no session, so just redirect to the
+        //file input page.
+        response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
+        return;
+    }
+    
+    if (!mainDoc.isValidXML()) {
+        throw new Exception("This page needs XML");
+    }
+    
+    XMLScrub scrubber = new XMLScrub();
+    
+    Mel root = mainDoc.getXML();
+    Map<String, Integer> counts = scrubber.collectAllNamespaceCounts(root);
+    
+    JSONArray errors = new JSONArray();
+    JSONArray mapCounts = new JSONArray();
+    JSONObject prefixUsage = new JSONObject();
+    Map<String,String> usedDefs = new HashMap<String,String>();
+    
+    
+    for (String key : counts.keySet()) {
+        Integer count = counts.get(key);
+        int barPos = key.indexOf("|");
+        String token = key.substring(0,barPos);
+        String url = key.substring(barPos+1);
+        JSONObject jo = new JSONObject();
+        jo.put("token", token);
+        jo.put("url", url);
+        jo.put("count", count.intValue());
+        mapCounts.put(jo);
+        
+        String oldUrl = usedDefs.get(token);
+        if (oldUrl!=null) {
+            if (!oldUrl.equals(url)) {
+                errors.put("Namespace declaration for '"+token+"' defined more than once with different URL values");
             }
         }
-        for (String key : jo.keySet()) {
-            Object value = jo.get(key);
-            if (value instanceof JSONObject) {
-                recusiveStripNameSpace((JSONObject)value);
-            }
-            else if (value instanceof JSONArray) {
-                listStripNameSpace((JSONArray)value);
+        else {
+            usedDefs.put(token, url);
+        }
+        
+        int colonPos = token.indexOf(":");
+        if (colonPos>0) {
+            String prefix = token.substring(colonPos+1);
+            int countx = scrubber.countPrefixUse(root, prefix);
+            prefixUsage.put(prefix, countx);
+            if (countx==0) {
+                errors.put("Unnecessary prefix '"+prefix+"' defined but never used in the file");
             }
         }
     }
     
-    void listStripNameSpace(JSONArray ja) throws Exception {
-        for (int i=0; i<ja.length(); i++) {
-            Object value = ja.get(i);
-            if (value instanceof JSONObject) {
-                recusiveStripNameSpace((JSONObject)value);
-            }
-            else if (value instanceof JSONArray) {
-                listStripNameSpace((JSONArray)value);
-            }
-        }
-    }
+    scrubber.calculateIdRefCounts(root);
     
-    void recursiveStripTag(JSONObject jo, String tagName) throws Exception {
-        if (jo.has(tagName)) {
-            jo.remove(tagName);
-        }
-        ArrayList<String> keys = new ArrayList<String>();
-        for (String key : jo.keySet()) {
-            keys.add(key);
-        }
-        for (String key : jo.keySet()) {
-            Object value = jo.get(key);
-            if (value instanceof JSONObject) {
-                recursiveStripTag((JSONObject)value, tagName);
-            }
-            else if (value instanceof JSONArray) {
-                listStripNameSpace((JSONArray)value);
-            }
-        }
+    JSONArray idScan = new JSONArray();
+    for (String id : scrubber.idToPath.keySet() ) {
+        JSONObject jo = new JSONObject();
+        jo.put("id", id);
+        jo.put("path", scrubber.idToPath.get(id));
+        jo.put("count", scrubber.refCount.getCount(id));
+        jo.put("ref", scrubber.refToPath.get(id));
+        idScan.put(jo);
     }
-    void listStripTag(JSONArray ja, String tagName) throws Exception {
-        for (int i=0; i<ja.length(); i++) {
-            Object value = ja.get(i);
-            if (value instanceof JSONObject) {
-                recursiveStripTag((JSONObject)value, tagName);
-            }
-            else if (value instanceof JSONArray) {
-                listStripTag((JSONArray)value, tagName);
-            }
+    for (String ref : scrubber.refToPath.keySet() ) {
+        if (scrubber.idToPath.get(ref)==null) {
+            errors.put("Dangling reference to undefined id: '"+ref+"'");
         }
     }
     
@@ -129,9 +103,13 @@
     var myApp = angular.module('myApp', []);
 
     myApp.controller('myCtrl', function ($scope) {
-        $scope.dmnObj = <% jo.write(out,2,2); %>;
         $scope.dataOut = {};
         $scope.dataIn = {};
+        $scope.counts = <% mapCounts.write(out,2,2); %>;
+        $scope.usage = <% prefixUsage.write(out,2,2); %>;
+        $scope.errors = <% errors.write(out,2,2); %>;
+        $scope.idScan = <% idScan.write(out,2,2); %>;
+        
         
         $scope.selectFile = function() {
             window.location.href = "selectfile.jsp?f="+$scope.fileName;
@@ -163,6 +141,47 @@
   <button class="btn btn-primary"  ng-click="selectFile()">Change File</button>
   <button class="btn btn-primary"  ng-click="visualFile()">Visualize</button>
 </div>
+
+<h2>Errors</h2>
+<table class="table">
+<tr ng-repeat="row in errors">
+  <td><span style="color:red">{{row}}</span></td>
+</tr>
+<tr><td></td></tr>
+</table>
+
+
+<h2>Namespace Definitions</h2>
+<table class="table">
+<tr ng-repeat="row in counts">
+  <td>{{row.token}}</td>
+  <td>{{row.url}}</td>
+  <td>{{row.count}}</td>
+</tr>
+<tr><td></td><td></td><td></td></tr>
+</table>
+
+
+<h2>Use of Namespace Prefix</h2>
+<table class="table">
+<tr ng-repeat="(ps,counta) in usage">
+  <td>{{ps}}</td>
+  <td>{{counta}}</td>
+</tr>
+<tr><td></td><td></td></tr>
+</table>
+
+<h2>All IDS</h2>
+<table class="table">
+<tr ng-repeat="row in idScan">
+  <td>{{row.id}}</td>
+  <td>{{row.count}}</td>
+  <td>{{row.path}}<br/>
+      {{row.ref}}</td>
+</tr>
+<tr><td></td><td></td></tr>
+</table>
+
 
 <div ng-repeat="deci in dmnObj.definitions.decision">
     <h2>Input for {{deci.id}}</h2>
@@ -208,9 +227,6 @@
     </table>
 </div>
 
-<pre>
-<% wr.writeHtml(jo.toString(2)); %>
-</pre>
 
 <div style="height:50px"></div>
 <% wr.invokeJSP("tileBottom.jsp"); %>

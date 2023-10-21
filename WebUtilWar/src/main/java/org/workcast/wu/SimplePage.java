@@ -8,7 +8,9 @@ import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
@@ -71,6 +73,7 @@ public class SimplePage {
             return new DefaultHttpClient(ccm, base.getParams());
             */
             HttpClientBuilder hcb = HttpClientBuilder.create();
+            hcb.setSSLContext(new SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build());
             hcb.setSSLHostnameVerifier(SSLPatch.getAllHostVerifier());
             return hcb.build();
             

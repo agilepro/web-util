@@ -10,6 +10,7 @@
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.NamedNodeMap"
+%><%@page import="com.purplehillsbooks.json.Dom2JSON"
 %><%@page import="com.purplehillsbooks.xml.Mel"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
@@ -29,8 +30,24 @@
         response.sendRedirect("selectfile.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
     }
-    if (!mainDoc.isValidJSON())
-    {
+    JSONObject tree = null;
+    if (mainDoc.isValidJSON()) {
+        tree = mainDoc.getJSON();
+    }
+    else if (mainDoc.isValidXML()) {
+        Mel temp = mainDoc.getXML();
+        Hashtable<String,Integer> hints = new Hashtable<String,Integer>();
+        hints.put("input", 3);
+        hints.put("output", 3);
+        hints.put("rule", 3);
+        hints.put("decision", 3);
+        hints.put("contextEntry", 3);
+        hints.put("decisionService", 3);
+        hints.put("semantic:input", 3);
+        
+        tree = Dom2JSON.convertDomToJSON(temp.getDocument(), hints);
+    }
+    else {
         response.sendRedirect("xmledit.jsp?f="+URLEncoder.encode(f, "UTF-8"));
         return;
     }
@@ -60,8 +77,13 @@
       padding:5px;
       cursor: pointer;
   }
+  table {
+      #border: 1px solid red;
+      margin: 0;
+  }
   tr td {
       padding:5px;
+      #border: 1px dashed blue;
   }
   </style>
 </head>
@@ -73,15 +95,15 @@
    <button ng-click="goMode('selectfile.jsp')" class="btn btn-primary">Change File</button>
 </td><td>
    <button ng-click="goMode('xmledit.jsp')" class="btn btn-primary">Text View</button>
-<% if (mainDoc.isValidJSON()) { %>
-</td><td>
-   <button ng-click="goMode('dataview.jsp')" class="btn btn-warning">Data View</button>
-</td><td>
-   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
-<% } %>
 <% if (mainDoc.isValidJSON() || mainDoc.isValidXML()) { %>
 </td><td>
    <button ng-click="goMode('xmlop.jsp')" class="btn btn-primary">Operation</button>
+</td><td>
+   <button ng-click="goMode('dataview.jsp')" class="btn btn-warning">Data View</button>
+<% } %>
+<% if (mainDoc.isValidJSON()) { %>
+</td><td>
+   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
 <% } %>
 </td></tr>
 <tr><td>
@@ -104,7 +126,7 @@
 <hr>
 
 <table><tr><td bgcolor="LightCyan">
-<% generateTables(wr, 800, "TOP", mainDoc.getJSON()); %>
+<% generateTables(wr, 800, "TOP", tree); %>
 </td></tr></table>
 
 <hr>
@@ -159,7 +181,7 @@
                     else  {
                         wr.writeHtml(key);
                         wr.write(" = ");
-                        wr.writeHtml("no impplemented yet");
+                        wr.writeHtml("not implemented yet");
                         wr.write("<br/>");
                     }
                 }
@@ -169,10 +191,6 @@
         }
         else if (me instanceof JSONArray) {
             JSONArray ja = ((JSONArray)me);
-            //wr.write("\n<table width=\""+(width-4)+"\">");
-            //wr.write("\n<col width=\"16\">");
-            //wr.write("\n<col width=\""+(cellwidth-4)+"\">");
-            //wr.write("\n  <tr><td colspan=\"2\">");
             for (int i=0; i<ja.length(); i++) {
                 Object o = ja.get(i);
                 if (o instanceof JSONObject) {
@@ -190,7 +208,7 @@
                 else  {
                     wr.writeHtml(name+"["+i+"]");
                     wr.write(" = ");
-                    wr.writeHtml("no impplemented yet");
+                    wr.writeHtml("not implemented yet");
                     wr.write("<br/>");
                 }
             }
@@ -206,7 +224,7 @@
         else {
             wr.writeHtml(name);
             wr.write(" = ");
-            wr.writeHtml("No implemento");
+            wr.writeHtml("Not implemented");
             wr.write("<br/>");
         }
     }

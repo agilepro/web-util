@@ -58,6 +58,10 @@
 <h1>File List</h1>
 
 <table class="table">
+<tr><td>Name</td>
+    <td>Type</td>
+    <td>Schema</td>
+    <td>Size</td></tr>
 <%
 
     int count = 0;
@@ -76,14 +80,20 @@
         {
 %>
 <tr><td><a href="<%=wr.retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">
-    <% wr.writeHtml(name); %></a></td><td>(JSON)  <% wr.writeHtml(schemaName); %> </td></tr>
+        <% wr.writeHtml(name); %></a></td>
+    <td>(JSON)</td>
+    <td><% wr.writeHtml(schemaName); %> </td>
+    <td><%=fc.getSize()%> </td></tr>
 <%
         }
         else
         {
 %>
 <tr><td><a href="<%=wr.retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">
-    <% wr.writeHtml(name); %></a></td><td>(<% wr.writeHtml(fc.getType()); %>)</td></tr>
+        <% wr.writeHtml(name); %></a></td>
+    <td>(<% wr.writeHtml(fc.getType()); %>)</td>
+    <td><% wr.writeHtml(schemaName); %> </td>
+    <td><%=fc.getSize()%> </td></tr>
 <%
         }
     }

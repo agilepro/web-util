@@ -98,36 +98,33 @@
    <button ng-click="goMode('selectfile.jsp')" class="btn btn-primary">Change File</button>
 </td><td>
    <button ng-click="goMode('xmledit.jsp')" class="btn btn-warning">Text View</button>
-<% if (mainDoc.isValidJSON()) { %>
-</td><td>
-   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
-</td><td>
-   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
-<% } %>
 <% if (mainDoc.isValidJSON() || mainDoc.isValidXML()) { %>
 </td><td>
    <button ng-click="goMode('xmlop.jsp')" class="btn btn-primary">Operation</button>
+</td><td>
+   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
+<% } %>
+<% if (mainDoc.isValidJSON()) { %>
+</td><td>
+   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
 <% } %>
 </td></tr>
 <tr><td>
 </table>
 
-
-   
-    <button ng-click="goof()">DMN Test {{fileName}}</button>
    
    
    </p>
 <p>
 <%
     if (!mainDoc.isValidJSON()) {
-        wr.write("<font color=\"red\">NOT JSON</font>");
+        wr.write(" <font color=\"red\">NOT JSON</font> ");
     }
     else {
         out.write("Valid JSON,   Schema is");
         FileCache fcs = mainDoc.getSchema();
         if (fcs==null) {
-            wr.write(" <i>not set</i>");
+            wr.write(" <i>not set</i> ");
         }
         else {
             wr.write(": ");
@@ -135,13 +132,13 @@
         }
     }
     if (!mainDoc.isValidXML()) {
-        wr.write("<font color=\"red\">NOT XML</font>");
+        wr.write(" <font color=\"red\">NOT XML</font> ");
     }
     else {
-        out.write("Valid XML");
+        out.write(" Valid XML ");
     }
 %>
-<a href="findallpaths.jsp">Find All Paths</a>
+
 </p>
 <textarea ng-model="content" style="width:800px;height:400px"></textarea>
 

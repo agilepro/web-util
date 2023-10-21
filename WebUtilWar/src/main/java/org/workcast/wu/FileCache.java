@@ -40,8 +40,8 @@ public class FileCache
     private JSONObject   parsedJSON;
     private Mel          parsedXML;
     private FileCache    schemaFile;
-    private Exception    parseError;
-    private Exception    parseErrorXML;
+    public  Exception    parseError;
+    public  Exception    parseErrorXML;
 
     //for XMLSchema support, we need to remember what the namespace of the root
     //element was before stripping the XMLSchema attributes out
@@ -53,33 +53,7 @@ public class FileCache
     public static int LOAD_WEB_RESOURCE = 1;
     public static int TRANSFORM = 2;
 
-
-    public static FileCache findFile(HttpSession session, String name) {
-        @SuppressWarnings("unchecked")
-        List<FileCache> fileList = (List<FileCache>) session.getAttribute("fileCache");
-        if (fileList == null) {
-            fileList = new ArrayList<FileCache>();
-            session.setAttribute("fileCache", fileList);
-        }
-        for (FileCache fc : fileList) {
-            if (name.equalsIgnoreCase(fc.name)) {
-                return fc;
-            }
-        }
-        return null;
-    }
-    public static void storeFile(HttpSession session, FileCache fc) {
-        @SuppressWarnings("unchecked")
-        List<FileCache> fileList = (List<FileCache>) session.getAttribute("fileCache");
-        List<FileCache> newFileList = new ArrayList<FileCache>();
-        newFileList.add(fc);
-        for (FileCache ofc : fileList) {
-            if (!fc.name.equalsIgnoreCase(ofc.name)) {
-                newFileList.add(ofc);
-            }
-        }
-        session.setAttribute("fileCache", newFileList);
-    }
+    
     public static List<FileCache> listFiles(HttpSession session) {
         @SuppressWarnings("unchecked")
         List<FileCache> fileList = (List<FileCache>) session.getAttribute("fileCache");
@@ -88,6 +62,27 @@ public class FileCache
             session.setAttribute("fileCache", fileList);
         }
         return fileList;
+    }
+
+    public static FileCache findFile(HttpSession session, String name) {
+        List<FileCache> fileList = listFiles(session);
+        for (FileCache fc : fileList) {
+            if (name.equalsIgnoreCase(fc.name)) {
+                return fc;
+            }
+        }
+        return null;
+    }
+    public static void storeFile(HttpSession session, FileCache fc) {
+        List<FileCache> fileList = listFiles(session);
+        List<FileCache> newFileList = new ArrayList<FileCache>();
+        newFileList.add(fc);
+        for (FileCache ofc : fileList) {
+            if (!fc.name.equalsIgnoreCase(ofc.name)) {
+                newFileList.add(ofc);
+            }
+        }
+        session.setAttribute("fileCache", newFileList);
     }
     
     
@@ -276,6 +271,10 @@ public class FileCache
     public void setType(HttpSession session, String newName) {
         fileType = newName;
     }
+    
+    public int getSize() {
+        return contents.totalBytes();
+    }
 
     public void writeContents(Writer w) throws Exception {
         if (parsedJSON!=null) {
@@ -339,7 +338,7 @@ public class FileCache
 
     public List<String> validateSchema() throws Exception {
         JSONSchema converter = new JSONSchema();
-        boolean valid = converter.checkSchema(parsedJSON, this.schemaFile.parsedJSON);
+        converter.checkSchema(parsedJSON, this.schemaFile.parsedJSON);
         return converter.getErrorList();
     }
 
@@ -378,6 +377,34 @@ public class FileCache
             }
         }
     }
-
+    public static void recursiveStripTag(JSONObject jo, String tagName) throws Exception {
+        if (jo.has(tagName)) {
+            jo.remove(tagName);
+        }
+        ArrayList<String> keys = new ArrayList<String>();
+        for (String key : jo.keySet()) {
+            keys.add(key);
+        }
+        for (String key : jo.keySet()) {
+            Object value = jo.get(key);
+            if (value instanceof JSONObject) {
+                recursiveStripTag((JSONObject)value, tagName);
+            }
+            else if (value instanceof JSONArray) {
+                listStripNameSpace((JSONArray)value);
+            }
+        }
+    }
+    public static void listStripTag(JSONArray ja, String tagName) throws Exception {
+        for (int i=0; i<ja.length(); i++) {
+            Object value = ja.get(i);
+            if (value instanceof JSONObject) {
+                recursiveStripTag((JSONObject)value, tagName);
+            }
+            else if (value instanceof JSONArray) {
+                listStripTag((JSONArray)value, tagName);
+            }
+        }
+    }
 
 }

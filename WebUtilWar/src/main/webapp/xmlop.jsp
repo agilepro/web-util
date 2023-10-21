@@ -99,15 +99,15 @@
    <button ng-click="goMode('selectfile.jsp')" class="btn btn-primary">Change File</button>
 </td><td>
    <button ng-click="goMode('xmledit.jsp')" class="btn btn-primary">Text View</button>
-<% if (mainDoc.isValidJSON()) { %>
-</td><td>
-   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
-</td><td>
-   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
-<% } %>
 <% if (mainDoc.isValidJSON() || mainDoc.isValidXML()) { %>
 </td><td>
    <button ng-click="goMode('xmlop.jsp')" class="btn btn-warning">Operation</button>
+</td><td>
+   <button ng-click="goMode('dataview.jsp')" class="btn btn-primary">Data View</button>
+<% } %>
+<% if (mainDoc.isValidJSON()) { %>
+</td><td>
+   <button ng-click="goMode('fieldview.jsp')" class="btn btn-primary">Field Edit</button>
 <% } %>
 </td></tr>
 <tr><td>
@@ -207,6 +207,8 @@
    <input type="submit" name="act" value="Reformat">
    to put the file in canonical form
    </form></p>
+   
+<p> <button ng-click="goMode('dmn-test.jsp')">DMN Test</button></p>
 <% } %>
 
 

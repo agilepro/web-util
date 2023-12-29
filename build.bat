@@ -1,3 +1,3 @@
 cd WebUtilWar
-call gradle clean build
+call mvn clean test package
 pause

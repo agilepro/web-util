@@ -2,10 +2,11 @@
 .gradle
 
 # Ignore Gradle build output directory
-build
+target
 
 #crap from eclipse
 .settings
 .project
+.classpath
 
 

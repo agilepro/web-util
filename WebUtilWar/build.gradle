@@ -46,6 +46,9 @@ application {
     // mainClass = 'com.purplehillsbooks.wu.App'
 }
 
+test {
+    useJUnitPlatform()
+}
 
 //java source files are UTF-8
 apply plugin: "java"

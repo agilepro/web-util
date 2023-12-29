@@ -21,6 +21,7 @@
 package org.workcast.wu;
 
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.util.List;
 
 import com.purplehillsbooks.streams.HTMLWriter;
@@ -54,13 +55,19 @@ public class WikiConverter
     protected String userKey;
 
     protected static String retPath = "";
+    protected String linkConverter;
 
     /**
     * Construct on the AuthRequest that output will be to
     */
-    public WikiConverter(Writer destination)
+    public WikiConverter(Writer destination, String newLinkConverter)
     {
         ar = destination;
+        linkConverter = newLinkConverter;
+        if (linkConverter == null) {
+            // arbitrary
+            linkConverter = "/wu/capture.jsp?path=";
+        }
     }
 
     /**
@@ -68,19 +75,17 @@ public class WikiConverter
     * converter directly.   Convenience for the case where you are
     * going to use a converter only once, and only for HTML output.
     */
-    public static void writeWikiAsHtml(Writer destination, String tv) throws Exception
-    {
-        WikiConverter wc = new WikiConverter(destination);
+    public static void writeWikiAsHtml(Writer destination, String tv, String path) throws Exception {
+        WikiConverter wc = new WikiConverter(destination, path);
         wc.writeWikiAsHtml(tv);
     }
 
     /**
     * Takes a block of data formatted in wiki format, and converts
-    * it to HTML, outputting that to the AuthRequest that was
+    * it to HTML, outputting that to the writer that was
     * passed in when the object was constructed.
     */
-    public void writeWikiAsHtml(String tv) throws Exception
-    {
+    public void writeWikiAsHtml(String tv) throws Exception {
         LineIterator li = new LineIterator(tv);
         while (li.moreLines())
         {
@@ -91,8 +96,7 @@ public class WikiConverter
         ar.flush();
     }
 
-    protected void formatText(String line) throws Exception
-    {
+    protected void formatText(String line) throws Exception {
         boolean isIndented = line.startsWith(" ");
         if (majorState != PREFORMATTED) {
             line = line.trim();
@@ -147,8 +151,7 @@ public class WikiConverter
         }
     }
 
-    protected void terminate() throws Exception
-    {
+    protected void terminate() throws Exception {
         if (isBold) {
             ar.write("</b>");
         }
@@ -185,37 +188,29 @@ public class WikiConverter
         isItalic = false;
     }
 
-    protected void startParagraph() throws Exception
-    {
+    protected void startParagraph() throws Exception {
         terminate();
         ar.write("<p>\n");
         majorState = PARAGRAPH;
         majorLevel = 0;
     }
 
-    protected void startPRE() throws Exception
-    {
+    protected void startPRE() throws Exception {
         terminate();
         ar.write("<pre>\n");
         majorState = PREFORMATTED;
         majorLevel = 0;
     }
 
-    protected void makeLineBreak()
-        throws Exception
-    {
+    protected void makeLineBreak() throws Exception {
         ar.write("<br/>");
     }
 
-    protected void makeHorizontalRule()
-        throws Exception
-    {
+    protected void makeHorizontalRule() throws Exception {
         ar.write("<hr/>");
     }
 
-    protected void startBullet(String line, int level)
-            throws Exception
-    {
+    protected void startBullet(String line, int level) throws Exception {
         if (majorState != BULLET) {
             terminate();
             majorState = BULLET;
@@ -234,9 +229,7 @@ public class WikiConverter
         scanForStyle(line, level);
     }
 
-    protected void startHeader(String line, int level)
-            throws Exception
-    {
+    protected void startHeader(String line, int level) throws Exception {
         terminate();
         majorState = HEADER;
         majorLevel = level;
@@ -254,9 +247,7 @@ public class WikiConverter
         scanForStyle(line, level);
     }
 
-    protected void scanForStyle(String line, int scanStart)
-            throws Exception
-    {
+    protected void scanForStyle(String line, int scanStart) throws Exception {
         int pos = scanStart;
         int last = line.length();
         while (pos < last) {
@@ -338,14 +329,11 @@ public class WikiConverter
     * Returns either the position of a white space, or it
     * returns the length of the line if no white space char found
     */
-    public static int findIdentifierEnd(String line, int pos)
-    {
+    public static int findIdentifierEnd(String line, int pos) {
         int last = line.length();
-        while (pos < last)
-        {
+        while (pos < last) {
             char ch = line.charAt(pos);
-            if (!Character.isLetterOrDigit(ch) && ch!='_')
-            {
+            if (!Character.isLetterOrDigit(ch) && ch!='_') {
                 return pos;
             }
             pos++;
@@ -358,18 +346,15 @@ public class WikiConverter
     * links within the block, and return a vector with just the
     * links in them.
     */
-    public void findLinks(List<String> v, String inputText) throws Exception
-    {
+    public void findLinks(List<String> v, String inputText) throws Exception {
         LineIterator li = new LineIterator(inputText);
-        while (li.moreLines())
-        {
+        while (li.moreLines()) {
             String thisLine = li.nextLine();
             scanLineForLinks(thisLine, v);
         }
     }
 
-    protected void scanLineForLinks(String thisLine, List<String> v)
-    {
+    protected void scanLineForLinks(String thisLine, List<String> v) {
         int bracketPos = thisLine.indexOf('[');
         int startPos = 0;
         while (bracketPos >= startPos) {
@@ -404,8 +389,7 @@ public class WikiConverter
     *
     * The name part of the link
     */
-    private static void outputLink(Writer ar, String linkURL)
-            throws Exception {
+    private void outputLink(Writer ar, String linkURL) throws Exception {
         boolean isImage = linkURL.startsWith("IMG:");
 
         int barPos = linkURL.indexOf("|");
@@ -430,6 +414,8 @@ public class WikiConverter
             HTMLWriter.writeHtml(ar, linkName);
             return;
         }
+        
+        linkAddr = linkConverter + URLEncoder.encode(linkAddr, "UTF-8");
 
         
         if (isImage) {
@@ -547,5 +533,75 @@ public class WikiConverter
             scanForStyle(line, 0);
         }
     }
+    
+    
+    /**
+     * Many blocks of text from the web consists entirely of links, and those are 
+     * related to button bas, menus, etc.  In order to distinguish these blocks, which can be 
+     * quite large, this will return the amount of text that is NOT linked, as that usually
+     * indicates the body of readable text from a web page.
+     * @param sample
+     * @return
+     */
+    public static int amtNonLinkedText(String sample) {
+        int total = 0;
+        
+        int lineStart = 0;
+        while (lineStart < sample.length()) {
+            int lineEnd = findNext(sample, lineStart, '\n');
+            int textStart = skipFormatting(sample, lineStart);
+            total = total + unbracedTextCount(sample, textStart, lineEnd);
+            lineStart = span(sample, lineEnd, '\n');
+        }
+        
+        return total;
+    }
 
+    private static int findNext(String sample, int lineStart, char ch) {
+        int pos = sample.indexOf(ch, lineStart);
+        if (pos > 0) {
+            return pos;
+        }
+        return sample.length();
+    }
+    
+    private static int skipFormatting(String sample, int start) {
+        if (start >= sample.length()) {
+            return start;
+        }
+        char firstChar = sample.charAt(start);
+        if (firstChar == '*') {
+            start = span(sample, start, '*');
+            return span(sample, start, ' ');
+        }
+        if (firstChar == '!') {
+            start = span(sample, start, '!');
+            return span(sample, start, ' ');
+        }
+        if (firstChar == ':') {
+            return start + 1;
+        }
+        return start;
+    }
+    
+    private static int span(String sample, int start, char ch) {
+        while (start < sample.length() && sample.charAt(start)==ch) {
+            start++;
+        }
+        return start;
+    }
+    
+    private static int unbracedTextCount(String sample, int start, int end) {
+        int amt = 0;
+        int pos = start;
+        
+        while (pos < end) {
+            int bracePos = findNext(sample, pos, '[');
+            // include the amount before the brace
+            amt = amt + bracePos - pos;
+            pos = bracePos;
+            pos = findNext(sample, pos, ']');
+        }
+        return amt;
+    }
 }

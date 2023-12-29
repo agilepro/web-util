@@ -16,9 +16,9 @@
 %><%@page import="org.jsoup.nodes.Node"
 %><%@page import="org.jsoup.nodes.TextNode"
 %><%@page import="org.workcast.wu.SimplePage"
-%><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="org.workcast.wu.SimpleWebRequest"
 %><%
-    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
+    SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
     request.setCharacterEncoding("UTF-8");
 
     String enc  = request.getParameter("enc");
@@ -182,7 +182,7 @@ p {
     boolean showDebug = false;
 
 
-    public void outputCleanPage(OldWebRequest wr, Element ele, String s) throws Exception {
+    public void outputCleanPage(SimpleWebRequest wr, Element ele, String s) throws Exception {
         String tagName = ele.nodeName().toLowerCase();
         String p = s + " / " + tagName;
 
@@ -298,7 +298,7 @@ p {
     }
     
    
-    public void dumpLink(OldWebRequest wr, Element ele) throws Exception  {
+    public void dumpLink(SimpleWebRequest wr, Element ele) throws Exception  {
         String val = ele.text().trim();
         if (val.length()==0) {
             return;
@@ -308,7 +308,7 @@ p {
         wr.write("</div>");
     }
     
-    public void streamNonBlock(OldWebRequest wr, Element ele) throws Exception {
+    public void streamNonBlock(SimpleWebRequest wr, Element ele) throws Exception {
         String tagName = ele.nodeName().toLowerCase();
         boolean ignore = true;
         if ("a".equals(tagName)) {
@@ -341,7 +341,7 @@ p {
         }
     }
     
-    public void streamLink(OldWebRequest wr, Element ele) throws Exception {
+    public void streamLink(SimpleWebRequest wr, Element ele) throws Exception {
         String url = "";
         for (Attribute att : ele.attributes()) {
             if (att.getKey().equalsIgnoreCase("href")) {

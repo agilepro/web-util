@@ -4,7 +4,6 @@ package org.workcast.wu;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -36,12 +35,14 @@ public class MarkdownTest {
                 File outFile = new File(tempFolder, baseName+".md");
                 File htmlFile = new File(tempFolder, baseName+".html");
                 Reader reader = new  InputStreamReader(new FileInputStream(child), "UTF-8");
-                String markdown = HtmlToWikiConverter.htmlStreamToWiki(reader);
+                HtmlToWikiConverter hwc = new HtmlToWikiConverter();
+                hwc.htmlStreamToWiki(reader, "https://noplace.com/1/2/3/4/5/foo.html");
+                String markdown = hwc.resultString();
                 StringReader forOutput = new StringReader(markdown);
                 StreamHelper.copyReaderToUTF8File(forOutput, outFile);
                 
                 Writer htmlWriter = new OutputStreamWriter(new FileOutputStream(htmlFile), "UTF-8");
-                WikiConverter.writeWikiAsHtml(htmlWriter, markdown);
+                WikiConverter.writeWikiAsHtml(htmlWriter, markdown, "https://noplace.com/converter?page=");
             }
         }
         

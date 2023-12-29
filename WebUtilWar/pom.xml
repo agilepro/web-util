@@ -77,11 +77,13 @@
 	            <configuration>
 	                <source>8</source>
 	                <target>8</target>
+                    <lineEnding>KEEP</lineEnding>
 	            </configuration>
 	        </plugin>
 	        <plugin>
 			    <artifactId>maven-war-plugin</artifactId>
 			    <configuration>
+			        <lineEnding>keep</lineEnding>
 			        <attachClasses>true</attachClasses>
 			        <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
 			        <webResources>
@@ -95,4 +97,5 @@
 	        
 	    </plugins>
 	</build>
+
 </project>

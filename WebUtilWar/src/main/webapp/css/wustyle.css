@@ -1,7 +1,8 @@
 
 
 body {
-    background: #FFFCFF;
+    xbackground: #FFFCFF;
+    background: white;
     font: normal 18px/1.5 "Montserrat", helvetica, arial, sans-serif;
   font weight:    normal;
   font-size:      18px;
@@ -106,3 +107,7 @@ a:hover {
     text-decoration: none;
 }
 
+p {
+    background-color: white;
+    line-height: 1.5;
+}

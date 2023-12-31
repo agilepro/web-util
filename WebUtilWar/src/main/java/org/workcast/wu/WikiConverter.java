@@ -447,7 +447,7 @@ public class WikiConverter
                     HTMLWriter.writeHtml(ar, target);
                 }
                 ar.write("\">");
-                HTMLWriter.writeHtml(ar, linkName);
+                scanForStyle(linkName, 0);
                 ar.write("</a>");
             } else {
                 ar.write("<a href=\"");
@@ -455,7 +455,7 @@ public class WikiConverter
                 ar.write("\" title=\"");
                 HTMLWriter.writeHtml(ar, titleValue);
                 ar.write("\">");
-                HTMLWriter.writeHtml(ar, linkName);
+                scanForStyle(linkName, 0);
                 // the icon indicates condition of page
                 ar.write("<img src=\"");
                 ar.write(retPath);
@@ -467,52 +467,7 @@ public class WikiConverter
 
     }
 
-    /**
-    * Given a block of wiki formatted text, this will strip out all the
-    * formatting characters, but write out everything else as plain text.
-    */
-/*     public void writePlainText(String wikiData) throws Exception
-    {
-        LineIterator li = new LineIterator(wikiData);
-        while (li.moreLines())
-        {
-            String thisLine = li.nextLine();
-            removeWikiFormattings(thisLine);
-            ar.write(" ");
-        }
-    }
- */
-/*     protected void removeWikiFormattings(String line)
-            throws Exception
-    {
-        if (line == null || ((line = line.trim()).length()) == 0) {
-            return;
-        }
 
-        if (line.startsWith("----"))
-        {
-            line = line.substring(4);
-        }
-        else if (line.startsWith("!!!") || (line.startsWith("***")))
-        {
-            line = line.substring(3);
-        }
-        else if (line.startsWith("!!") || (line.startsWith("**")))
-        {
-            line = line.substring(2);
-        }
-        else if (line.startsWith("!") || (line.startsWith("*")))
-        {
-            line = line.substring(1);
-        }
-        line = line.replaceAll("__", "");
-        line = line.replaceAll("''", "");
-        line = line.replaceAll("[", "");
-        line = line.replaceAll("]", "");
-        line = line.replaceAll("|", "");
-        ar.write(line);
-    }
- */
     protected void fomatFontStyle(String line) throws Exception{
         boolean scan = false;
         if(line.startsWith("%%(")){
@@ -548,21 +503,30 @@ public class WikiConverter
         
         int lineStart = 0;
         while (lineStart < sample.length()) {
-            int lineEnd = findNext(sample, lineStart, '\n');
+            // skip any spaces that might exist
+            lineStart = span(sample, lineStart, ' ');
+            
+            // find the end of the line
+            int lineEnd = findNext(sample, lineStart, sample.length(), '\n');
             int textStart = skipFormatting(sample, lineStart);
             total = total + unbracedTextCount(sample, textStart, lineEnd);
+            
+            // find beginning of next line after any number of newlines
             lineStart = span(sample, lineEnd, '\n');
         }
         
         return total;
     }
 
-    private static int findNext(String sample, int lineStart, char ch) {
-        int pos = sample.indexOf(ch, lineStart);
-        if (pos > 0) {
+    private static int findNext(String sample, int start, int end, char ch) {
+        int pos = sample.indexOf(ch, start);
+        if (pos >= end) {
+            return end;
+        }
+        if (pos >= 0) {
             return pos;
         }
-        return sample.length();
+        return end;
     }
     
     private static int skipFormatting(String sample, int start) {
@@ -596,11 +560,11 @@ public class WikiConverter
         int pos = start;
         
         while (pos < end) {
-            int bracePos = findNext(sample, pos, '[');
+            int bracePos = findNext(sample, pos, end, '[');
             // include the amount before the brace
             amt = amt + bracePos - pos;
             pos = bracePos;
-            pos = findNext(sample, pos, ']');
+            pos = findNext(sample, pos, end, ']')+1;
         }
         return amt;
     }

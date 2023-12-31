@@ -7,9 +7,9 @@
 %><%@page import="java.net.URL"
 %><%@page import="java.net.URLConnection"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="org.workcast.wu.SimpleWebRequest"
 %><%
-    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
+    SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
     request.setCharacterEncoding("UTF-8");
 
 %>

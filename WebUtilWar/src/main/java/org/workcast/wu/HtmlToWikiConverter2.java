@@ -125,6 +125,7 @@ public class HtmlToWikiConverter2 {
 
     public final static char ESCAPE_CHAR = 'º';
     public MemFile htmlValue;
+    public List<ParseFrame2> wikiFrames = new ArrayList<>();
     public List<String> wikiValue = new ArrayList<>();
     private int bulletIndentationLevel = 0;
     private String baseUrl;
@@ -165,6 +166,7 @@ public class HtmlToWikiConverter2 {
         Document doc = Jsoup.parse(mf.getInputStream(), "UTF-8", baseUrl);
         Element body = doc.body();
         scanMajorElement(body, "=  ");
+        genAllText();
         return wikiValue;
     }
     
@@ -207,7 +209,7 @@ public class HtmlToWikiConverter2 {
                     currentFrame.addBlock("!!");
                     formatText(child, depth+"- ");
                 }
-                else if ("h3".equals(nodeName)) {
+                else if ("h3".equals(nodeName) || "h4".equals(nodeName) || "h5".equals(nodeName) || "h6".equals(nodeName)) {
                     currentFrame.addBlock("!");
                     formatText(child, depth+"- ");
                 }
@@ -258,10 +260,13 @@ public class HtmlToWikiConverter2 {
                         formatText(child, depth+"b ");
                         currentFrame.addText("__");
                     }
-                    if (clazz.contains( "italic;" )) {
+                    else if (clazz.contains( "italic;" )) {
                         currentFrame.addText("''");
                         formatText(child, depth+"i ");
                         currentFrame.addText("''");
+                    }
+                    else {
+                        formatText(child, depth+"i ");
                     }
                 }
                 else if ("#text".contentEquals(nodeName)) {
@@ -421,6 +426,7 @@ public class HtmlToWikiConverter2 {
     }
 
     public String resultString() {
+        genAllText();
         return String.join("\n\n", wikiValue);
     }
     
@@ -430,35 +436,12 @@ public class HtmlToWikiConverter2 {
         currentFrame.tagType = newTagType;
         currentFrame.isIgnoring = ignore;
         currentFrame.frameNo = ++frameCount;
+        wikiFrames.add(currentFrame);
         System.out.println("Created: "+currentFrame.tagType+":"+currentFrame.frameNo);
     }
     
     public void pop() {
         System.out.println("-end-  : "+currentFrame.tagType+":"+currentFrame.frameNo);
-        StringBuilder finalText = new StringBuilder();
-        boolean needBlankLine = false;
-        currentFrame.finish();
-        for (WikiBlock2 block: currentFrame.blocks) {
-            if (block.text.length()>0) {
-                if(block.startChars.length()==0) {
-                    if (needBlankLine) {
-                        finalText.append("\n");
-                    }
-                    needBlankLine = true;
-                }
-                else {
-                    finalText.append(block.startChars);
-                }
-                finalText.append(block.text);
-                finalText.append("\n");
-            }
-        }
-        String result = finalText.toString().trim();
-        if (result.length()>0) {
-            // only add the resulting string if there is something there.
-            // otherwise we can just ignore this block
-            wikiValue.add(result);
-        }
         if (wikiStack.size()>0) {
             currentFrame = wikiStack.remove(wikiStack.size()-1);
         }
@@ -518,6 +501,19 @@ public class HtmlToWikiConverter2 {
         // then just return the whole thing, there is no  container.
         return url;
     }
+    
+    public void genAllText() {
+        wikiValue = new ArrayList<>();
+        for (ParseFrame2 frame : wikiFrames) {
+            String result = frame.getFinalText();
+            if (result.length()>0) {
+                // only add the resulting string if there is something there.
+                // otherwise we can just ignore this block
+                wikiValue.add(result);
+            }
+        }
+            
+    }
 }
 
 
@@ -559,10 +555,32 @@ class ParseFrame2 {
         currentBlock.startChars = blockChars;
     }
     public void finish() {
-        if (currentBlock.text.length()>0) {
+        if (currentBlock!=null && currentBlock.text.length()>0) {
             blocks.add(currentBlock);
         }
         currentBlock = null;
+    }
+    
+    public String getFinalText() {
+        StringBuilder finalText = new StringBuilder();
+        boolean needBlankLine = false;
+        finish();
+        for (WikiBlock2 block: blocks) {
+            if (block.text.length()>0) {
+                if(block.startChars.length()==0) {
+                    if (needBlankLine) {
+                        finalText.append("\n");
+                    }
+                    needBlankLine = true;
+                }
+                else {
+                    finalText.append(block.startChars);
+                }
+                finalText.append(block.text);
+                finalText.append("\n");
+            }
+        }
+        return finalText.toString().trim();        
     }
 }
 
@@ -955,25 +973,7 @@ class HTMLParser2 extends HTMLEditorKit.ParserCallback {
     
     public void pop() {
         System.out.println("-end-  : "+currentFrame.tagType+":"+currentFrame.frameNo);
-        StringBuilder finalText = new StringBuilder();
-        boolean needBlankLine = false;
-        currentFrame.finish();
-        for (WikiBlock2 block: currentFrame.blocks) {
-            if (block.text.length()>0) {
-                if(block.startChars.length()==0) {
-                    if (needBlankLine) {
-                        finalText.append("\n");
-                    }
-                    needBlankLine = true;
-                }
-                else {
-                    finalText.append(block.startChars);
-                }
-                finalText.append(block.text);
-                finalText.append("\n");
-            }
-        }
-        String result = finalText.toString().trim();
+        String result = currentFrame.getFinalText();
         if (result.length()>0) {
             // only add the resulting string if there is something there.
             // otherwise we can just ignore this block

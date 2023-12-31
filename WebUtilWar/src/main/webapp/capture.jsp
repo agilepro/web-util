@@ -20,7 +20,7 @@
 %><%@page import="org.jsoup.nodes.TextNode"
 %><%@page import="org.workcast.wu.SimplePage"
 %><%@page import="org.workcast.wu.SimpleWebRequest"
-%><%@page import="org.workcast.wu.HtmlToWikiConverter"
+%><%@page import="org.workcast.wu.HtmlToWikiConverter2"
 %><%@page import="org.workcast.wu.WikiConverter"
 %><%
     SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
@@ -102,7 +102,7 @@
     }
     List<String> markDown = new ArrayList<>();
     if (path.length()>4) {
-        HtmlToWikiConverter converter = new HtmlToWikiConverter();
+        HtmlToWikiConverter2 converter = new HtmlToWikiConverter2();
         markDown = converter.webPageToWiki(path);
     }
     List<String> articleText = new ArrayList<>();
@@ -224,7 +224,7 @@ a {
 <div class="mainFrame">
 <%
     for (String block : markDown) {
-        wr.write("\n<p>"+WikiConverter.amtNonLinkedText(block)+"</p>\n<pre>\n");
+        wr.write("\n<p>"+WikiConverter.amtNonLinkedText(block)+" / "+block.length()+"</p>\n<pre>\n");
         HTMLWriter.writeHtml(wr.w, block);
         wr.write("\n</pre>\n");
     }

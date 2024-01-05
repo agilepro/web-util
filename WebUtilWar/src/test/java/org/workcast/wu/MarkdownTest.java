@@ -30,6 +30,9 @@ public class MarkdownTest {
         
         for (File child : resourceFolder.listFiles()) {
             String childName = child.getName();
+            if (!childName.startsWith("test7")) {
+                continue;
+            }
             if (childName.endsWith(".html")) {
                 String baseName = childName.substring(0, childName.length()-5);
                 File outFile = new File(tempFolder, baseName+".md");

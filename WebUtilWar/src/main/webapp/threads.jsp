@@ -1,6 +1,6 @@
 <%@ page language="java" import="java.util.*,java.lang.Thread.State" contentType="text/html;charset=UTF-8"
     pageEncoding="ISO-8859-1"%>
-<%@page import="org.workcast.wu.OldWebRequest"%>
+<%@page import="org.workcast.wu.SimpleWebRequest"%>
 <html>
 <head>
   <title>Thread Dump</title>
@@ -23,7 +23,7 @@
 <h1>Thread Dump</h1>
 
 <%
-    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
+    SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
     out.print("Generating Thread-dump at:" + (new java.util.Date()).toString() + "<BR>");
     out.println("----------------------------<br>");
     Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();

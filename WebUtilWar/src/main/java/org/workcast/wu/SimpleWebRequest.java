@@ -14,8 +14,8 @@ import com.purplehillsbooks.streams.JavaScriptWriter;
 
 public class SimpleWebRequest {
 
-    public HttpServletRequest  req;
-    public HttpServletResponse resp;
+    public HttpServletRequest  request;
+    public HttpServletResponse response;
     public Writer w;
 
     /**
@@ -28,8 +28,8 @@ public class SimpleWebRequest {
     */
     public SimpleWebRequest(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
             throws Exception {
-        req = areq;
-        resp = aresp;
+        request = areq;
+        response = aresp;
         w = aw;
     }
 
@@ -115,13 +115,13 @@ public class SimpleWebRequest {
     public String defParam(String paramName, String defaultValue)
         throws Exception
     {
-        String val = req.getParameter(paramName);
+        String val = request.getParameter(paramName);
         if (val != null) {
             return val;
         }
 
         //try and see if it a request attribute
-        val = (String)req.getAttribute(paramName);
+        val = (String)request.getAttribute(paramName);
         if (val != null) {
             return val;
         }
@@ -147,7 +147,7 @@ public class SimpleWebRequest {
             //The exception that is thrown will not be seen by users.  Once all of the pages
             //have proper URLs constricted for redirecting to other pages, this error will
             //not occur.  Therefor, there is no need to localize this exception.
-            throw new Exception("A parameter named '"+paramName+"' is required for page "+req.getRequestURI());
+            throw new Exception("A parameter named '"+paramName+"' is required for page "+request.getRequestURI());
         }
         return val;
     }
@@ -158,21 +158,21 @@ public class SimpleWebRequest {
     */
     public void invokeJSP(String JSPName) throws Exception {
         w.flush();
-        resp.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         String relPath = getRelPathFromCtx();
-        RequestDispatcher rd = req.getRequestDispatcher(relPath + JSPName);
-        rd.include(req, resp);
+        RequestDispatcher rd = request.getRequestDispatcher(relPath + JSPName);
+        rd.include(request, response);
         flush();
     }
     
     private String getRelPathFromCtx() throws Exception  {
-        if (req == null)
+        if (request == null)
         {
             throw new Exception("getRelPathFromCtx requires a request object to be set, but it is null");
         }
 
-        String pageUrl = req.getRequestURL().toString();
-        String context = req.getContextPath() + "/";
+        String pageUrl = request.getRequestURL().toString();
+        String context = request.getContextPath() + "/";
         int contextPos = pageUrl.indexOf(context);
         if (contextPos == -1) {
             throw new Exception("Something is wrong, the context path can not be found in the current URL.  "

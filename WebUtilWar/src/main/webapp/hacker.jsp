@@ -9,9 +9,9 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.net.URLDecoder"
 %><%@page import="java.util.Vector"
-%><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="org.workcast.wu.SimpleWebRequest"
 %><%
-    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
+    SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
     request.setCharacterEncoding("UTF-8");
 
     String enc  = request.getParameter("enc");

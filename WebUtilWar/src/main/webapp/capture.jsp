@@ -25,6 +25,7 @@
 %><%
     SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
     request.setCharacterEncoding("UTF-8");
+    String serviceUrl = request.getRequestURL().toString()+"?path=";
 
     String enc  = request.getParameter("enc");
     if (enc==null) {
@@ -33,6 +34,7 @@
     String path = request.getParameter("path");
     int threshold = 400;
     int articleThreshold = 400;
+    
     
 %>
 
@@ -186,20 +188,22 @@ a {
 
 
 <hr>
-<style>
 
-</style>
+
+<pre>
+<% wr.write(request.getRequestURL().toString()); %>
+</pre>
 <div>
 <table width="100%">
 <%
     for (String block : articleText) {
         wr.write("\n<tr><td class=\"blockStyle\">\n");
-        WikiConverter.writeWikiAsHtml(wr.w, block, "http://bobcat/wu/capture.jsp?path=");
+        WikiConverter.writeWikiAsHtml(wr.w, block, serviceUrl);
         wr.write("\n</td></tr>\n");
     }
     for (String block : linkText) {
         wr.write("\n<tr><td class=\"blockStyle\">\n");
-        WikiConverter.writeWikiAsHtml(wr.w, block, "http://bobcat/wu/capture.jsp?path=");
+        WikiConverter.writeWikiAsHtml(wr.w, block, serviceUrl);
         wr.write("\n</td></tr>\n");
     }
 %>
@@ -223,10 +227,12 @@ a {
 
 <div class="mainFrame">
 <%
-    for (String block : markDown) {
-        wr.write("\n<p>"+WikiConverter.amtNonLinkedText(block)+" / "+block.length()+"</p>\n<pre>\n");
-        HTMLWriter.writeHtml(wr.w, block);
-        wr.write("\n</pre>\n");
+    if (false) {
+        for (String block : markDown) {
+            wr.write("\n<p>"+WikiConverter.amtNonLinkedText(block)+" / "+block.length()+"</p>\n<pre>\n");
+            HTMLWriter.writeHtml(wr.w, block);
+            wr.write("\n</pre>\n");
+        }
     }
 %>
 

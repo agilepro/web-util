@@ -159,6 +159,8 @@ public class HtmlToWikiConverter2 {
         currentFrame = new ParseFrame2();
         currentFrame.tagType = "ROOT";
         currentFrame.frameNo = ++frameCount;
+        currentFrame.isIgnoring = false;
+        wikiFrames.add(currentFrame);
         
         MemFile mf = new MemFile();
         mf.fillWithReader(reader);
@@ -182,7 +184,7 @@ public class HtmlToWikiConverter2 {
             String nodeName = child.nodeName().toLowerCase();
             
             if (child instanceof Element) {
-                System.out.println(depth + "<"+nodeName+">");
+                // System.out.println(depth + "<"+nodeName+">");
                 if ("style".equals(nodeName)) {
                     continue; // we don't care about styles or any contents
                 }
@@ -198,8 +200,14 @@ public class HtmlToWikiConverter2 {
                     pop();
                 }
                 else if ("p".equals(nodeName)) {
+                    if (!isInside("li")) {
+                        currentFrame.addBlock("");
+                    }
+                    scanMajorElement((Element)child, depth+"* ");
+                }
+                else if ("td".equals(nodeName) || "th".equals(nodeName)) {
                     currentFrame.addBlock("");
-                    formatText(child, depth+"- ");
+                    scanMajorElement((Element)child, depth+"* ");
                 }
                 else if ("h1".equals(nodeName)) {
                     currentFrame.addBlock("!!!");
@@ -213,9 +221,17 @@ public class HtmlToWikiConverter2 {
                     currentFrame.addBlock("!");
                     formatText(child, depth+"- ");
                 }
+                else if ("hr".equals(nodeName)) {
+                    currentFrame.addBlock("");
+                    currentFrame.addText("----");
+                    currentFrame.addBlock("");
+                }
+                else if ("br".equals(nodeName)) {
+                    currentFrame.addBlock(":");
+                }
                 else if ("pre".equals(nodeName)) {
                     currentFrame.addBlock("{{{\n");
-                    formatText(child, depth+"- ");
+                    unformatPreserveNewline(child, depth+"- ");
                     currentFrame.addText("\n}}}");
                 }
                 else if ("ol".equals(nodeName) || "ul".equals(nodeName)) {
@@ -226,10 +242,6 @@ public class HtmlToWikiConverter2 {
                 else if ("li".equals(nodeName)) {
                     startBlock("*");
                     scanMajorElement((Element)child, depth+"  ");
-                }
-                else if ("#text".equals(nodeName)) {
-                    String text = child.toString();
-                    System.out.println(depth + "  !" + niceText(text));
                 }
                 else if ("b".equals(nodeName) || "strong".equals(nodeName)) {
                     currentFrame.addText("__");
@@ -243,11 +255,18 @@ public class HtmlToWikiConverter2 {
                 }
                 else if ("a".equals(nodeName)) {
                     String href = ((Element)child).attr("href");
-                    currentFrame.addText("[");
-                    unformatText(child, depth+"u ");
-                    currentFrame.addText("|");
-                    currentFrame.addText(convertToGlobalUrl(href));
-                    currentFrame.addText("]");
+                    if (href!=null && href.length()>5 && !href.startsWith("mailto")) {
+                        StringBuilder sb = new StringBuilder();
+                        unformatText(child, depth+"u ", sb);
+                        String linkedText = sb.toString().trim();
+                        if (linkedText.length()>0) {
+                            currentFrame.addText("[");
+                            currentFrame.addText(linkedText.toString());
+                            currentFrame.addText("|");
+                            currentFrame.addText(convertToGlobalUrl(href));
+                            currentFrame.addText("]");
+                        }
+                    }
                 }
                 else if ("span".equals(nodeName)) {
                     //apparently the text editor we are using will inclue span tags for
@@ -288,6 +307,15 @@ public class HtmlToWikiConverter2 {
         }        
     }
     
+    private boolean isInside(String tag) {
+        for (ParseFrame2 pf : wikiStack) {
+            if (pf.tagType.equals(tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void formatText(Node node, String depth) {
         for (Node child : node.childNodes()) {
             String nodeName = child.nodeName().toLowerCase();
@@ -303,11 +331,17 @@ public class HtmlToWikiConverter2 {
             }
             else if ("a".equals(nodeName)) {
                 String href = ((Element)child).attr("href");
-                currentFrame.addText("[");
-                unformatText(child, depth+"u ");
-                currentFrame.addText("|");
-                currentFrame.addText(convertToGlobalUrl(href));
-                currentFrame.addText("]");
+                if (href!=null && href.length()>5) {
+                    StringBuilder sb = new StringBuilder();
+                    unformatText(child, depth+"u ", sb);
+                    if (sb.length()>0) {
+                        currentFrame.addText("[");
+                        currentFrame.addText(sb.toString());
+                        currentFrame.addText("|");
+                        currentFrame.addText(convertToGlobalUrl(href));
+                        currentFrame.addText("]");
+                    }
+                }
             }
             else if ("span".equals(nodeName)) {
                 //apparently the text editor we are using will inclue span tags for
@@ -326,6 +360,9 @@ public class HtmlToWikiConverter2 {
                     currentFrame.addText("''");
                 }
             }
+            else if ("br".equals(nodeName)) {
+                currentFrame.addBlock(":");
+            }
             else if ("#text".contentEquals(nodeName)) {
                 copyWhileEscaping(child.toString(), true);
             }
@@ -334,23 +371,43 @@ public class HtmlToWikiConverter2 {
             }
         }        
     }
-    public void unformatText(Node node, String depth) {
+    public void unformatText(Node node, String depth, StringBuilder sb) {
+        for (Node child : node.childNodes()) {
+            String nodeName = child.nodeName().toLowerCase();
+            if ("#text".contentEquals(nodeName)) {
+                copyWhileEscaping(child.toString(), false, sb);
+            }
+            else {
+                unformatText(child, depth+"% ", sb);
+            }
+        }        
+    }
+    public void unformatPreserveNewline(Node node, String depth) {
         for (Node child : node.childNodes()) {
             String nodeName = child.nodeName().toLowerCase();
             if ("#text".contentEquals(nodeName)) {
                 copyWhileEscaping(child.toString(), false);
             }
+            else if ("br".contentEquals(nodeName)) {
+                currentFrame.addText("\n");
+            }
             else {
-                unformatText(child, depth+"% ");
+                unformatPreserveNewline(child, depth+"% ");
             }
         }        
     }
     
     private void copyWhileEscaping(String input, boolean allowBraces) {
+        StringBuilder sb = new StringBuilder();
+        copyWhileEscaping(input, allowBraces, sb);
+        currentFrame.addText(sb.toString());
+    }
+    private void copyWhileEscaping(String input, boolean allowBraces, StringBuilder sb) {
         input = Entities.unescape(input);
         
         //walk through and escape special characters that would
         //otherwise cause possible styling errors
+        //StringBuilder debug = new StringBuilder();
         for (int i=0; i<input.length(); i++) {
             char ch = input.charAt(i);
             if (ch<32) {
@@ -358,23 +415,25 @@ public class HtmlToWikiConverter2 {
                     //these are the only valid characters less than 32, strip out any others
                     //this is critical because inclusion of these characters can cause the 
                     //XML parsing to fail for the entire workspace
-                    currentFrame.addChar( ch );
+                    //  \t = 9,  \n = 10, \r = 13
+                    sb.append( ch );
                 }
             }
             else if (!allowBraces && ch=='[') {
-                currentFrame.addChar( '(' );
+                sb.append( '(' );
             }
             else if (!allowBraces && ch==']') {
-                currentFrame.addChar( ')' );
+                sb.append( ')' );
             }
             else if (ch=='[' || ch=='_' || ch=='\'' || ch==ESCAPE_CHAR) {
-                currentFrame.addChar(ESCAPE_CHAR);
-                currentFrame.addChar( ch );
+                sb.append(ESCAPE_CHAR);
+                sb.append( ch );
             }
             else {
-                currentFrame.addChar( ch );
+                sb.append( ch );
             }
         }
+        //System.out.println("--("+debug.toString()+")");
     }
     
     public String niceText(String in) {
@@ -437,11 +496,11 @@ public class HtmlToWikiConverter2 {
         currentFrame.isIgnoring = ignore;
         currentFrame.frameNo = ++frameCount;
         wikiFrames.add(currentFrame);
-        System.out.println("Created: "+currentFrame.tagType+":"+currentFrame.frameNo);
+        //System.out.println("Created: "+currentFrame.tagType+":"+currentFrame.frameNo);
     }
     
     public void pop() {
-        System.out.println("-end-  : "+currentFrame.tagType+":"+currentFrame.frameNo);
+        //System.out.println("-end-  : "+currentFrame.tagType+":"+currentFrame.frameNo);
         if (wikiStack.size()>0) {
             currentFrame = wikiStack.remove(wikiStack.size()-1);
         }
@@ -537,7 +596,7 @@ class ParseFrame2 {
             if (text.length()>40) {
                 text = value.substring(0, 40);
             }
-            System.out.println("text   : "+tagType+":"+frameNo+": "+text);
+            //System.out.println("text   : "+tagType+":"+frameNo+": "+text);
         }
     }
     
@@ -843,18 +902,14 @@ class HTMLParser2 extends HTMLEditorKit.ParserCallback {
         }
         else if (t == HTML.Tag.STYLE) {
             push("STYLE", true);
-            System.out.println("** STYLE found start, line "+countableReader.getLineNumber());
         }
         else if (t == HTML.Tag.SCRIPT) {
-            System.out.println("** SCRIPT found start, line "+countableReader.getLineNumber());
             push("SCRIPT", true);
         }
         else if (t == HTML.Tag.HEAD) {
-            System.out.println("** HEAD found start, line "+countableReader.getLineNumber());
             push("HEAD", true);
         }
         else if (t == HTML.Tag.BODY) {
-            System.out.println("** BODY found start, line "+countableReader.getLineNumber());
             push("BODY", false);
         }
     }
@@ -876,12 +931,10 @@ class HTMLParser2 extends HTMLEditorKit.ParserCallback {
         }
         else if (t == HTML.Tag.STYLE) {
             pop();
-            System.out.println("** STYLE found end, line "+countableReader.getLineNumber());
             return;
         }
         else if (t == HTML.Tag.SCRIPT) {
             pop();
-            System.out.println("** SCRIPT found end, line "+countableReader.getLineNumber());
             return;
         }
         else if (t == HTML.Tag.H1 || t == HTML.Tag.H2
@@ -941,11 +994,9 @@ class HTMLParser2 extends HTMLEditorKit.ParserCallback {
             prepareBold = false;
         }
         else if (t == HTML.Tag.HEAD) {
-            System.out.println("** HEAD found end, line "+countableReader.getLineNumber());
             pop();
         }
         else if (t == HTML.Tag.BODY) {
-            System.out.println("** BODY found end, line "+countableReader.getLineNumber());
             pop();
         }
     }
@@ -961,71 +1012,21 @@ class HTMLParser2 extends HTMLEditorKit.ParserCallback {
         }
     }
     
-    private int blockCount = 0;
     public void push(String newTagType, boolean ignore) {
-        wikiStack.add(currentFrame);
-        currentFrame = new ParseFrame2();
-        currentFrame.tagType = newTagType;
-        currentFrame.isIgnoring = ignore;
-        currentFrame.frameNo = (++blockCount);
-        System.out.println("created: "+currentFrame.tagType+":"+currentFrame.frameNo);
     }
     
     public void pop() {
-        System.out.println("-end-  : "+currentFrame.tagType+":"+currentFrame.frameNo);
-        String result = currentFrame.getFinalText();
-        if (result.length()>0) {
-            // only add the resulting string if there is something there.
-            // otherwise we can just ignore this block
-            wikiFinal.add(result);
-        }
-        if (wikiStack.size()>0) {
-            currentFrame = wikiStack.remove(wikiStack.size()-1);
-        }
     }
     
     public String findContainingUrl(String url) {
-        int index = url.lastIndexOf("/");
-        if (index > 10) {
-            return url.substring(0, index);
-        }
-        // if we don't find a slash more than 10 characters in
-        // then just return the whole thing, there is no  container.
-        return url;
+        return "";
     }
     
     public String convertToGlobalUrl(String relativeUrl) {
-        if (relativeUrl.startsWith("http")) {
-            // it already is global so just return it
-            return relativeUrl;
-        }
-        
-        // site global or root relative URL starts with a slash
-        if (relativeUrl.startsWith("/")) {
-            return siteRootPath() + relativeUrl;
-        }
-        
-        // get rid of any .. elements from the beginning
-        String containerPath = baseUrl;
-        while (relativeUrl.length()>3 && relativeUrl.startsWith("../")) {
-            relativeUrl = relativeUrl.substring(3);
-            containerPath = findContainingUrl(containerPath);
-        }
-
-        return containerPath + "/" + relativeUrl;
+        return "";
     }
-    
-    
-    /**
-     * @return the "https://sitename" without a slash on the end
-     */
+
     public String siteRootPath() {
-        // https:// is 8 letters long
-        int firstSlash = baseUrl.indexOf("/", 9);
-        if (firstSlash > 0) {
-            return baseUrl.substring(0, firstSlash);
-        }
-        // we have to assume here that it already is the site root
-        return baseUrl;
+        return "";
     }
 }

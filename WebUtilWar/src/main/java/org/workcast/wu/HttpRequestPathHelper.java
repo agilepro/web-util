@@ -20,9 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse response)  {
-        OldWebRequest wr = null;
+        SimpleWebRequest wr = null;
         try {
-            wr = OldWebRequest.getOrCreate(req, response, null);
+            wr = new SimpleWebRequest(req, response, null);
             handleRequest(wr);
             wr.flush();
         }
@@ -51,7 +51,7 @@ public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
     }
 
     //request to http://machine:port/application/jd/version/com/example/foo/MyClass.html
-    private void handleRequest(OldWebRequest wr) throws Exception {
+    private void handleRequest(SimpleWebRequest wr) throws Exception {
 
         String getContextPathStr = wr.request.getContextPath();
         String getPathInfoStr = wr.request.getPathInfo();

@@ -7,9 +7,10 @@
 %><%@page import="java.util.Hashtable"
 %><%@page import="org.workcast.wu.DOMFace"
 %><%@page import="org.workcast.wu.FileCache"
-%><%@page import="com.purplehillsbooks.web.WebRequest"
+%><%@page import="org.workcast.wu.SimpleWebRequest"
 %><%
-    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
+    SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
+    String retPath = "";
 
     //determine a good name for a new file if they want to create one
     int i=1;
@@ -79,7 +80,7 @@
         if (fc.isValidJSON())
         {
 %>
-<tr><td><a href="<%=wr.retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">
+<tr><td><a href="<%=retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">
         <% wr.writeHtml(name); %></a></td>
     <td>(JSON)</td>
     <td><% wr.writeHtml(schemaName); %> </td>
@@ -89,7 +90,7 @@
         else
         {
 %>
-<tr><td><a href="<%=wr.retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">
+<tr><td><a href="<%=retPath%>xmledit.jsp?f=<%= URLEncoder.encode(name, "UTF-8") %>">
         <% wr.writeHtml(name); %></a></td>
     <td>(<% wr.writeHtml(fc.getType()); %>)</td>
     <td><% wr.writeHtml(schemaName); %> </td>

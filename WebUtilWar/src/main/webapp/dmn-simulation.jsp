@@ -1,8 +1,8 @@
 <%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page errorPage="error.jsp"
-%><%@page import="org.workcast.wu.OldWebRequest"
+%><%@page import="org.workcast.wu.SimpleWebRequest"
 %><%
-    OldWebRequest wr = OldWebRequest.getOrCreate(request, response, out);
+    SimpleWebRequest wr = new SimpleWebRequest(request, response, out);
 %>
 <html lang="en">
 <head>

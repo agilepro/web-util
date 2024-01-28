@@ -1,11 +1,12 @@
 package org.workcast.wu;
 
-import javax.servlet.ServletContext;
 
 import com.purplehillsbooks.web.JSONHandler;
 import com.purplehillsbooks.web.JSONServlet;
 import com.purplehillsbooks.web.SessionManager;
 import com.purplehillsbooks.web.WebRequest;
+
+import jakarta.servlet.ServletContext;
 
 public class AuthServlet extends JSONServlet {
 

@@ -6,8 +6,8 @@ package org.workcast.wu;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
 * HttpServletResponse has this *strange* limitation that you can
@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 * Copyright: Keith Swenson, all rights reserved
 * License: This code is made available under the GNU Lesser GPL license.
 */
-public class HttpServletResponseWithoutBug extends javax.servlet.http.HttpServletResponseWrapper
+public class HttpServletResponseWithoutBug extends jakarta.servlet.http.HttpServletResponseWrapper
 {
     public ServletOutputStream out;
     public PrintWriter writer;

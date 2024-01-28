@@ -7,10 +7,10 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.xml.Mel;
 
 /**
@@ -22,7 +22,7 @@ import com.purplehillsbooks.xml.Mel;
 * License: This code is made available under the GNU Lesser GPL license.
 */
 @SuppressWarnings("serial")
-public class JavaDocServlet extends javax.servlet.http.HttpServlet {
+public class JavaDocServlet extends jakarta.servlet.http.HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {

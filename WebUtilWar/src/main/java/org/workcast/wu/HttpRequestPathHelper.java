@@ -4,10 +4,10 @@
 package org.workcast.wu;
 import java.io.PrintWriter;
 import java.io.Writer;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
 * Just to see what the various parts of the application are
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 * License: This code is made available under the GNU Lesser GPL license.
 */
 @SuppressWarnings("serial")
-public class HttpRequestPathHelper extends javax.servlet.http.HttpServlet {
+public class HttpRequestPathHelper extends jakarta.servlet.http.HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse response)  {
         SimpleWebRequest wr = null;

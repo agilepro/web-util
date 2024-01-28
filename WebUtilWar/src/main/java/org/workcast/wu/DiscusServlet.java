@@ -1,6 +1,6 @@
 package org.workcast.wu;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import com.purplehillsbooks.web.JSONHandler;
 import com.purplehillsbooks.web.JSONServlet;

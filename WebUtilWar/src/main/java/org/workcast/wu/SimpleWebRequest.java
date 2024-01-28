@@ -2,9 +2,9 @@ package org.workcast.wu;
 
 import java.io.Writer;
 import java.net.URLEncoder;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.streams.HTMLWriter;
 import com.purplehillsbooks.streams.JavaScriptWriter;
 

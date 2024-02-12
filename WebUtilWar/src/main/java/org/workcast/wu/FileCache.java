@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -247,7 +248,7 @@ public class FileCache
 
 
     public void loadContentsFromWeb(String urlPath) throws Exception {
-        URL url = new URL(urlPath);
+        URL url = URI.create(urlPath).toURL();
         URLConnection uc = url.openConnection();
         if (uc == null) {
             throw new Exception("Got a null URLConnection object!");

@@ -6,6 +6,7 @@ package org.workcast.wu;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,7 +72,7 @@ public class ConnectionTest
             osw.write("Count,Time,Result,BytesRead,Duration\n");
             osw.flush();
 
-            URL destAddress = new URL(address);
+            URL destAddress = URI.create(address).toURL();
             int count = 0;
             targetTime = targetTime + 100;
 

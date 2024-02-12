@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.SimpleException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONSchema;
 import com.purplehillsbooks.web.JSONHandler;
@@ -68,7 +68,7 @@ public class DiscusHandler extends JSONHandler {
             return validateJSON();
         }
         
-        throw new JSONException("Don't understand the path element ({0})", token);
+        throw new SimpleException("Don't understand the path element (%s)", token);
     }
 
     /*
@@ -119,13 +119,13 @@ public class DiscusHandler extends JSONHandler {
             File targetFile = new File(dataFolder, targetName);
 
             if (targetFile.exists()) {
-                throw new JSONException("An article with the key '{0}' is already in use.", key);
+                throw new SimpleException("An article with the key '%s' is already in use.", key);
             }
             newArticle.writeToFile(targetFile);
             return newArticle;
         }
         catch (Exception e) {
-            throw new JSONException("Unable to create new discussion article", e);
+            throw new SimpleException("Unable to create new discussion article", e);
         }
     }
 
@@ -134,7 +134,7 @@ public class DiscusHandler extends JSONHandler {
         for( File child : dataFolder.listFiles()) {
             String childName = child.getName();
             if (childName.equals(targetName)) {
-                throw new JSONException("The key '{0}' is already in use.", key);
+                throw new SimpleException("The key '%s' is already in use.", key);
             }
         }
     }
@@ -150,7 +150,7 @@ public class DiscusHandler extends JSONHandler {
         article = art;
         File discussionFile = new File(dataFolder, art+".disc");
         if (!discussionFile.exists()) {
-            throw new JSONException("Can't find the discussion file: {0}", discussionFile.getAbsolutePath());
+            throw new SimpleException("Can't find the discussion file: %s", discussionFile.getAbsolutePath());
         }
         if (wr.pathFinished()) {
             throw new Exception("Nothing returned at this level: need another path element");
@@ -171,9 +171,9 @@ public class DiscusHandler extends JSONHandler {
             }
         }
         catch (Exception e) {
-            throw new JSONException("Failure handling path element ({0})", e, token);
+            throw new SimpleException("Failure handling path element (%s)", e, token);
         }
-        throw new JSONException("Don't understand the path element ({0})", token);
+        throw new SimpleException("Don't understand the path element (%s)", token);
     }
 
     private JSONObject getOneDiscussionDocument() throws Exception {

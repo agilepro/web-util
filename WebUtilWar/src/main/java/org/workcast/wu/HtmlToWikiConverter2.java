@@ -653,7 +653,6 @@ class HTMLParser2 extends HTMLEditorKit.ParserCallback {
 
     public final static char ESCAPE_CHAR = 'º';
 
-    private String baseUrl;
     private String href = "";
     private StringBuilder linkText = new StringBuilder();
 
@@ -669,15 +668,12 @@ class HTMLParser2 extends HTMLEditorKit.ParserCallback {
     private boolean prepareItal = false;
     private boolean prepareLineFeed = false;
     
-    private LineNumberReader countableReader;
-
     List<String> wikiFinal = new ArrayList<>();
     List<ParseFrame2> wikiStack = new ArrayList<>();
     ParseFrame2 currentFrame;
     
     public HTMLParser2(String fullUrl, LineNumberReader newReader) {
-        baseUrl = findContainingUrl(fullUrl);
-        countableReader = newReader;
+        //baseUrl = findContainingUrl(fullUrl);
         currentFrame = new ParseFrame2();
         currentFrame.tagType = "ROOT";
     }

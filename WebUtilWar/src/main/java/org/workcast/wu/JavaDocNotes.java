@@ -34,13 +34,11 @@ public class JavaDocNotes
             {
                 String member = note.getScalar("member");
                 Integer count = commentCount.get(member);
-                if (count==null)
-                {
-                    commentCount.put(member, new Integer(1));
+                if (count==null) {
+                    commentCount.put(member, Integer.valueOf(1));
                 }
-                else
-                {
-                    commentCount.put(member, new Integer(count.intValue()+1));
+                else {
+                    commentCount.put(member, Integer.valueOf(count.intValue()+1));
                 }
             }
         }

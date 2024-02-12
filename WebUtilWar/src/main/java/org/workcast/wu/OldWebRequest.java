@@ -1,6 +1,7 @@
 package org.workcast.wu;
 
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -10,6 +11,8 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import com.purplehillsbooks.json.SimpleException;
 import com.purplehillsbooks.streams.HTMLWriter;
 import com.purplehillsbooks.streams.JavaScriptWriter;
 import com.purplehillsbooks.streams.MemFile;
@@ -465,17 +468,19 @@ public class OldWebRequest extends com.purplehillsbooks.web.WebRequest {
     * reuqest that was put there by code doing a server side redirect to the
     * JSP file.  If that is not there either, then return the default instead.
     */
-    public String defParam(String paramName, String defaultValue)
-        throws Exception
-    {
+    public String defParam(String paramName, String defaultValue) {
         String val = request.getParameter(paramName);
         if (val!=null)
         {
             // this next line should not be needed, but I have seen this hack recommended
             // in many forums.  See setTomcatKludge() above.
-            if (needTomcatKludge)
-            {
-                val = new String(val.getBytes("iso-8859-1"), "UTF-8");
+            if (needTomcatKludge) {
+                try {
+                    val = new String(val.getBytes("iso-8859-1"), "UTF-8");
+                }
+                catch (UnsupportedEncodingException e) {
+                    // this is impossible.  UTF-8 is always supported
+                }
             }
             return val;
         }
@@ -502,16 +507,13 @@ public class OldWebRequest extends com.purplehillsbooks.web.WebRequest {
     * have proper URLs constricted for redirecting to other pages, this error will
     * not occur.  Therefor, there is no need to localize this exception.
     */
-    public String reqParam(String paramName)
-        throws Exception
-    {
+    public String reqParam(String paramName) {
         String val = defParam(paramName, null);
-        if (val == null || val.length()==0)
-        {
+        if (val == null || val.length()==0) {
             //The exception that is thrown will not be seen by users.  Once all of the pages
             //have proper URLs constricted for redirecting to other pages, this error will
             //not occur.  Therefor, there is no need to localize this exception.
-            throw new Exception("A parameter named '"+paramName+"' is required for page "+getRequestURL());
+            throw new SimpleException("A parameter named '%s' is required for page %s", paramName, getRequestURL());
         }
         return val;
     }
@@ -522,9 +524,7 @@ public class OldWebRequest extends com.purplehillsbooks.web.WebRequest {
     * Given the name of a JSP file, this will call it, and the
     * output will appear in the place of the call.
     */
-    public void invokeJSP(String JSPName)
-        throws Exception
-    {
+    public void invokeJSP(String JSPName) throws Exception {
         w.flush();
         response.setContentType("text/html;charset=UTF-8");
         String relPath = getRelPathFromCtx();
@@ -536,29 +536,24 @@ public class OldWebRequest extends com.purplehillsbooks.web.WebRequest {
 
 
 
-    private String getRelPathFromCtx() throws Exception
-    {
-        if (request == null)
-        {
+    private String getRelPathFromCtx() throws Exception {
+        if (request == null) {
             throw new Exception("getRelPathFromCtx requires a request object to be set, but it is null");
         }
 
         String pageUrl = request.getRequestURL().toString();
         String context = request.getContextPath() + "/";
         int contextPos = pageUrl.indexOf(context);
-        if (contextPos == -1)
-        {
+        if (contextPos == -1) {
             throw new Exception("Something is wrong, the context path can not be found in the current URL.  "
                     +"This should never happen.  Request URL is '"+pageUrl+"' and context is '"+context+"'");
         }
 
         StringBuffer relPath = new StringBuffer();
         String strOfIntrest = pageUrl.substring(contextPos + context.length());
-        for (int i=0; i<strOfIntrest.length(); i++)
-        {
+        for (int i=0; i<strOfIntrest.length(); i++)  {
             char c = strOfIntrest.charAt(i);
-            if (c == '/')
-            {
+            if (c == '/') {
                 relPath.append("../");
             }
         }
@@ -569,36 +564,30 @@ public class OldWebRequest extends com.purplehillsbooks.web.WebRequest {
     //////////////////////// SESSION ///////////////////////////
 
 
-    public String getSessionString(String paramName, String defaultValue)
-    {
+    public String getSessionString(String paramName, String defaultValue) {
         String val = (String) session.getAttribute(paramName);
-        if (val == null)
-        {
+        if (val == null) {
             session.setAttribute(paramName, defaultValue);
             return defaultValue;
         }
         return val;
     }
 
-    public void setSessionString(String paramName, String value)
-    {
+    public void setSessionString(String paramName, String value) {
         session.setAttribute(paramName, value);
     }
 
-    public int getSessionInt(String paramName, int defaultValue)
-    {
+    public int getSessionInt(String paramName, int defaultValue) {
         Integer val = (Integer) session.getAttribute(paramName);
-        if (val == null)
-        {
-            session.setAttribute(paramName, new Integer(defaultValue));
+        if (val == null) {
+            session.setAttribute(paramName, Integer.valueOf(defaultValue));
             return defaultValue;
         }
         return val.intValue();
     }
 
-    public void setSessionInt(String paramName, int val)
-    {
-        session.setAttribute(paramName, new Integer(val));
+    public void setSessionInt(String paramName, int val) {
+        session.setAttribute(paramName, Integer.valueOf(val));
     }
 
 

@@ -39,9 +39,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
-
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.streams.SSLPatch;
 
